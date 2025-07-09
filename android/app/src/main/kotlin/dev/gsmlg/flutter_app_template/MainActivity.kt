@@ -1,4 +1,4 @@
-package dev.gsmlg.flutter_app_template
+package dev.gsmlg.mobile_hex_pm
 
 import io.flutter.embedding.android.FlutterActivity
 

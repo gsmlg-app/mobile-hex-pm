@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/screens/app/error_screen.dart';
-import 'package:flutter_app_template/screens/app/splash_screen.dart';
-import 'package:flutter_app_template/screens/home/home_screen.dart';
-import 'package:flutter_app_template/screens/settings/hex_settings_screen.dart';
-import 'package:flutter_app_template/screens/settings/settings_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_hex_pm/screens/app/error_screen.dart';
+import 'package:mobile_hex_pm/screens/app/splash_screen.dart';
+import 'package:mobile_hex_pm/screens/home/home_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
 
 class AppRouter {
   static final GlobalKey<NavigatorState> key =
@@ -39,7 +39,7 @@ class AppRouter {
         return NoTransitionPage<void>(
           key: state.pageKey,
           restorationId: state.pageKey.value,
-          child: const HomeScreen(),
+          child: HomeScreen(),
         );
       },
     ),
@@ -61,7 +61,7 @@ class AppRouter {
             return NoTransitionPage<void>(
               key: state.pageKey,
               restorationId: state.pageKey.value,
-              child: const HexSettingsScreen(),
+              child: HexSettingsScreen(),
             );
           },
         ),

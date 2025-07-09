@@ -1,7 +1,7 @@
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/screens/home/home_screen.dart';
-import 'package:flutter_app_template/screens/settings/settings_screen.dart';
+import 'package:mobile_hex_pm/screens/home/home_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class Destinations {

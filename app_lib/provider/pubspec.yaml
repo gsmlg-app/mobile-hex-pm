@@ -16,6 +16,7 @@ dependencies:
 
   theme_bloc: any
   hex_api: any
+  hex_auth_bloc: any
 
 dev_dependencies:
   flutter_test:

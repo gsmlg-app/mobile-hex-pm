@@ -1,0 +1,21 @@
+name: hex_auth_bloc
+description: App hex_auth bloc
+version: 1.0.0
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+resolution: workspace
+
+dependencies:
+  bloc: ^9.0.0
+  equatable: ^2.0.5
+
+  hex_api: any
+  shared_preferences: any
+  dio: any
+
+dev_dependencies:
+  test: ^1.20.1
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.3
+  lints: ^6.0.0

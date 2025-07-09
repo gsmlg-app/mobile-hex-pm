@@ -1,6 +1,7 @@
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hex_auth_bloc/hex_auth_bloc.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
 import 'router.dart';
@@ -18,6 +19,7 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
+    context.read<HexAuthBloc>().add(const HexAuthEventInit());
   }
 
   @override

@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.gsmlg.flutter_app_template"
+    namespace = "dev.gsmlg.mobile_hex_pm"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "dev.gsmlg.flutter_app_template"
+        applicationId = "dev.gsmlg.mobile_hex_pm"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

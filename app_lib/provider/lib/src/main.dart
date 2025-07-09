@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_api/hex_api.dart';
+import 'package:hex_auth_bloc/hex_auth_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
@@ -29,6 +30,12 @@ class MainProvider extends StatelessWidget {
         providers: [
           BlocProvider<ThemeBloc>(
             create: (BuildContext context) => ThemeBloc(
+              context.read<SharedPreferences>(),
+            ),
+          ),
+          BlocProvider<HexAuthBloc>(
+            create: (context) => HexAuthBloc(
+              context.read<HexApi>(),
               context.read<SharedPreferences>(),
             ),
           ),

@@ -1,20 +1,21 @@
+import 'dart:io';
+
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_feedback/app_feedback.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app_template/destination.dart';
-import 'package:flutter_app_template/screens/settings/settings_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hex_auth_bloc/hex_auth_bloc.dart';
+import 'package:mobile_hex_pm/destination.dart';
+import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 class HexSettingsScreen extends StatelessWidget {
   static const name = 'Hex Settings';
   static const path = '/settings/hex';
 
-  const HexSettingsScreen({super.key});
+  HexSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,9 @@ class HexSettingsScreen extends StatelessWidget {
       ),
       destinations: Destinations.navs(context),
       body: (context) {
-        final sharedPrefs = context.read<SharedPreferences>();
-        final token = sharedPrefs.getString('HEX_API_KEY');
+        final bloc = context.read<HexAuthBloc>();
+        final user = bloc.state.currenUser;
+        final token = bloc.state.apiKey;
 
         return SafeArea(
           child: CustomScrollView(
@@ -39,7 +41,7 @@ class HexSettingsScreen extends StatelessWidget {
                 title: Text(context.l10n.settingsTitle),
               ),
               SliverFillRemaining(
-                child: BlocBuilder<ThemeBloc, ThemeState>(
+                child: BlocBuilder<HexAuthBloc, HexAuthState>(
                   builder: (context, state) {
                     return SettingsList(
                       sections: [
@@ -51,13 +53,38 @@ class HexSettingsScreen extends StatelessWidget {
                               title: Center(
                                 child: Text(
                                   'HEX_API_KEY',
-                                  textAlign: TextAlign.center,
                                 ),
                               ),
                               trailing: token == null
                                   ? Text('Not set')
                                   : Text('******'),
-                              onPressed: (context) {},
+                              onPressed: (context) {
+                                showSetApiDialog(context);
+                              },
+                            ),
+                            SettingsTile(
+                              leading: const Icon(Icons.account_box),
+                              title: Center(
+                                child: Text(
+                                  'Hex User',
+                                ),
+                              ),
+                              trailing: user == null
+                                  ? Text('N/A')
+                                  : Text(user.username),
+                              description: state.error != null
+                                  ? Text(
+                                      state.error.toString(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .error,
+                                          ),
+                                    )
+                                  : null,
                             ),
                           ],
                         ),
@@ -71,6 +98,60 @@ class HexSettingsScreen extends StatelessWidget {
         );
       },
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+    );
+  }
+
+  final TextEditingController controller = TextEditingController(text: '');
+
+  void showSetApiDialog(BuildContext context) {
+    showAppDialog(
+      context: context,
+      title: Text('Set hex.pm API Key'),
+      content: Column(
+        children: [
+          SizedBox(
+            height: 18,
+          ),
+          Platform.isIOS || Platform.isMacOS
+              ? CupertinoTextField(
+                  controller: controller,
+                  placeholder: 'HEX_API_KEY',
+                )
+              : TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    hintText: 'HEX_API_KEY',
+                  ),
+                ),
+          SizedBox(
+            height: 18,
+          ),
+        ],
+      ),
+      actions: [
+        AppDialogAction(
+          onPressed: (context) {
+            final apkKey = controller.text.trim();
+            if (apkKey.isNotEmpty) {
+              context.read<HexAuthBloc>().add(
+                    HexAuthEventLogin(apkKey),
+                  );
+              Navigator.of(context).pop();
+            }
+          },
+          child: Text(
+            context.l10n.ok,
+          ),
+        ),
+        AppDialogAction(
+          onPressed: (context) {
+            Navigator.of(context).pop();
+          },
+          child: Text(
+            context.l10n.cancel,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,5 @@
-name: flutter_app_template
-description: "A new Flutter project."
+name: mobile_hex_pm
+description: "App for browsing hex.pm"
 publish_to: "none"
 
 version: 1.0.0+1
@@ -12,6 +12,7 @@ workspace:
   - app_lib/locale
   - app_lib/provider
   - app_bloc/theme
+  - app_bloc/hex_auth
   - app_widget/adaptive
   - app_widget/artwork
   - app_widget/feedback
@@ -51,6 +52,8 @@ dependencies:
   app_adaptive_widgets: any
   settings_ui: any
   hex_api: any
+  hex_auth_bloc: any
+  form_bloc: any
 
 dev_dependencies:
   flutter_test:
@@ -79,7 +82,7 @@ flutter_launcher_icons:
     generate: true
 
 melos:
-  name: flutter_app_template
+  name: mobile_hex_pm
   command:
     version:
       # Only allow versioning to happen on main branch.
