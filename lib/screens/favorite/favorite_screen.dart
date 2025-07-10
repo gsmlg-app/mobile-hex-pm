@@ -1,5 +1,7 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
 
 class FavoriteScreen extends StatelessWidget {
@@ -10,6 +12,10 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((duration) {
+      context.read<FavoritePackageBloc>().add(FavoritePackageEventInit());
+    });
+
     return AppAdaptiveScaffold(
       selectedIndex:
           Destinations.indexOf(const Key(FavoriteScreen.name), context),
@@ -23,24 +29,23 @@ class FavoriteScreen extends StatelessWidget {
           SliverAppBar(
             title: Text('Favorite Packages'),
           ),
-          SliverList.list(children: [
-            ListTile(
-              leading: Text('1'),
-              title: Text('nx'),
-            ),
-            ListTile(
-              leading: Text('2'),
-              title: Text('bumblebee'),
-            ),
-            ListTile(
-              leading: Text('3'),
-              title: Text('phoenix'),
-            ),
-            ListTile(
-              leading: Text('4'),
-              title: Text('elixir'),
-            ),
-          ]),
+          BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
+            builder: (context, state) {
+              final favorites = state.favorites;
+
+              return SliverList.builder(
+                itemCount: favorites.length,
+                itemBuilder: (context, idx) {
+                  final pkg = favorites[idx];
+                  return ListTile(
+                    leading: Text('${idx + 1}.'),
+                    title: Text(pkg.name),
+                    subtitle: Text(pkg.description),
+                  );
+                },
+              );
+            },
+          ),
         ],
       ),
     );

@@ -5,12 +5,18 @@ class FavoritePackageState extends Equatable {
     return FavoritePackageState();
   }
 
-  const FavoritePackageState();
+  const FavoritePackageState({this.favorites = const []});
+
+  final List<FavoritePackageData> favorites;
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [favorites];
 
-  FavoritePackageState copyWith() {
-    return FavoritePackageState();
+  FavoritePackageState copyWith({
+    List<FavoritePackageData>? favorites,
+  }) {
+    return FavoritePackageState(
+      favorites: favorites ?? this.favorites,
+    );
   }
 }

@@ -5,6 +5,5 @@ sealed class FavoritePackageEvent {
 }
 
 final class FavoritePackageEventInit extends FavoritePackageEvent {
-
   const FavoritePackageEventInit();
 }

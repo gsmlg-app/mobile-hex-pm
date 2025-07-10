@@ -20,6 +20,9 @@ class FavoritePackageBloc
     FavoritePackageEventInit event,
     Emitter<FavoritePackageState> emitter,
   ) async {
-    emitter(state.copyWith());
+    final List<FavoritePackageData> favorites =
+        await database.select(database.favoritePackage).get();
+
+    emitter(state.copyWith(favorites: favorites));
   }
 }
