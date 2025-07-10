@@ -1,4 +1,5 @@
 import 'package:app_database/app_database.dart';
+import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_api/hex_api.dart';
@@ -51,6 +52,12 @@ class MainProvider extends StatelessWidget {
           ),
           BlocProvider<HexSearchBloc>(
             create: (context) => HexSearchBloc(
+              context.read<HexApi>(),
+            ),
+          ),
+          BlocProvider<FavoritePackageBloc>(
+            create: (context) => FavoritePackageBloc(
+              context.read<AppDatabase>(),
               context.read<HexApi>(),
             ),
           ),

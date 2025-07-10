@@ -18,6 +18,7 @@ dependencies:
   hex_api: any
   hex_auth_bloc: any
   hex_search_bloc: any
+  favorite_package_bloc: any
   app_database: any
 
 dev_dependencies:

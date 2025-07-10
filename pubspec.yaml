@@ -15,6 +15,7 @@ workspace:
   - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
+  - app_bloc/favorite_package
   - app_widget/adaptive
   - app_widget/artwork
   - app_widget/feedback
