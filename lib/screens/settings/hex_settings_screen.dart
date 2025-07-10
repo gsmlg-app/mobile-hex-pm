@@ -61,17 +61,6 @@ class HexSettingsScreen extends StatelessWidget {
                               onPressed: (context) {
                                 showSetApiDialog(context);
                               },
-                            ),
-                            SettingsTile(
-                              leading: const Icon(Icons.account_box),
-                              title: Center(
-                                child: Text(
-                                  'Hex User',
-                                ),
-                              ),
-                              trailing: user == null
-                                  ? Text('N/A')
-                                  : Text(user.username),
                               description: state.error != null
                                   ? Text(
                                       state.error.toString(),
@@ -88,6 +77,53 @@ class HexSettingsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (user != null)
+                          SettingsSection(
+                            title: Text('Hex User'),
+                            tiles: <SettingsTile>[
+                              SettingsTile(
+                                leading: const Icon(Icons.account_box),
+                                title: Center(
+                                  child: Text(
+                                    'Username',
+                                  ),
+                                ),
+                                trailing: Text(user.username),
+                              ),
+                              SettingsTile(
+                                leading: const Icon(Icons.email_rounded),
+                                title: Center(
+                                  child: Text(
+                                    'Email',
+                                  ),
+                                ),
+                                trailing: Text(user.email),
+                              ),
+                              SettingsTile(
+                                leading: const Icon(Icons.link_sharp),
+                                title: Center(
+                                  child: Text(
+                                    'URL',
+                                  ),
+                                ),
+                                trailing: Text(user.url),
+                              ),
+                              SettingsTile(
+                                leading: const Icon(Icons.group_rounded),
+                                title: Center(
+                                  child: Text(
+                                    'Organization',
+                                  ),
+                                ),
+                                trailing: Column(
+                                  children: [
+                                    for (var org in user.organizations)
+                                      Text(org.name)
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                       ],
                     );
                   },

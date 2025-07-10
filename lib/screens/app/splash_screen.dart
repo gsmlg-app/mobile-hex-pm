@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:app_artwork/logo/gsmlg_dev.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_hex_pm/screens/home/home_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_hex_pm/screens/home/home_screen.dart';
 
 class SplashScreen extends StatelessWidget {
   static const name = 'Splash Screen';
@@ -35,10 +35,10 @@ class SplashScreen extends StatelessWidget {
           width: w * 0.618,
           height: w * 0.618,
           child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            // decoration: BoxDecoration(
+            //   shape: BoxShape.rectangle,
+            //   color: Theme.of(context).colorScheme.primary,
+            // ),
             child: Center(
               child: LogoGSMLGDEV(),
             ),

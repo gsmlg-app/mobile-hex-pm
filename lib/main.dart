@@ -1,3 +1,4 @@
+import 'package:app_database/app_database.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:app_provider/app_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,11 @@ void main(List<String> args) async {
   logging.hierarchicalLoggingEnabled = true;
 
   final sharedPrefs = await SharedPreferences.getInstance();
-  // final applicationSupportDirectory = await getApplicationSupportDirectory();
+  final database = AppDatabase();
 
   runApp(MainProvider(
     sharedPrefs: sharedPrefs,
+    database: database,
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocale.localizationsDelegates,

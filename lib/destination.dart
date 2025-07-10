@@ -1,8 +1,9 @@
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:mobile_hex_pm/screens/home/home_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
-import 'package:go_router/go_router.dart';
 
 class Destinations {
   static List<NavigationDestination> navs(BuildContext context) =>
@@ -12,6 +13,12 @@ class Destinations {
             icon: const Icon(Icons.home_outlined),
             selectedIcon: const Icon(Icons.home),
             label: context.l10n.navHome),
+        NavigationDestination(
+          key: const Key(FavoriteScreen.name),
+          icon: const Icon(Icons.favorite_outline),
+          selectedIcon: const Icon(Icons.favorite),
+          label: context.l10n.navFavorite,
+        ),
         NavigationDestination(
           key: const Key(SettingsScreen.name),
           icon: const Icon(Icons.settings_outlined),
@@ -27,7 +34,8 @@ class Destinations {
   static void changeHandler(int idx, BuildContext context) {
     void _ = switch (idx) {
       0 => context.goNamed(HomeScreen.name),
-      1 => context.goNamed(SettingsScreen.name),
+      1 => context.goNamed(FavoriteScreen.name),
+      2 => context.goNamed(SettingsScreen.name),
       int() => context.goNamed(HomeScreen.name),
     };
   }

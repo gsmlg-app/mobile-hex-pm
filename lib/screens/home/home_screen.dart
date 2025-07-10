@@ -12,9 +12,7 @@ class HomeScreen extends StatelessWidget {
   static const name = 'Home Screen';
   static const path = '/home';
 
-  HomeScreen({super.key});
-
-  final TextEditingController controller = TextEditingController(text: '');
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +61,9 @@ class HomeScreen extends StatelessWidget {
                       },
                     );
                   },
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    runAlignment: WrapAlignment.center,
                     children: [
                       SizedBox(
                         width: max(w * 0.5, 400),
@@ -85,10 +83,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                       SizedBox(
                         width: 120,
-                        height: 54,
-                        child: TextButton(
-                          onPressed: formBloc.submit,
-                          child: Text('Search'),
+                        height: 84,
+                        child: Center(
+                          child: TextButton(
+                            onPressed: formBloc.submit,
+                            child: Text('Search'),
+                          ),
                         ),
                       ),
                     ],

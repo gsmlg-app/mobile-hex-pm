@@ -11,6 +11,7 @@ workspace:
   - app_lib/theme
   - app_lib/locale
   - app_lib/provider
+  - app_lib/database
   - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
@@ -48,12 +49,13 @@ dependencies:
   app_theme: any
   app_locale: any
   app_provider: any
-  theme_bloc: any
+  app_database: any
   app_artwork: any
   app_feedback: any
   app_adaptive_widgets: any
   settings_ui: any
   hex_api: any
+  theme_bloc: any
   hex_auth_bloc: any
   hex_search_bloc: any
   form_bloc: any
@@ -70,11 +72,12 @@ dev_dependencies:
 
   melos: ^7.0.0-dev.8
   dependency_validator: ^5.0.0
+  flutter_launcher_icons: any
 
 flutter:
   uses-material-design: true
 
-# generate icon with `dart run flutter_launcher_icons:main``
+# generate icon with `dart run flutter_launcher_icons:main`
 flutter_launcher_icons:
   image_path: "app_widget/artwork/assets/icon/app-icon.png"
   android: true

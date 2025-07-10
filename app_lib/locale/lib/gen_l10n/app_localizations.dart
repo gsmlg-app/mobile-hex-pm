@@ -160,6 +160,12 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get navHome;
 
+  /// No description provided for @navFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get navFavorite;
+
   /// No description provided for @navSetting.
   ///
   /// In en, this message translates to:

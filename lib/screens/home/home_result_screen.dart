@@ -58,7 +58,7 @@ class HomeResultScreen extends StatelessWidget {
                     width: 12,
                   ),
                   SizedBox(
-                    width: max(w * 0.5, 400),
+                    width: max(w * 0.5, 300),
                     height: 84,
                     child: TextFieldBlocBuilder(
                       textFieldBloc: formBloc.searchName,
@@ -200,7 +200,7 @@ class HomeResultScreen extends StatelessWidget {
                       ),
                 ),
                 Divider(),
-                Row(
+                Wrap(
                   spacing: 32,
                   children: [
                     Text.rich(

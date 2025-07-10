@@ -1,3 +1,4 @@
+import 'package:app_database/app_database.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_api/hex_api.dart';
@@ -11,10 +12,12 @@ class MainProvider extends StatelessWidget {
     super.key,
     required this.child,
     required this.sharedPrefs,
+    required this.database,
   });
 
   final Widget child;
   final SharedPreferences sharedPrefs;
+  final AppDatabase database;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,9 @@ class MainProvider extends StatelessWidget {
       providers: [
         RepositoryProvider<SharedPreferences>(
           create: (BuildContext context) => sharedPrefs,
+        ),
+        RepositoryProvider<AppDatabase>(
+          create: (BuildContext context) => database,
         ),
         RepositoryProvider<HexApi>(
           create: (BuildContext context) => HexApi(),
