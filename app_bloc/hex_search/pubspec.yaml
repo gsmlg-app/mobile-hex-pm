@@ -1,0 +1,19 @@
+name: hex_search_bloc
+description: App hex_search bloc
+version: 1.0.0
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+resolution: workspace
+
+dependencies:
+  bloc: ^9.0.0
+  equatable: ^2.0.5
+  form_bloc: any
+  hex_api: any
+
+dev_dependencies:
+  test: ^1.20.1
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.3
+  lints: ^6.0.0

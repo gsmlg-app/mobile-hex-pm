@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hex_api/hex_api.dart';
 import 'package:hex_auth_bloc/hex_auth_bloc.dart';
+import 'package:hex_search_bloc/hex_search_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
@@ -37,6 +38,14 @@ class MainProvider extends StatelessWidget {
             create: (context) => HexAuthBloc(
               context.read<HexApi>(),
               context.read<SharedPreferences>(),
+            ),
+          ),
+          BlocProvider<HexSearchFormBloc>(
+            create: (context) => HexSearchFormBloc(),
+          ),
+          BlocProvider<HexSearchBloc>(
+            create: (context) => HexSearchBloc(
+              context.read<HexApi>(),
             ),
           ),
         ],

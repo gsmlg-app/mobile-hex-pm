@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hex_api/hex_api.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hex_search_bloc/hex_search_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
+import 'package:mobile_hex_pm/screens/home/home_result_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   static const name = 'Home Screen';
@@ -22,6 +24,8 @@ class HomeScreen extends StatelessWidget {
     if (screenHeight < screenWidth) {
       w = screenHeight;
     }
+    final formBloc = context.read<HexSearchFormBloc>();
+    final hexSearchBloc = context.read<HexSearchBloc>();
 
     return AppAdaptiveScaffold(
       selectedIndex: Destinations.indexOf(const Key(HomeScreen.name), context),
@@ -41,31 +45,53 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(14.0),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Text(
                     'The package manager for the Erlang and Elixir ecosystem',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                SizedBox(
-                  width: max(w * 0.5, 300),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Find packages',
-                      border: OutlineInputBorder(),
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () async {
-                          final search = controller.text;
-                          print('search $search');
-                          final hexApi = context.read<HexApi>();
-                          final api = hexApi.getPackagesApi();
-                          final resp = await api.listPackages(search: search);
-                          final data = resp.data;
-                          print(data);
-                        },
+                FormBlocListener<HexSearchFormBloc, String, String>(
+                  formBloc: formBloc,
+                  onSuccess: (context, state) {
+                    final name = state.successResponse!;
+                    hexSearchBloc.add(HexSearchEventSearch(name));
+                    context.goNamed(
+                      HomeResultScreen.name,
+                      pathParameters: {
+                        'package_name': name,
+                      },
+                    );
+                  },
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: max(w * 0.5, 400),
+                        height: 84,
+                        child: TextFieldBlocBuilder(
+                          textFieldBloc: formBloc.searchName,
+                          suffixButton: SuffixButton.clearText,
+                          autofillHints: const [AutofillHints.name],
+                          obscureText: false,
+                          autocorrect: false,
+                          enableSuggestions: false,
+                          decoration: InputDecoration(
+                            hintText: 'Find packages',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
                       ),
-                    ),
+                      SizedBox(
+                        width: 120,
+                        height: 54,
+                        child: TextButton(
+                          onPressed: formBloc.submit,
+                          child: Text('Search'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

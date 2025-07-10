@@ -13,6 +13,7 @@ workspace:
   - app_lib/provider
   - app_bloc/theme
   - app_bloc/hex_auth
+  - app_bloc/hex_search
   - app_widget/adaptive
   - app_widget/artwork
   - app_widget/feedback
@@ -36,6 +37,7 @@ dependencies:
 
   shared_preferences: ^2.0.17
   path_provider: ^2.1.3
+  url_launcher: ^6.3.0
 
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.0.5
@@ -53,7 +55,10 @@ dependencies:
   settings_ui: any
   hex_api: any
   hex_auth_bloc: any
+  hex_search_bloc: any
   form_bloc: any
+  flutter_form_bloc: any
+  flutter_adaptive_scaffold: any
 
 dev_dependencies:
   flutter_test:

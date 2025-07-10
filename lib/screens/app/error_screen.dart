@@ -1,7 +1,7 @@
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_hex_pm/screens/app/splash_screen.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_hex_pm/screens/app/splash_screen.dart';
 
 class ErrorScreen extends StatelessWidget {
   static const name = 'Error';
@@ -21,7 +21,6 @@ class ErrorScreen extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              alignment: Alignment.topLeft,
               child: Text(context.l10n.errorOccurred,
                   style: Theme.of(context)
                       .textTheme
