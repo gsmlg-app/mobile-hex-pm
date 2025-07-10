@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:app_database/app_database.dart';
 import 'package:app_feedback/app_feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -226,7 +227,24 @@ class HomeResultScreen extends StatelessWidget {
                       width: 24,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        try {
+                          final database = context.read<AppDatabase>();
+                          await database.into(database.favoritePackage).insert(
+                                FavoritePackageCompanion.insert(
+                                  name: pkg.name,
+                                  description: pkg.meta.description ?? '',
+                                  licenses: pkg.meta.licenses?.join(',') ?? '',
+                                ),
+                              );
+                          List<FavoritePackageData> favorites = await database
+                              .select(database.favoritePackage)
+                              .get();
+                          print(favorites);
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
                       child: Text('Add to Favorites'),
                     ),
                   ],
