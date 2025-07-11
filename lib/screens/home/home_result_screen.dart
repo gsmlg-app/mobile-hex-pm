@@ -268,6 +268,8 @@ class HomeResultScreen extends StatelessWidget {
                     final ownersMap = state.owners;
                     final owners = ownersMap[pkg.name] ?? <Owner>[];
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           'Owners',
@@ -485,6 +487,8 @@ class HomeResultScreen extends StatelessWidget {
                         <String, ReleaseRequirementsValue>{};
                     print('requirements: $requirements');
                     return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
                           'Dependencies',
@@ -499,16 +503,34 @@ class HomeResultScreen extends StatelessWidget {
                           spacing: 32,
                           children: [
                             for (final d in requirements.entries)
-                              Text(
-                                '${d.key}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: d.key,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                          ),
                                     ),
+                                    TextSpan(text: ' '),
+                                    TextSpan(
+                                      text: d.value.requirement,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                           ],
                         ),
