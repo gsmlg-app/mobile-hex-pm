@@ -12,7 +12,7 @@ Object _$ObjectFromJson(Map<String, dynamic> json) => Object(
           : Level.fromJson(json['level'] as String),
     );
 
-Map<String, Object?> _$ObjectToJson(Object instance) => <String, dynamic>{
+Map<String, String> _$ObjectToJson(Object instance) => <String, String>{
       'level': _$LevelEnumMap[instance.level]!,
     };
 

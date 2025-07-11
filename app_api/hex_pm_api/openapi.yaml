@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Hex API
-  version: beta
+  version: "1.0.0"
   description: |
     This is the complete OpenAPI specification for the Hex API, based on the provided API Blueprint documentation. The Hex API is a REST-based API currently in beta.  The implementation examples are from https://hex.pm/api. 
 
