@@ -4,7 +4,7 @@
 
 // ignore_for_file: unused_element
 import 'package:hex_api/src/model/release_meta.dart';
-import 'package:hex_api/src/model/release_dependencies_inner.dart';
+import 'package:hex_api/src/model/release_requirements_value.dart';
 import 'package:hex_api/src/model/release_retired.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -22,7 +22,7 @@ class Release {
     required this.version,
     required this.hasDocs,
     required this.meta,
-    required this.dependencies,
+    this.requirements,
     this.retired,
     required this.downloads,
     required this.insertedAt,
@@ -55,11 +55,11 @@ class Release {
   final ReleaseMeta meta;
 
   @JsonKey(
-    name: r'dependencies',
-    required: true,
+    name: r'requirements',
+    required: false,
     includeIfNull: false,
   )
-  final List<ReleaseDependenciesInner> dependencies;
+  final Map<String, ReleaseRequirementsValue>? requirements;
 
   @JsonKey(
     name: r'retired',
@@ -124,7 +124,7 @@ class Release {
           other.version == version &&
           other.hasDocs == hasDocs &&
           other.meta == meta &&
-          other.dependencies == dependencies &&
+          other.requirements == requirements &&
           other.retired == retired &&
           other.downloads == downloads &&
           other.insertedAt == insertedAt &&
@@ -139,7 +139,7 @@ class Release {
       version.hashCode +
       hasDocs.hashCode +
       meta.hashCode +
-      dependencies.hashCode +
+      requirements.hashCode +
       retired.hashCode +
       downloads.hashCode +
       insertedAt.hashCode +

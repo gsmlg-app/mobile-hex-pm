@@ -1,13 +1,13 @@
 import 'package:test/test.dart';
 import 'package:hex_api/hex_api.dart';
 
-// tests for ReleaseDependenciesInner
+// tests for ReleaseRequirementsValue
 void main() {
-  final ReleaseDependenciesInner? instance = /* ReleaseDependenciesInner(...) */
+  final ReleaseRequirementsValue? instance = /* ReleaseRequirementsValue(...) */
       null;
   // TODO add properties to the entity
 
-  group(ReleaseDependenciesInner, () {
+  group(ReleaseRequirementsValue, () {
     // String name
     test('to test the property `name`', () async {
       // TODO

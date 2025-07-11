@@ -24,41 +24,41 @@ info:
     Collection resources are paginated, returning up to 100 items per page.  The `page` query parameter can be used to navigate through pages, which are 1-indexed. 
 
     ### Authentication
-    Authentication is performed via Basic Authentication (for generating API tokens) or an API token.  Failed authentication returns `401 Unauthorized`. 
+    Authentication is performed via Basic Authentication (for generating API tokens) or an API token.  Failed authentication returns `401 Unauthorized`.
 servers:
   - url: https://hex.pm/api
     description: Production server
 tags:
   - name: Users
-    description: Endpoints for managing user accounts. 
+    description: Endpoints for managing user accounts.
   - name: Repositories
     description: Endpoints for managing repositories.
   - name: Packages
-    description: Endpoints for searching and managing packages. 
+    description: Endpoints for searching and managing packages.
   - name: Package Releases
-    description: Endpoints for publishing and managing package releases. 
+    description: Endpoints for publishing and managing package releases.
   - name: Package Documentation
-    description: Endpoints for managing package documentation. 
+    description: Endpoints for managing package documentation.
   - name: Package Owners
-    description: Endpoints for managing package ownership. 
+    description: Endpoints for managing package ownership.
   - name: API Keys
-    description: Endpoints for managing authentication keys. 
+    description: Endpoints for managing authentication keys.
 paths:
   /users:
     post:
       tags:
         - Users
-      summary: Create a User 
-      description: Creates a new user. A confirmation email with an activation link is sent to the provided email address.  The account must be activated before it can be used.  Clients must display a link to the Hex Terms of Service. 
+      summary: Create a User
+      description: Creates a new user. A confirmation email with an activation link is sent to the provided email address.  The account must be activated before it can be used.  Clients must display a link to the Hex Terms of Service.
       operationId: createUser
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserCreate'
+              $ref: "#/components/schemas/UserCreate"
       responses:
-        '201':
+        "201":
           description: User created successfully.
           headers:
             Location:
@@ -69,9 +69,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+                $ref: "#/components/schemas/User"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
   /users/{username_or_email}:
     parameters:
       - name: username_or_email
@@ -83,73 +83,73 @@ paths:
     get:
       tags:
         - Users
-      summary: Fetch a User 
+      summary: Fetch a User
       operationId: getUser
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: "#/components/schemas/User"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /users/me:
     get:
       tags:
         - Users
-      summary: Fetch Currently Authenticated User 
+      summary: Fetch Currently Authenticated User
       operationId: getCurrentUser
       security:
         - apiTokenAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserWithOrgs'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/UserWithOrgs"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /users/{username_or_email}/reset:
     parameters:
       - name: username_or_email
         in: path
         required: true
-        description: The username or email address of the user. 
+        description: The username or email address of the user.
         schema:
           type: string
     post:
       tags:
         - Users
-      summary: Reset User Password 
-      description: Initiates the password reset process. An email with a reset link will be sent to the user's primary email address. 
+      summary: Reset User Password
+      description: Initiates the password reset process. An email with a reset link will be sent to the user's primary email address.
       operationId: resetUserPassword
       security:
         - apiTokenAuth: []
       responses:
-        '204':
+        "204":
           description: Password reset process initiated successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /repos:
     get:
       tags:
         - Repositories
-      summary: List all Repositories 
-      description: Returns all public repositories and, if authenticated, all repositories the user is a member of. 
+      summary: List all Repositories
+      description: Returns all public repositories and, if authenticated, all repositories the user is a member of.
       operationId: listRepos
       security:
         - apiTokenAuth: []
       responses:
-        '200':
+        "200":
           description: A list of repositories.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Repository'
+                  $ref: "#/components/schemas/Repository"
   /repos/{name}:
     parameters:
       - name: name
@@ -160,52 +160,52 @@ paths:
     get:
       tags:
         - Repositories
-      summary: Fetch a Repository 
+      summary: Fetch a Repository
       operationId: getRepo
       responses:
-        '200':
+        "200":
           description: Successful response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Repository'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: "#/components/schemas/Repository"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /packages:
     get:
       tags:
         - Packages
-      summary: List all Packages 
-      description: Returns a paginated list of packages. Results can be sorted and searched. 
+      summary: List all Packages
+      description: Returns a paginated list of packages. Results can be sorted and searched.
       operationId: listPackages
       parameters:
         - name: sort
           in: query
-          description: Field to sort by. 
+          description: Field to sort by.
           schema:
             type: string
             enum: [name, downloads, inserted_at, updated_at]
             default: name
         - name: search
           in: query
-          description: Search string. See API documentation for syntax. 
+          description: Search string. See API documentation for syntax.
           schema:
             type: string
         - name: page
           in: query
-          description: Page number for pagination. 
+          description: Page number for pagination.
           schema:
             type: integer
             default: 1
       responses:
-        '200':
+        "200":
           description: A paginated list of packages.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Package'
+                  $ref: "#/components/schemas/Package"
   /packages/{name}:
     parameters:
       - name: name
@@ -217,56 +217,56 @@ paths:
     get:
       tags:
         - Packages
-      summary: Fetch a Package 
+      summary: Fetch a Package
       operationId: getPackage
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Package'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: "#/components/schemas/Package"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /packages/{name}/releases/{version}:
     parameters:
       - name: name
         in: path
         required: true
-        description: The name of the package. 
+        description: The name of the package.
         schema:
           type: string
       - name: version
         in: path
         required: true
-        description: The release version. 
+        description: The release version.
         schema:
           type: string
     get:
       tags:
         - Package Releases
-      summary: Fetch a Release 
+      summary: Fetch a Release
       operationId: getRelease
       responses:
-        '200':
+        "200":
           description: Successful response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Release'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: "#/components/schemas/Release"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /publish:
     post:
       tags:
         - Package Releases
-      summary: Publish a Release 
-      description: Publishes a new release version of a package. This will also create the package if it does not exist. The request body must be a package tarball. 
+      summary: Publish a Release
+      description: Publishes a new release version of a package. This will also create the package if it does not exist. The request body must be a package tarball.
       operationId: publishRelease
       security:
         - apiTokenAuth: []
       requestBody:
-        description: A gzipped tarball containing the package contents. 
+        description: A gzipped tarball containing the package contents.
         required: true
         content:
           application/gzip:
@@ -274,32 +274,32 @@ paths:
               type: string
               format: binary
       responses:
-        '201':
+        "201":
           description: Release published successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Release'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/Release"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /packages/{name}/releases/{version}/retire:
     parameters:
       - name: name
         in: path
         required: true
-        description: The package name. 
+        description: The package name.
         schema:
           type: string
       - name: version
         in: path
         required: true
-        description: The release version. 
+        description: The release version.
         schema:
           type: string
     post:
       tags:
         - Package Releases
-      summary: Mark Release as Retired 
+      summary: Mark Release as Retired
       operationId: retireRelease
       security:
         - apiTokenAuth: []
@@ -308,43 +308,43 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RetirementPayload'
+              $ref: "#/components/schemas/RetirementPayload"
       responses:
-        '204':
+        "204":
           description: The release was successfully marked as retired.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     delete:
       tags:
         - Package Releases
-      summary: Unmark Release as Retired 
+      summary: Unmark Release as Retired
       operationId: unretireRelease
       security:
         - apiTokenAuth: []
       responses:
-        '204':
+        "204":
           description: The release was successfully unmarked as retired.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /packages/{name}/releases/{version}/docs:
     parameters:
       - name: name
         in: path
         required: true
-        description: The package name. 
+        description: The package name.
         schema:
           type: string
       - name: version
         in: path
         required: true
-        description: The release version. 
+        description: The release version.
         schema:
           type: string
     post:
       tags:
         - Package Documentation
-      summary: Publish Package Documentation 
-      description: Upload documentation for a specific package release. The body must be a gzipped tarball containing the documentation files, including an `index.html`. 
+      summary: Publish Package Documentation
+      description: Upload documentation for a specific package release. The body must be a gzipped tarball containing the documentation files, including an `index.html`.
       operationId: publishDocs
       security:
         - apiTokenAuth: []
@@ -356,72 +356,72 @@ paths:
               type: string
               format: binary
       responses:
-        '201':
+        "201":
           description: Documentation published successfully.
           headers:
             Location:
               schema:
                 type: string
                 format: uri
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     delete:
       tags:
         - Package Documentation
-      summary: Remove Package Documentation 
+      summary: Remove Package Documentation
       operationId: deleteDocs
       security:
         - apiTokenAuth: []
       responses:
-        '204':
+        "204":
           description: Documentation removed successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /packages/{name}/owners:
     parameters:
       - name: name
         in: path
         required: true
-        description: The package name. 
+        description: The package name.
         schema:
           type: string
     get:
       tags:
         - Package Owners
-      summary: Fetch Package Owners 
+      summary: Fetch Package Owners
       operationId: getOwners
       security:
         - apiTokenAuth: []
       responses:
-        '200':
+        "200":
           description: A list of package owners.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Owner'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                  $ref: "#/components/schemas/Owner"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /packages/{name}/owners/{email}:
     parameters:
       - name: name
         in: path
         required: true
-        description: The package name. 
+        description: The package name.
         schema:
           type: string
       - name: email
         in: path
         required: true
-        description: The email address of the user to add as an owner. 
+        description: The email address of the user to add as an owner.
         schema:
           type: string
           format: email
     put:
       tags:
         - Package Owners
-      summary: Add a Package Owner 
+      summary: Add a Package Owner
       operationId: addOwner
       security:
         - apiTokenAuth: []
@@ -436,46 +436,46 @@ paths:
                   enum: [full, maintainer]
                   default: maintainer
       responses:
-        '204':
+        "204":
           description: Owner added successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     delete:
       tags:
         - Package Owners
-      summary: Remove a Package Owner 
+      summary: Remove a Package Owner
       operationId: removeOwner
       security:
         - apiTokenAuth: []
       responses:
-        '204':
+        "204":
           description: Owner removed successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /keys:
     get:
       tags:
         - API Keys
-      summary: List all API Keys 
+      summary: List all API Keys
       operationId: listKeys
       security:
         - apiTokenAuth: []
       responses:
-        '200':
+        "200":
           description: A list of the user's API keys.
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ApiKey'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                  $ref: "#/components/schemas/ApiKey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     post:
       tags:
         - API Keys
-      summary: Create an API Key 
-      description: Creates a new API key. This endpoint requires Basic Authentication.  The key's secret is only returned on creation and must be stored securely. 
+      summary: Create an API Key
+      description: Creates a new API key. This endpoint requires Basic Authentication.  The key's secret is only returned on creation and must be stored securely.
       operationId: createKey
       security:
         - basicAuth: []
@@ -484,9 +484,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApiKeyCreate'
+              $ref: "#/components/schemas/ApiKeyCreate"
       responses:
-        '201':
+        "201":
           description: API Key created successfully.
           headers:
             Location:
@@ -496,9 +496,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiKeyWithSecret'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/ApiKeyWithSecret"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /keys/{name}:
     parameters:
       - name: name
@@ -510,63 +510,63 @@ paths:
     get:
       tags:
         - API Keys
-      summary: Fetch an API Key 
+      summary: Fetch an API Key
       operationId: getKey
       security:
         - apiTokenAuth: []
       responses:
-        '200':
+        "200":
           description: Successful response.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiKey'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                $ref: "#/components/schemas/ApiKey"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
     delete:
       tags:
         - API Keys
-      summary: Remove an API Key 
+      summary: Remove an API Key
       operationId: removeKey
       security:
         - apiTokenAuth: []
       responses:
-        '204':
+        "204":
           description: Key removed successfully.
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 components:
   securitySchemes:
     basicAuth:
       type: http
       scheme: basic
-      description: Basic Authentication used for creating API tokens. 
+      description: Basic Authentication used for creating API tokens.
     apiTokenAuth:
       type: apiKey
       in: header
       name: Authorization
-      description: API Token authentication. The value should be the token secret. 
+      description: API Token authentication. The value should be the token secret.
   responses:
     Unauthorized:
-      description: Authentication failed. 
+      description: Authentication failed.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     Forbidden:
-      description: Access to the resource is forbidden. 
+      description: Access to the resource is forbidden.
     NotFound:
-      description: The requested resource was not found. 
+      description: The requested resource was not found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
     UnprocessableEntity:
-      description: Validation failed due to invalid parameters. 
+      description: Validation failed due to invalid parameters.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ValidationError'
+            $ref: "#/components/schemas/ValidationError"
   schemas:
     Error:
       type: object
@@ -577,7 +577,7 @@ components:
           type: string
     ValidationError:
       allOf:
-        - $ref: '#/components/schemas/Error'
+        - $ref: "#/components/schemas/Error"
         - type: object
           properties:
             errors:
@@ -590,11 +590,11 @@ components:
       properties:
         username:
           type: string
-          description: User's unique username. 
+          description: User's unique username.
         email:
           type: string
           format: email
-          description: User's primary email address. 
+          description: User's primary email address.
         inserted_at:
           type: string
           format: date-time
@@ -611,17 +611,17 @@ components:
         username:
           type: string
           pattern: "^[A-Za-z0-9_\\-.]+$"
-          description: Alphanumeric characters, underscores, hyphens, and dots. Case insensitive. 
+          description: Alphanumeric characters, underscores, hyphens, and dots. Case insensitive.
         password:
           type: string
           format: password
-          description: A printable UTF-8 string. 
+          description: A printable UTF-8 string.
         email:
           type: string
           format: email
     UserWithOrgs:
       allOf:
-        - $ref: '#/components/schemas/User'
+        - $ref: "#/components/schemas/User"
         - type: object
           required: [organizations]
           properties:
@@ -633,10 +633,10 @@ components:
                 properties:
                   name:
                     type: string
-                    description: Name of the organization. 
+                    description: Name of the organization.
                   role:
                     type: string
-                    description: User's role in the organization. 
+                    description: User's role in the organization.
     Repository:
       type: object
       required: [name, public, active, billing_active, inserted_at, updated_at]
@@ -715,7 +715,18 @@ components:
           format: uri
     Release:
       type: object
-      required: [version, has_docs, meta, dependencies, downloads, inserted_at, updated_at, url, package_url]
+      required:
+        [
+          version,
+          has_docs,
+          meta,
+          dependencies,
+          downloads,
+          inserted_at,
+          updated_at,
+          url,
+          package_url,
+        ]
       properties:
         version:
           type: string
@@ -728,9 +739,9 @@ components:
               type: array
               items:
                 type: string
-        dependencies:
-          type: array
-          items:
+        requirements:
+          type: object
+          additionalProperties:
             type: object
             properties:
               name:
@@ -776,20 +787,20 @@ components:
         reason:
           type: string
           enum: [other, invalid, security, deprecated, renamed]
-          description: Reason for retiring the release. 
+          description: Reason for retiring the release.
         message:
           type: string
-          description: An additional, clarifying message for the retirement. 
+          description: An additional, clarifying message for the retirement.
     Owner:
       allOf:
-        - $ref: '#/components/schemas/User'
+        - $ref: "#/components/schemas/User"
         - type: object
           required: [level]
           properties:
             level:
               type: string
               enum: [full, maintainer]
-              description: Ownership level. 'full' owners can manage other owners. 
+              description: Ownership level. 'full' owners can manage other owners.
     ApiKey:
       type: object
       required: [name, permissions, inserted_at, updated_at, url]
@@ -837,10 +848,10 @@ components:
                 type: string
     ApiKeyWithSecret:
       allOf:
-        - $ref: '#/components/schemas/ApiKey'
+        - $ref: "#/components/schemas/ApiKey"
         - type: object
           required: [secret]
           properties:
             secret:
               type: string
-              description: The key secret, a 32 character hex encoded string. Only returned on creation. 
+              description: The key secret, a 32 character hex encoded string. Only returned on creation.

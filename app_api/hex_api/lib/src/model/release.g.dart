@@ -16,7 +16,6 @@ Release _$ReleaseFromJson(Map<String, dynamic> json) => $checkedCreate(
             'version',
             'has_docs',
             'meta',
-            'dependencies',
             'downloads',
             'inserted_at',
             'updated_at',
@@ -29,12 +28,14 @@ Release _$ReleaseFromJson(Map<String, dynamic> json) => $checkedCreate(
           hasDocs: $checkedConvert('has_docs', (v) => v as bool),
           meta: $checkedConvert(
               'meta', (v) => ReleaseMeta.fromJson(v as Map<String, dynamic>)),
-          dependencies: $checkedConvert(
-              'dependencies',
-              (v) => (v as List<dynamic>)
-                  .map((e) => ReleaseDependenciesInner.fromJson(
-                      e as Map<String, dynamic>))
-                  .toList()),
+          requirements: $checkedConvert(
+              'requirements',
+              (v) => (v as Map<String, dynamic>?)?.map(
+                    (k, e) => MapEntry(
+                        k,
+                        ReleaseRequirementsValue.fromJson(
+                            e as Map<String, dynamic>)),
+                  )),
           retired: $checkedConvert(
               'retired',
               (v) => v == null
@@ -66,7 +67,9 @@ Map<String, dynamic> _$ReleaseToJson(Release instance) => <String, dynamic>{
       'version': instance.version,
       'has_docs': instance.hasDocs,
       'meta': instance.meta.toJson(),
-      'dependencies': instance.dependencies.map((e) => e.toJson()).toList(),
+      if (instance.requirements?.map((k, e) => MapEntry(k, e.toJson()))
+          case final value?)
+        'requirements': value,
       if (instance.retired?.toJson() case final value?) 'retired': value,
       'downloads': instance.downloads,
       'inserted_at': instance.insertedAt.toIso8601String(),

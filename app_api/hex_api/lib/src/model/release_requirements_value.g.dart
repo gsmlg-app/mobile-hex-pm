@@ -1,18 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'release_dependencies_inner.dart';
+part of 'release_requirements_value.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ReleaseDependenciesInner _$ReleaseDependenciesInnerFromJson(
+ReleaseRequirementsValue _$ReleaseRequirementsValueFromJson(
         Map<String, dynamic> json) =>
     $checkedCreate(
-      'ReleaseDependenciesInner',
+      'ReleaseRequirementsValue',
       json,
       ($checkedConvert) {
-        final val = ReleaseDependenciesInner(
+        final val = ReleaseRequirementsValue(
           name: $checkedConvert('name', (v) => v as String?),
           requirement: $checkedConvert('requirement', (v) => v as String?),
           optional: $checkedConvert('optional', (v) => v as bool?),
@@ -22,8 +22,8 @@ ReleaseDependenciesInner _$ReleaseDependenciesInnerFromJson(
       },
     );
 
-Map<String, dynamic> _$ReleaseDependenciesInnerToJson(
-        ReleaseDependenciesInner instance) =>
+Map<String, dynamic> _$ReleaseRequirementsValueToJson(
+        ReleaseRequirementsValue instance) =>
     <String, dynamic>{
       if (instance.name case final value?) 'name': value,
       if (instance.requirement case final value?) 'requirement': value,

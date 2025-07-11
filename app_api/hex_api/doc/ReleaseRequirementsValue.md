@@ -1,4 +1,4 @@
-# hex_api.model.ReleaseDependenciesInner
+# hex_api.model.ReleaseRequirementsValue
 
 ## Load the model package
 ```dart

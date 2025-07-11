@@ -5,7 +5,7 @@
 // ignore_for_file: unused_element
 import 'package:json_annotation/json_annotation.dart';
 
-part 'release_dependencies_inner.g.dart';
+part 'release_requirements_value.g.dart';
 
 @JsonSerializable(
   checked: true,
@@ -13,9 +13,9 @@ part 'release_dependencies_inner.g.dart';
   disallowUnrecognizedKeys: false,
   explicitToJson: true,
 )
-class ReleaseDependenciesInner {
-  /// Returns a new [ReleaseDependenciesInner] instance.
-  ReleaseDependenciesInner({
+class ReleaseRequirementsValue {
+  /// Returns a new [ReleaseRequirementsValue] instance.
+  ReleaseRequirementsValue({
     this.name,
     this.requirement,
     this.optional,
@@ -53,7 +53,7 @@ class ReleaseDependenciesInner {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ReleaseDependenciesInner &&
+      other is ReleaseRequirementsValue &&
           other.name == name &&
           other.requirement == requirement &&
           other.optional == optional &&
@@ -63,10 +63,10 @@ class ReleaseDependenciesInner {
   int get hashCode =>
       name.hashCode + requirement.hashCode + optional.hashCode + app.hashCode;
 
-  factory ReleaseDependenciesInner.fromJson(Map<String, dynamic> json) =>
-      _$ReleaseDependenciesInnerFromJson(json);
+  factory ReleaseRequirementsValue.fromJson(Map<String, dynamic> json) =>
+      _$ReleaseRequirementsValueFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ReleaseDependenciesInnerToJson(this);
+  Map<String, dynamic> toJson() => _$ReleaseRequirementsValueToJson(this);
 
   @override
   String toString() {

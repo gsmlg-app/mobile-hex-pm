@@ -22,8 +22,8 @@ void main() {
       // TODO
     });
 
-    // List<ReleaseDependenciesInner> dependencies
-    test('to test the property `dependencies`', () async {
+    // Map<String, ReleaseRequirementsValue> requirements
+    test('to test the property `requirements`', () async {
       // TODO
     });
 

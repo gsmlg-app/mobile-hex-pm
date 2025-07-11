@@ -161,6 +161,18 @@ class HomeResultScreen extends StatelessWidget {
   }
 
   void showPackage({required Package pkg, required BuildContext context}) {
+    context.read<HexSearchBloc>().add(
+          HexSearchEventGetPackageOwner(
+            pkg.name,
+          ),
+        );
+    context.read<HexSearchBloc>().add(
+          HexSearchEventGetPackageRelease(
+            pkg.name,
+            pkg.releases.first.version!,
+          ),
+        );
+
     showFullScreenDialog(
       context: context,
       title: Text.rich(
@@ -240,7 +252,6 @@ class HomeResultScreen extends StatelessWidget {
                           List<FavoritePackageData> favorites = await database
                               .select(database.favoritePackage)
                               .get();
-                          print(favorites);
                         } catch (e) {
                           print(e);
                         }
@@ -248,6 +259,45 @@ class HomeResultScreen extends StatelessWidget {
                       child: Text('Add to Favorites'),
                     ),
                   ],
+                ),
+                Divider(),
+                BlocBuilder<HexSearchBloc, HexSearchState>(
+                  buildWhen: (previous, current) =>
+                      previous.owners[pkg.name] != current.owners[pkg.name],
+                  builder: (context, state) {
+                    final ownersMap = state.owners;
+                    final owners = ownersMap[pkg.name] ?? <Owner>[];
+                    return Column(
+                      children: [
+                        Text(
+                          'Owners',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        Wrap(
+                          spacing: 32,
+                          children: [
+                            for (final owner in owners)
+                              Text(
+                                owner.username,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 Divider(),
                 Row(
@@ -423,6 +473,48 @@ class HomeResultScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                Divider(),
+                BlocBuilder<HexSearchBloc, HexSearchState>(
+                  buildWhen: (previous, current) =>
+                      previous.releases[pkg.name] != current.releases[pkg.name],
+                  builder: (context, state) {
+                    final releaseMap = state.releases;
+                    final release = releaseMap[pkg.name];
+                    final requirements = release?.requirements ??
+                        <String, ReleaseRequirementsValue>{};
+                    print('requirements: $requirements');
+                    return Column(
+                      children: [
+                        Text(
+                          'Dependencies',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        Wrap(
+                          spacing: 32,
+                          children: [
+                            for (final d in requirements.entries)
+                              Text(
+                                '${d.key}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),

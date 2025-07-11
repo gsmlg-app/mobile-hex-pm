@@ -10,8 +10,8 @@ import 'package:hex_api/src/model/package_downloads.dart';
 import 'package:hex_api/src/model/package_meta.dart';
 import 'package:hex_api/src/model/package_releases_inner.dart';
 import 'package:hex_api/src/model/release.dart';
-import 'package:hex_api/src/model/release_dependencies_inner.dart';
 import 'package:hex_api/src/model/release_meta.dart';
+import 'package:hex_api/src/model/release_requirements_value.dart';
 import 'package:hex_api/src/model/release_retired.dart';
 import 'package:hex_api/src/model/repository.dart';
 import 'package:hex_api/src/model/retirement_payload.dart';
@@ -69,11 +69,11 @@ ReturnType deserialize<ReturnType, BaseType>(dynamic value, String targetType,
           as ReturnType;
     case 'Release':
       return Release.fromJson(value as Map<String, dynamic>) as ReturnType;
-    case 'ReleaseDependenciesInner':
-      return ReleaseDependenciesInner.fromJson(value as Map<String, dynamic>)
-          as ReturnType;
     case 'ReleaseMeta':
       return ReleaseMeta.fromJson(value as Map<String, dynamic>) as ReturnType;
+    case 'ReleaseRequirementsValue':
+      return ReleaseRequirementsValue.fromJson(value as Map<String, dynamic>)
+          as ReturnType;
     case 'ReleaseRetired':
       return ReleaseRetired.fromJson(value as Map<String, dynamic>)
           as ReturnType;

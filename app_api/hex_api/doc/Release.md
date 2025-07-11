@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **version** | **String** |  | 
 **hasDocs** | **bool** |  | 
 **meta** | [**ReleaseMeta**](ReleaseMeta.md) |  | 
-**dependencies** | [**List&lt;ReleaseDependenciesInner&gt;**](ReleaseDependenciesInner.md) |  | 
+**requirements** | [**Map&lt;String, ReleaseRequirementsValue&gt;**](ReleaseRequirementsValue.md) |  | [optional] 
 **retired** | [**ReleaseRetired**](ReleaseRetired.md) |  | [optional] 
 **downloads** | **int** |  | 
 **insertedAt** | [**DateTime**](DateTime.md) |  | 
