@@ -12,7 +12,7 @@ import 'package_documentation/package_documentation_client.dart';
 import 'package_owners/package_owners_client.dart';
 import 'api_keys/api_keys_client.dart';
 
-/// Hex API `vbeta`.
+/// Hex API `v1.0.0`.
 ///
 /// This is the complete OpenAPI specification for the Hex API, based on the provided API Blueprint documentation. The Hex API is a REST-based API currently in beta.  The implementation examples are from https://hex.pm/api. .
 ///
@@ -47,7 +47,7 @@ class HexPmApi {
   final Dio _dio;
   final String? _baseUrl;
 
-  static String get version => 'beta';
+  static String get version => '1.0.0';
 
   UsersClient? _users;
   RepositoriesClient? _repositories;

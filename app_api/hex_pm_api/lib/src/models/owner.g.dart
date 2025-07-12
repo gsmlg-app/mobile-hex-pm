@@ -12,7 +12,7 @@ Owner _$OwnerFromJson(Map<String, dynamic> json) => Owner(
       insertedAt: DateTime.parse(json['inserted_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       url: json['url'] as String,
-      level: OwnerLevel.fromJson(json['level'] as String),
+      level: $enumDecode(_$OwnerLevelEnumMap, json['level']),
     );
 
 Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
@@ -27,5 +27,4 @@ Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
 const _$OwnerLevelEnumMap = {
   OwnerLevel.full: 'full',
   OwnerLevel.maintainer: 'maintainer',
-  OwnerLevel.$unknown: r'$unknown',
 };

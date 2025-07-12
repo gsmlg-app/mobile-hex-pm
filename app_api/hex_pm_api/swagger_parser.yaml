@@ -65,7 +65,7 @@ swagger_parser:
 
   # Optional (dart only). Set 'true' to maintain backwards compatibility
   # when adding new values on the backend.
-  unknown_enum_value: true
+  unknown_enum_value: false
 
   # Optional. Set 'false' to not put a comment at the beginning of the generated files.
   mark_files_as_generated: true

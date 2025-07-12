@@ -8,7 +8,7 @@ part of 'retirement_payload.dart';
 
 RetirementPayload _$RetirementPayloadFromJson(Map<String, dynamic> json) =>
     RetirementPayload(
-      reason: RetirementPayloadReason.fromJson(json['reason'] as String),
+      reason: $enumDecode(_$RetirementPayloadReasonEnumMap, json['reason']),
       message: json['message'] as String?,
     );
 
@@ -24,5 +24,4 @@ const _$RetirementPayloadReasonEnumMap = {
   RetirementPayloadReason.security: 'security',
   RetirementPayloadReason.deprecated: 'deprecated',
   RetirementPayloadReason.renamed: 'renamed',
-  RetirementPayloadReason.$unknown: r'$unknown',
 };

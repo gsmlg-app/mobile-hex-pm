@@ -7,9 +7,7 @@ part of 'retired.dart';
 // **************************************************************************
 
 Retired _$RetiredFromJson(Map<String, dynamic> json) => Retired(
-      reason: json['reason'] == null
-          ? null
-          : Reason.fromJson(json['reason'] as String),
+      reason: $enumDecodeNullable(_$ReasonEnumMap, json['reason']),
       message: json['message'] as String?,
     );
 
@@ -24,5 +22,4 @@ const _$ReasonEnumMap = {
   Reason.security: 'security',
   Reason.deprecated: 'deprecated',
   Reason.renamed: 'renamed',
-  Reason.$unknown: r'$unknown',
 };

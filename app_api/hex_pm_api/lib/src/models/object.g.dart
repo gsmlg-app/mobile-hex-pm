@@ -7,17 +7,15 @@ part of 'object.dart';
 // **************************************************************************
 
 Object _$ObjectFromJson(Map<String, dynamic> json) => Object(
-      level: json['level'] == null
-          ? Level.maintainer
-          : Level.fromJson(json['level'] as String),
+      level: $enumDecodeNullable(_$LevelEnumMap, json['level']) ??
+          Level.maintainer,
     );
 
-Map<String, String> _$ObjectToJson(Object instance) => <String, String>{
+Map<String, Object> _$ObjectToJson(Object instance) => <String, Object>{
       'level': _$LevelEnumMap[instance.level]!,
     };
 
 const _$LevelEnumMap = {
   Level.full: 'full',
   Level.maintainer: 'maintainer',
-  Level.$unknown: r'$unknown',
 };

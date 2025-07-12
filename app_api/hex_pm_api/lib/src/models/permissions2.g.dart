@@ -7,9 +7,7 @@ part of 'permissions2.dart';
 // **************************************************************************
 
 Permissions2 _$Permissions2FromJson(Map<String, dynamic> json) => Permissions2(
-      domain: json['domain'] == null
-          ? null
-          : Domain.fromJson(json['domain'] as String),
+      domain: $enumDecodeNullable(_$DomainEnumMap, json['domain']),
       resource: json['resource'] as String?,
     );
 
@@ -23,5 +21,4 @@ const _$DomainEnumMap = {
   Domain.api: 'api',
   Domain.repository: 'repository',
   Domain.repositories: 'repositories',
-  Domain.$unknown: r'$unknown',
 };
