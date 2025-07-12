@@ -2,7 +2,9 @@ import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mobile_hex_pm/destination.dart';
+import 'package:mobile_hex_pm/screens/favorite/favorite_releases_screen.dart';
 
 class FavoriteScreen extends StatelessWidget {
   static const name = 'Favorite Screen';
@@ -41,6 +43,10 @@ class FavoriteScreen extends StatelessWidget {
                     leading: Text('${idx + 1}.'),
                     title: Text(pkg.name),
                     subtitle: Text(pkg.description),
+                    onTap: () {
+                      context.goNamed(FavoriteReleasesScreen.name,
+                          pathParameters: {'package_name': pkg.name});
+                    },
                   );
                 },
               );

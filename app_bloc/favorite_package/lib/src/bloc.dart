@@ -14,6 +14,7 @@ class FavoritePackageBloc
   FavoritePackageBloc(this.database, this.hexApi)
       : super(FavoritePackageState.initial()) {
     on<FavoritePackageEventInit>(_onFavoritePackageEventInit);
+    on<FavoritePackageEventGetReleases>(_onFavoritePackageEventGetReleases);
   }
 
   Future<void> _onFavoritePackageEventInit(
@@ -24,5 +25,33 @@ class FavoritePackageBloc
         await database.select(database.favoritePackage).get();
 
     emitter(state.copyWith(favorites: favorites));
+  }
+
+  Future<void> _onFavoritePackageEventGetReleases(
+    FavoritePackageEventGetReleases event,
+    Emitter<FavoritePackageState> emitter,
+  ) async {
+    try {
+      final name = event.name;
+      final pkg = await hexApi.getPackagesApi().getPackage(name: name);
+      final releases = pkg.data!.releases;
+      final list = <Release>[];
+      for (var release in releases) {
+        final r = await hexApi.getPackageReleasesApi().getRelease(
+              name: name,
+              version: release.version!,
+            );
+        list.add(r.data!);
+      }
+      final favoriteReleases = Map<String, List<Release>>.unmodifiable(
+        {
+          ...state.favoriteReleases,
+          name: list,
+        },
+      );
+      emitter(state.copyWith(favoriteReleases: favoriteReleases));
+    } catch (e) {
+      print(e);
+    }
   }
 }
