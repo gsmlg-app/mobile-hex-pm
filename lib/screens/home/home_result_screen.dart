@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_database/app_database.dart';
 import 'package:app_feedback/app_feedback.dart';
+import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:hex_api/hex_api.dart';
@@ -175,7 +176,7 @@ class HomeResultScreen extends StatelessWidget {
 
     showFullScreenDialog(
       context: context,
-      title: Text.rich(
+      title: SelectableText.rich(
         TextSpan(
           children: [
             TextSpan(
@@ -238,25 +239,44 @@ class HomeResultScreen extends StatelessWidget {
                     SizedBox(
                       width: 24,
                     ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          final database = context.read<AppDatabase>();
-                          await database.into(database.favoritePackage).insert(
-                                FavoritePackageCompanion.insert(
-                                  name: pkg.name,
-                                  description: pkg.meta.description ?? '',
-                                  licenses: pkg.meta.licenses?.join(',') ?? '',
-                                ),
-                              );
-                          List<FavoritePackageData> favorites = await database
-                              .select(database.favoritePackage)
-                              .get();
-                        } catch (e) {
-                          print(e);
-                        }
+                    BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
+                      builder: (context, state) {
+                        final favorites = state.favorites;
+                        final isSaved = favorites.any((element) {
+                          return element.name == pkg.name;
+                        });
+
+                        return ElevatedButton(
+                          onPressed: isSaved
+                              ? null
+                              : () async {
+                                  try {
+                                    final database =
+                                        context.read<AppDatabase>();
+                                    await database
+                                        .into(database.favoritePackage)
+                                        .insert(
+                                          FavoritePackageCompanion.insert(
+                                            name: pkg.name,
+                                            description:
+                                                pkg.meta.description ?? '',
+                                            licenses:
+                                                pkg.meta.licenses?.join(',') ??
+                                                    '',
+                                          ),
+                                        );
+                                    context.read<FavoritePackageBloc>().add(
+                                          FavoritePackageEventInit(),
+                                        );
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                          child: isSaved
+                              ? Text('Favorite')
+                              : Text('Add to Favorites'),
+                        );
                       },
-                      child: Text('Add to Favorites'),
                     ),
                   ],
                 ),

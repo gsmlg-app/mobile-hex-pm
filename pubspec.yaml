@@ -138,3 +138,7 @@ melos:
     validate-dependencies:
       run: dart run dependency_validator
       description: Run `dart run dependency_validator` check dependencies usage.
+
+    gen-l10n:
+      run: melos exec --flutter --file-exists=l10n.yaml flutter gen-l10n
+      description: Run `flutter gen-l10n` generate localization files.
