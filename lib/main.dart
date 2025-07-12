@@ -3,6 +3,7 @@ import 'package:app_locale/app_locale.dart';
 import 'package:app_provider/app_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart' as logging;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
@@ -14,10 +15,14 @@ void main(List<String> args) async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
   final database = AppDatabase();
+  final appSupportDir = await getApplicationSupportDirectory();
+  final tmpDir = await getTemporaryDirectory();
 
   runApp(MainProvider(
     sharedPrefs: sharedPrefs,
     database: database,
+    appSupportDir: appSupportDir,
+    tmpDir: tmpDir,
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
       localizationsDelegates: AppLocale.localizationsDelegates,
