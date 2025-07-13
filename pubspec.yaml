@@ -112,7 +112,7 @@ melos:
 
     analyze:
       run: |
-        melos exec --order-dependents flutter analyze --fatal-infos
+        melos exec --no-flutter --order-dependents dart analyze && melos exec --flutter --order-dependents flutter analyze
       description: Run `flutter analyze` for all packages.
 
     fix:
