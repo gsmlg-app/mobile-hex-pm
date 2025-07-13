@@ -6,8 +6,9 @@ on:
       build-name:
         required: true
         description: |
-            The version of the release, provid by `--build-name=<x.y.z>`
-        default: '4.21.0'
+            The version of the release, provide by `--build-name=<x.y.z>`,
+            the push apk to release tag {github.event.inputs.build-name}.
+        default: '0.1.0'
       revision:
         required: true
         description: 'The revision of git'
@@ -37,7 +38,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: v${{ github.event.inputs.build-name }}
+          tag: ${{ github.event.inputs.build-name }}
           file: "build/app/outputs/flutter-apk/app-release.apk"
           overwrite: true
           file_glob: true
