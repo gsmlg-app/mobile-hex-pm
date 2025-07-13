@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      build-name:
+        required: true
+        description: |
+            The version of the release, provid by `--build-name=<x.y.z>`
+        default: '4.21.0'
+      revision:
+        required: true
+        description: 'The revision of git'
+        default: 'main'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.revision }}
+
+      - uses: flutter-actions/setup-flutter@v3
+
+      - name: Install tools
+        run: dart pub global activate melos
+        
+      - name: Install dependencies
+        run: melos run prepare
+
+      - name: Analyze project source
+        run: flutter build apk --build-name=${{ github.event.inputs.build-name }} --release
+
+
