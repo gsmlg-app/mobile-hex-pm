@@ -33,4 +33,11 @@ jobs:
       - name: Analyze project source
         run: flutter build apk --build-name=${{ github.event.inputs.build-name }} --release
 
-
+      - name: ⬆️ Upload api to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ github.event.inputs.build-name }}
+          file: "build/app/outputs/flutter-apk/app-release.apk"
+          overwrite: true
+          file_glob: true
