@@ -8,7 +8,7 @@ import 'package:mobile_hex_pm/screens/favorite/favorite_releases_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class FavoriteReleaseDocsScreen extends StatelessWidget {
+class FavoriteReleaseDocsScreen extends StatefulWidget {
   static const name = 'Favorite Release Document Screen';
   static const path = ':package_version/docs';
   static const fullPath = '${FavoriteReleasesScreen.fullPath}/$path';
@@ -23,11 +23,19 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
   final String packageVersion;
 
   @override
+  State<FavoriteReleaseDocsScreen> createState() =>
+      _FavoriteReleaseDocsScreenState();
+}
+
+class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
+  Size boxSize = const Size(400, 600);
+
+  @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       context.read<HexDocBloc>().add(HexDocEventSetup(
-            packageName: packageName,
-            packageVersion: packageVersion,
+            packageName: widget.packageName,
+            packageVersion: widget.packageVersion,
           ));
     });
 
@@ -42,7 +50,8 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
       body: (context) => CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: Text('$packageName($packageVersion) Document'),
+            title: Text(
+                '${widget.packageName}(${widget.packageVersion}) Document'),
           ),
           BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
@@ -50,7 +59,7 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
                 return SliverFillRemaining(
                   child: Center(
                     child: Text(
-                      'Document $packageName ($packageVersion) is not exists',
+                      'Document ${widget.packageName} (${widget.packageVersion}) is not exists',
                     ),
                   ),
                 );
@@ -59,7 +68,7 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
                 return SliverFillRemaining(
                   child: Center(
                     child: Text(
-                      'Document $packageName ($packageVersion) is downloading',
+                      'Document ${widget.packageName} (${widget.packageVersion}) is downloading',
                     ),
                   ),
                 );
@@ -68,7 +77,7 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
                 return SliverFillRemaining(
                   child: Center(
                     child: Text(
-                      'Document $packageName ($packageVersion) is extracting',
+                      'Document ${widget.packageName} (${widget.packageVersion}) is extracting',
                     ),
                   ),
                 );
@@ -77,7 +86,7 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
                 return SliverFillRemaining(
                   child: Center(
                     child: Text(
-                      'Document $packageName ($packageVersion) setup error',
+                      'Document ${widget.packageName} (${widget.packageVersion}) setup error',
                     ),
                   ),
                 );
@@ -89,16 +98,22 @@ class FavoriteReleaseDocsScreen extends StatelessWidget {
                       onPressed: () =>
                           launchUrl(Uri.parse('file://${state.indexFile}')),
                       child: Text(
-                          'Document $packageName ($packageVersion) setup error'),
+                          'Document ${widget.packageName} (${widget.packageVersion}) setup error'),
                     ),
                   ),
                 );
               }
-              final screenHeight = MediaQuery.of(context).size.height;
+
               return SliverToBoxAdapter(
                 child: SizedBox(
-                  height: screenHeight - 64,
+                  height: boxSize.height,
+                  width: boxSize.width,
                   child: LocalHtmlViewer(
+                    setSize: (size) {
+                      setState(() {
+                        boxSize = size;
+                      });
+                    },
                     indexFile: state.indexFile,
                   ),
                 ),
