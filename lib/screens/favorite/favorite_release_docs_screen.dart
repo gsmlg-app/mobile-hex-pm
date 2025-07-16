@@ -28,8 +28,6 @@ class FavoriteReleaseDocsScreen extends StatefulWidget {
 }
 
 class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
-  Size boxSize = const Size(400, 600);
-
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((duration) {
@@ -104,18 +102,9 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                 );
               }
 
-              return SliverToBoxAdapter(
-                child: SizedBox(
-                  height: boxSize.height,
-                  width: boxSize.width,
-                  child: LocalHtmlViewer(
-                    setSize: (size) {
-                      setState(() {
-                        boxSize = size;
-                      });
-                    },
-                    indexFile: state.indexFile,
-                  ),
+              return SliverFillRemaining(
+                child: LocalHtmlViewer(
+                  indexFile: state.indexFile,
                 ),
               );
             },
