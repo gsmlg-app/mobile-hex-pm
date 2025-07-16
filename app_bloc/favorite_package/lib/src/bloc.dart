@@ -14,7 +14,8 @@ class FavoritePackageBloc
   FavoritePackageBloc(this.database, this.hexApi)
       : super(FavoritePackageState.initial()) {
     on<FavoritePackageEventInit>(_onFavoritePackageEventInit);
-    on<FavoritePackageEventGetReleases>(_onFavoritePackageEventGetReleases);
+    on<FavoritePackageEventGetPackage>(_onFavoritePackageEventGetPackage);
+    on<FavoritePackageEventGetRelease>(_onFavoritePackageEventGetRelease);
   }
 
   Future<void> _onFavoritePackageEventInit(
@@ -27,26 +28,40 @@ class FavoritePackageBloc
     emitter(state.copyWith(favorites: favorites));
   }
 
-  Future<void> _onFavoritePackageEventGetReleases(
-    FavoritePackageEventGetReleases event,
+  Future<void> _onFavoritePackageEventGetPackage(
+    FavoritePackageEventGetPackage event,
     Emitter<FavoritePackageState> emitter,
   ) async {
     try {
       final name = event.name;
       final pkg = await hexApi.getPackagesApi().getPackage(name: name);
-      final releases = pkg.data!.releases;
-      final list = <Release>[];
-      for (var release in releases) {
-        final r = await hexApi.getPackageReleasesApi().getRelease(
-              name: name,
-              version: release.version!,
-            );
-        list.add(r.data!);
-      }
-      final favoriteReleases = Map<String, List<Release>>.unmodifiable(
+      final favoritePackages = Map<String, Package>.unmodifiable(
+        {
+          ...state.favoritePackages,
+          name: pkg.data!,
+        },
+      );
+      emitter(state.copyWith(favoritePackages: favoritePackages));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _onFavoritePackageEventGetRelease(
+    FavoritePackageEventGetRelease event,
+    Emitter<FavoritePackageState> emitter,
+  ) async {
+    try {
+      final name = event.name;
+      final version = event.version;
+      final release = await hexApi.getPackageReleasesApi().getRelease(
+            name: name,
+            version: version,
+          );
+      final favoriteReleases = Map<String, Release>.unmodifiable(
         {
           ...state.favoriteReleases,
-          name: list,
+          '$name-$version': release.data!,
         },
       );
       emitter(state.copyWith(favoriteReleases: favoriteReleases));

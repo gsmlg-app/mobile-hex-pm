@@ -20,7 +20,7 @@ class FavoriteReleasesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       context.read<FavoritePackageBloc>().add(
-            FavoritePackageEventGetReleases(packageName),
+            FavoritePackageEventGetPackage(packageName),
           );
     });
 
@@ -39,28 +39,48 @@ class FavoriteReleasesScreen extends StatelessWidget {
           ),
           BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
             builder: (context, state) {
-              final releases = state.favoriteReleases[packageName] ?? [];
+              final releases =
+                  state.favoritePackages[packageName]?.releases ?? [];
 
               return SliverList.builder(
                 itemCount: releases.length,
                 itemBuilder: (context, idx) {
                   final r = releases[idx];
+                  final release =
+                      state.favoriteReleases['$packageName-${r.version}'];
+
+                  if (release == null) {
+                    if (r.version != null) {
+                      context.read<FavoritePackageBloc>().add(
+                            FavoritePackageEventGetRelease(
+                              packageName,
+                              r.version!,
+                            ),
+                          );
+                    }
+                    return ListTile(
+                      title: Text(r.version ?? 'Unknown version'),
+                      subtitle: const Text('Loading...'),
+                    );
+                  }
 
                   return ListTile(
-                    leading: Text('${r.downloads}'),
+                    leading: Text('${release.downloads}'),
                     title: SelectableText.rich(
                       TextSpan(
-                        text: r.version,
+                        text: release.version,
                         children: [
-                          TextSpan(text: '   '),
-                          TextSpan(text: '${r.meta.buildTools?.join(",")}'),
+                          const TextSpan(text: '   '),
+                          TextSpan(
+                              text: '${release.meta.buildTools?.join(",")}'),
                         ],
                       ),
                     ),
                     subtitle: SelectableText.rich(
                       TextSpan(
                         children: [
-                          for (final entry in (r.requirements ?? {}).entries)
+                          for (final entry
+                              in (release.requirements ?? {}).entries)
                             TextSpan(
                               text:
                                   '{:${entry.key}, "${entry.value.requirement}", ${entry.value.optional == true ? "optional: true" : ""}},',
@@ -68,23 +88,23 @@ class FavoriteReleasesScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    trailing: r.hasDocs
+                    trailing: release.hasDocs
                         ? IconButton(
                             onPressed: () {
                               context.goNamed(
                                 FavoriteReleaseDocsScreen.name,
                                 pathParameters: {
                                   'package_name': packageName,
-                                  'package_version': r.version,
+                                  'package_version': release.version,
                                 },
                                 queryParameters: {
                                   'parentName': FavoriteScreen.name,
                                 },
                               );
                             },
-                            icon: Icon(Icons.description),
+                            icon: const Icon(Icons.description),
                           )
-                        : Icon(Icons.cancel_outlined),
+                        : const Icon(Icons.cancel_outlined),
                   );
                 },
               );

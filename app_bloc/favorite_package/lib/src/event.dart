@@ -8,8 +8,16 @@ final class FavoritePackageEventInit extends FavoritePackageEvent {
   const FavoritePackageEventInit();
 }
 
-final class FavoritePackageEventGetReleases extends FavoritePackageEvent {
-  const FavoritePackageEventGetReleases(this.name);
-
+final class FavoritePackageEventGetPackage extends FavoritePackageEvent {
   final String name;
+
+  const FavoritePackageEventGetPackage(this.name);
 }
+
+final class FavoritePackageEventGetRelease extends FavoritePackageEvent {
+  final String name;
+  final String version;
+
+  const FavoritePackageEventGetRelease(this.name, this.version);
+}
+

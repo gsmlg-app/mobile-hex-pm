@@ -1,7 +1,8 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_web_view/app_web_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
 import 'package:mobile_hex_pm/screens/downloads/downloads_screen.dart';
@@ -52,63 +53,67 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
       body: (context) => CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  if (widget.parentName == FavoriteScreen.name) {
+                    context.goNamed(FavoriteScreen.name);
+                  } else {
+                    context.goNamed(DownloadsScreen.name);
+                  }
+                }
+              },
+            ),
             title: Text(
                 '${widget.packageName}(${widget.packageVersion}) Document'),
           ),
           BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
-              if (state.stats == DocStats.unset) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Document ${widget.packageName} (${widget.packageVersion}) is not exists',
+              if (state.stats == DocStats.ok && state.indexFile.isNotEmpty) {
+                if (Breakpoint.isDesktop(context)) {
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            launchUrl(Uri.parse('file://${state.indexFile}')),
+                        child: Text(
+                            'Document ${widget.packageName} (${widget.packageVersion}) is ready. Click to open.'),
+                      ),
                     ),
-                  ),
-                );
-              }
-              if (state.stats == DocStats.downloading) {
+                  );
+                }
                 return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Document ${widget.packageName} (${widget.packageVersion}) is downloading',
-                    ),
-                  ),
-                );
-              }
-              if (state.stats == DocStats.extracting) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Document ${widget.packageName} (${widget.packageVersion}) is extracting',
-                    ),
-                  ),
-                );
-              }
-              if (state.stats == DocStats.error) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Text(
-                      'Document ${widget.packageName} (${widget.packageVersion}) setup error',
-                    ),
-                  ),
-                );
-              }
-              if (Breakpoint.isDesktop(context)) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () =>
-                          launchUrl(Uri.parse('file://${state.indexFile}')),
-                      child: Text(
-                          'Document ${widget.packageName} (${widget.packageVersion}) setup error'),
-                    ),
+                  child: LocalHtmlViewer(
+                    indexFile: state.indexFile,
                   ),
                 );
               }
 
+              String message;
+              switch (state.stats) {
+                case DocStats.downloading:
+                  message =
+                      'Document ${widget.packageName} (${widget.packageVersion}) is downloading';
+                  break;
+                case DocStats.extracting:
+                  message =
+                      'Document ${widget.packageName} (${widget.packageVersion}) is extracting';
+                  break;
+                case DocStats.error:
+                  message =
+                      'Document ${widget.packageName} (${widget.packageVersion}) setup error';
+                  break;
+                default:
+                  message =
+                      'Document ${widget.packageName} (${widget.packageVersion}) is preparing...';
+              }
+
               return SliverFillRemaining(
-                child: LocalHtmlViewer(
-                  indexFile: state.indexFile,
+                child: Center(
+                  child: Text(message),
                 ),
               );
             },

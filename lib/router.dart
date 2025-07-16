@@ -86,24 +86,7 @@ class AppRouter {
               ),
             );
           },
-          routes: [
-            GoRoute(
-              name: FavoriteReleaseDocsScreen.name,
-              path: FavoriteReleaseDocsScreen.path,
-              pageBuilder: (context, state) {
-                return NoTransitionPage<void>(
-                  key: state.pageKey,
-                  restorationId: state.pageKey.value,
-                  child: FavoriteReleaseDocsScreen(
-                    packageName: state.pathParameters['package_name']!,
-                    packageVersion: state.pathParameters['package_version']!,
-                    parentName: state.uri.queryParameters['parentName'],
-                  ),
-                );
-              },
-              routes: [],
-            ),
-          ],
+          routes: [],
         ),
       ],
     ),
@@ -117,23 +100,22 @@ class AppRouter {
           child: const DownloadsScreen(),
         );
       },
-      routes: [
-        GoRoute(
-          name: '${DownloadsScreen.name} ${FavoriteReleaseDocsScreen.name}',
-          path: FavoriteReleaseDocsScreen.path,
-          pageBuilder: (context, state) {
-            return NoTransitionPage<void>(
-              key: state.pageKey,
-              restorationId: state.pageKey.value,
-              child: FavoriteReleaseDocsScreen(
-                packageName: state.pathParameters['package_name']!,
-                packageVersion: state.pathParameters['package_version']!,
-                parentName: state.uri.queryParameters['parentName'],
-              ),
-            );
-          },
-        ),
-      ],
+      routes: [],
+    ),
+    GoRoute(
+      name: FavoriteReleaseDocsScreen.name,
+      path: '/docs/:package_name/:package_version',
+      pageBuilder: (context, state) {
+        return NoTransitionPage<void>(
+          key: state.pageKey,
+          restorationId: state.pageKey.value,
+          child: FavoriteReleaseDocsScreen(
+            packageName: state.pathParameters['package_name']!,
+            packageVersion: state.pathParameters['package_version']!,
+            parentName: state.uri.queryParameters['parentName'],
+          ),
+        );
+      },
     ),
     GoRoute(
       name: SettingsScreen.name,

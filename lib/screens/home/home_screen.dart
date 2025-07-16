@@ -69,6 +69,7 @@ class HomeScreen extends StatelessWidget {
                         width: max(w * 0.5, 400),
                         height: 84,
                         child: TextFieldBlocBuilder(
+                          onSubmitted: (v) => formBloc.submit(),
                           textFieldBloc: formBloc.searchName,
                           suffixButton: SuffixButton.clearText,
                           autofillHints: const [AutofillHints.name],
