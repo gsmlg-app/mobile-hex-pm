@@ -17,22 +17,10 @@ class DownloadsScreen extends StatefulWidget {
 }
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
-  Map<String, bool> _expanded = {};
-
   @override
   void initState() {
     super.initState();
     context.read<HexDocBloc>().add(const HexDocEventList());
-    _expanded =
-        (PageStorage.of(context).readState(context, identifier: 'expanded')
-                as Map?)
-            ?.cast<String, bool>() ??
-            {};
-  }
-
-  void _saveExpandedState() {
-    PageStorage.of(context)
-        .writeState(context, _expanded, identifier: 'expanded');
   }
 
   @override
@@ -42,6 +30,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
       body: (context) => CustomScrollView(
+        key: const PageStorageKey('downloads_scroll_view'),
         slivers: [
           SliverAppBar(
             title: const Text('Downloads'),
@@ -49,15 +38,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
               final docs = state.docs;
-              final packageNames = docs.keys.toList();
+              final packageNames = docs.keys.toList()..sort();
 
               return SliverToBoxAdapter(
                 child: ExpansionPanelList(
                   expansionCallback: (int index, bool isExpanded) {
-                    setState(() {
-                      _expanded[packageNames[index]] = !isExpanded;
-                      _saveExpandedState();
-                    });
+                    context.read<HexDocBloc>().add(
+                          HexDocEventToggleExpanded(packageNames[index]),
+                        );
                   },
                   children:
                       packageNames.map<ExpansionPanel>((String packageName) {
@@ -134,7 +122,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           );
                         }).toList(),
                       ),
-                      isExpanded: _expanded[packageName] ?? false,
+                      isExpanded: state.expandedState[packageName] ?? false,
                     );
                   }).toList(),
                 ),

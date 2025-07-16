@@ -15,6 +15,7 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     on<HexDocEventSetup>(_onHexDocEventSetup);
     on<HexDocEventList>(_onHexDocEventList);
     on<HexDocEventDelete>(_onHexDocEventDelete);
+    on<HexDocEventToggleExpanded>(_onHexDocEventToggleExpanded);
   }
 
   String getUrl(String name, String version) {
@@ -31,21 +32,51 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     emitter(state.copyWith());
   }
 
+  Future<void> _onHexDocEventToggleExpanded(
+    HexDocEventToggleExpanded event,
+    Emitter<HexDocState> emitter,
+  ) async {
+    final newExpandedState = Map<String, bool>.from(state.expandedState);
+    newExpandedState[event.packageName] =
+        !(newExpandedState[event.packageName] ?? false);
+    emitter(state.copyWith(expandedState: newExpandedState));
+  }
+
   Future<void> _onHexDocEventDelete(
     HexDocEventDelete event,
     Emitter<HexDocState> emitter,
   ) async {
     try {
-      final dir = Directory(p.join(
+      final packageDir = Directory(p.join(
         appSupportDir.path,
         'hex_docs',
         event.packageName,
+      ));
+      final versionDir = Directory(p.join(
+        packageDir.path,
         event.packageVersion,
       ));
-      if (await dir.exists()) {
-        await dir.delete(recursive: true);
+
+      if (await versionDir.exists()) {
+        await versionDir.delete(recursive: true);
       }
-      add(const HexDocEventList());
+
+      final newDocs = Map<String, List<DocInfo>>.from(state.docs);
+      final versions = newDocs[event.packageName];
+      if (versions != null) {
+        versions.removeWhere((doc) => doc.packageVersion == event.packageVersion);
+        if (versions.isEmpty) {
+          newDocs.remove(event.packageName);
+        }
+      }
+      emitter(state.copyWith(docs: newDocs));
+
+      if (await packageDir.exists()) {
+        final remainingFiles = await packageDir.list().toList();
+        if (remainingFiles.isEmpty) {
+          await packageDir.delete();
+        }
+      }
     } catch (e) {
       emitter(state.copyWith(stats: DocStats.error, error: e));
     }
@@ -72,7 +103,9 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
               ));
             }
           }
-          docs[packageName] = docInfos;
+          if (docInfos.isNotEmpty) {
+            docs[packageName] = docInfos;
+          }
         }
       }
       emitter(state.copyWith(docs: docs));

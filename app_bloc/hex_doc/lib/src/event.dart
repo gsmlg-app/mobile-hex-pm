@@ -18,6 +18,11 @@ final class HexDocEventDelete extends HexDocEvent {
   });
 }
 
+final class HexDocEventToggleExpanded extends HexDocEvent {
+  final String packageName;
+  const HexDocEventToggleExpanded(this.packageName);
+}
+
 final class HexDocEventList extends HexDocEvent {
   const HexDocEventList();
 }
