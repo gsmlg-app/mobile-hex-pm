@@ -29,13 +29,13 @@ class HexDocState extends Equatable {
   const HexDocState({
     this.stats = DocStats.unset,
     this.indexFile = '',
-    this.docs = const [],
+    this.docs = const {},
     this.error,
   });
 
   final DocStats stats;
   final String indexFile;
-  final List<DocInfo> docs;
+  final Map<String, List<DocInfo>> docs;
   final Object? error;
 
   @override
@@ -44,7 +44,7 @@ class HexDocState extends Equatable {
   HexDocState copyWith({
     DocStats? stats,
     String? indexFile,
-    List<DocInfo>? docs,
+    Map<String, List<DocInfo>>? docs,
     Object? error,
   }) {
     return HexDocState(

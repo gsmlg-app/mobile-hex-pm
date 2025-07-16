@@ -8,6 +8,16 @@ final class HexDocEventInit extends HexDocEvent {
   const HexDocEventInit();
 }
 
+final class HexDocEventDelete extends HexDocEvent {
+  final String packageName;
+  final String packageVersion;
+
+  const HexDocEventDelete({
+    required this.packageName,
+    required this.packageVersion,
+  });
+}
+
 final class HexDocEventList extends HexDocEvent {
   const HexDocEventList();
 }

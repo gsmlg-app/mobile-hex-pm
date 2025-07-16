@@ -14,6 +14,7 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     on<HexDocEventInit>(_onHexDocEventInit);
     on<HexDocEventSetup>(_onHexDocEventSetup);
     on<HexDocEventList>(_onHexDocEventList);
+    on<HexDocEventDelete>(_onHexDocEventDelete);
   }
 
   String getUrl(String name, String version) {
@@ -30,6 +31,26 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     emitter(state.copyWith());
   }
 
+  Future<void> _onHexDocEventDelete(
+    HexDocEventDelete event,
+    Emitter<HexDocState> emitter,
+  ) async {
+    try {
+      final dir = Directory(p.join(
+        appSupportDir.path,
+        'hex_docs',
+        event.packageName,
+        event.packageVersion,
+      ));
+      if (await dir.exists()) {
+        await dir.delete(recursive: true);
+      }
+      add(const HexDocEventList());
+    } catch (e) {
+      emitter(state.copyWith(stats: DocStats.error, error: e));
+    }
+  }
+
   Future<void> _onHexDocEventList(
     HexDocEventList event,
     Emitter<HexDocState> emitter,
@@ -37,18 +58,21 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     final docsDir = Directory(p.join(appSupportDir.path, 'hex_docs'));
     if (await docsDir.exists()) {
       final packages = await docsDir.list().toList();
-      final docs = <DocInfo>[];
+      final docs = <String, List<DocInfo>>{};
       for (final package in packages) {
         if (package is Directory) {
+          final packageName = p.basename(package.path);
           final versions = await Directory(package.path).list().toList();
+          final docInfos = <DocInfo>[];
           for (final version in versions) {
             if (version is Directory) {
-              docs.add(DocInfo(
-                packageName: p.basename(package.path),
+              docInfos.add(DocInfo(
+                packageName: packageName,
                 packageVersion: p.basename(version.path),
               ));
             }
           }
+          docs[packageName] = docInfos;
         }
       }
       emitter(state.copyWith(docs: docs));
