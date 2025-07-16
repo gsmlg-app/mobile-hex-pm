@@ -8,6 +8,10 @@ final class HexDocEventInit extends HexDocEvent {
   const HexDocEventInit();
 }
 
+final class HexDocEventList extends HexDocEvent {
+  const HexDocEventList();
+}
+
 final class HexDocEventSetup extends HexDocEvent {
   final String packageName;
   final String packageVersion;

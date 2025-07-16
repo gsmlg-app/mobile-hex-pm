@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
+import 'package:mobile_hex_pm/screens/downloads/downloads_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_releases_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,14 +14,16 @@ class FavoriteReleaseDocsScreen extends StatefulWidget {
   static const path = ':package_version/docs';
   static const fullPath = '${FavoriteReleasesScreen.fullPath}/$path';
 
-  FavoriteReleaseDocsScreen({
+  const FavoriteReleaseDocsScreen({
     super.key,
     required this.packageName,
     required this.packageVersion,
+    this.parentName,
   });
 
   final String packageName;
   final String packageVersion;
+  final String? parentName;
 
   @override
   State<FavoriteReleaseDocsScreen> createState() =>
@@ -38,8 +41,9 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
     });
 
     return AppAdaptiveScaffold(
-      selectedIndex:
-          Destinations.indexOf(const Key(FavoriteScreen.name), context),
+      selectedIndex: widget.parentName == FavoriteScreen.name
+          ? Destinations.indexOf(const Key(FavoriteScreen.name), context)
+          : Destinations.indexOf(const Key(DownloadsScreen.name), context),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(
         idx,
         context,

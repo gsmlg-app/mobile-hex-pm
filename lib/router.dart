@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_hex_pm/screens/app/error_screen.dart';
 import 'package:mobile_hex_pm/screens/app/splash_screen.dart';
+import 'package:mobile_hex_pm/screens/downloads/downloads_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_release_docs_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_releases_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
@@ -96,12 +97,41 @@ class AppRouter {
                   child: FavoriteReleaseDocsScreen(
                     packageName: state.pathParameters['package_name']!,
                     packageVersion: state.pathParameters['package_version']!,
+                    parentName: state.uri.queryParameters['parentName'],
                   ),
                 );
               },
               routes: [],
             ),
           ],
+        ),
+      ],
+    ),
+    GoRoute(
+      name: DownloadsScreen.name,
+      path: DownloadsScreen.path,
+      pageBuilder: (context, state) {
+        return NoTransitionPage<void>(
+          key: state.pageKey,
+          restorationId: state.pageKey.value,
+          child: const DownloadsScreen(),
+        );
+      },
+      routes: [
+        GoRoute(
+          name: '${DownloadsScreen.name} ${FavoriteReleaseDocsScreen.name}',
+          path: FavoriteReleaseDocsScreen.path,
+          pageBuilder: (context, state) {
+            return NoTransitionPage<void>(
+              key: state.pageKey,
+              restorationId: state.pageKey.value,
+              child: FavoriteReleaseDocsScreen(
+                packageName: state.pathParameters['package_name']!,
+                packageVersion: state.pathParameters['package_version']!,
+                parentName: state.uri.queryParameters['parentName'],
+              ),
+            );
+          },
         ),
       ],
     ),
@@ -131,3 +161,4 @@ class AppRouter {
     ),
   ];
 }
+

@@ -10,9 +10,10 @@ part 'event.dart';
 part 'state.dart';
 
 class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
-  HexDocBloc(this.appSupportDir, this.tmpDir) : super(HexDocState.initial()) {
+  HexDocBloc(this.appSupportDir, this.tmpDir) : super(const HexDocState()) {
     on<HexDocEventInit>(_onHexDocEventInit);
     on<HexDocEventSetup>(_onHexDocEventSetup);
+    on<HexDocEventList>(_onHexDocEventList);
   }
 
   String getUrl(String name, String version) {
@@ -29,6 +30,31 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     emitter(state.copyWith());
   }
 
+  Future<void> _onHexDocEventList(
+    HexDocEventList event,
+    Emitter<HexDocState> emitter,
+  ) async {
+    final docsDir = Directory(p.join(appSupportDir.path, 'hex_docs'));
+    if (await docsDir.exists()) {
+      final packages = await docsDir.list().toList();
+      final docs = <DocInfo>[];
+      for (final package in packages) {
+        if (package is Directory) {
+          final versions = await Directory(package.path).list().toList();
+          for (final version in versions) {
+            if (version is Directory) {
+              docs.add(DocInfo(
+                packageName: p.basename(package.path),
+                packageVersion: p.basename(version.path),
+              ));
+            }
+          }
+        }
+      }
+      emitter(state.copyWith(docs: docs));
+    }
+  }
+
   Future<void> _onHexDocEventSetup(
     HexDocEventSetup event,
     Emitter<HexDocState> emitter,
@@ -42,7 +68,10 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
       );
       final indexFile = File(p.join(dir, 'index.html'));
       if (await indexFile.exists()) {
-        emitter(state.copyWith(stats: DocStats.ok));
+        emitter(state.copyWith(
+          stats: DocStats.ok,
+          indexFile: indexFile.path,
+        ));
       } else {
         emitter(state.copyWith(stats: DocStats.downloading));
         final response = await http.get(Uri.parse(getUrl(

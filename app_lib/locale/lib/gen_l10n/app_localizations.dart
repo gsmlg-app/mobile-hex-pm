@@ -166,6 +166,12 @@ abstract class AppLocalizations {
   /// **'Favorite'**
   String get navFavorite;
 
+  /// No description provided for @navDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads'**
+  String get navDownloads;
+
   /// No description provided for @navSetting.
   ///
   /// In en, this message translates to:

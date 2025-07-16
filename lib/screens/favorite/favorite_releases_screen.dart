@@ -77,6 +77,9 @@ class FavoriteReleasesScreen extends StatelessWidget {
                                   'package_name': packageName,
                                   'package_version': r.version,
                                 },
+                                queryParameters: {
+                                  'parentName': FavoriteScreen.name,
+                                },
                               );
                             },
                             icon: Icon(Icons.description),
