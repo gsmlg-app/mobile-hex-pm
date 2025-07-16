@@ -1,0 +1,1 @@
+Mobile hex.pm is an unofficial client for browsing the hex.pm package registry. It allows you to search for packages, view their details, and, most importantly, download and read their documentation offline. This is perfect for developers who need to access documentation on the go without relying on an internet connection.
