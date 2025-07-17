@@ -88,9 +88,7 @@ class HexSettingsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: (context) {
-                                  context
-                                      .read<HexAuthBloc>()
-                                      .add(HexAuthEventLogout());
+                                  showRemoveApiDialog(context);
                                 },
                               ),
                           ],
@@ -208,4 +206,32 @@ class HexSettingsScreen extends StatelessWidget {
       ],
     );
   }
+
+  void showRemoveApiDialog(BuildContext context) {
+    showAppDialog(
+      context: context,
+      title: Text('Remove API Key'),
+      content: Text('Are you sure you want to remove the API key?'),
+      actions: [
+        AppDialogAction(
+          onPressed: (context) {
+            context.read<HexAuthBloc>().add(HexAuthEventLogout());
+            Navigator.of(context).pop();
+          },
+          child: Text(
+            context.l10n.ok,
+          ),
+        ),
+        AppDialogAction(
+          onPressed: (context) {
+            Navigator.of(context).pop();
+          },
+          child: Text(
+            context.l10n.cancel,
+          ),
+        ),
+      ],
+    );
+  }
 }
+
