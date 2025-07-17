@@ -11,11 +11,13 @@ class FavoritePackageState extends Equatable {
     this.favorites = const [],
     this.favoritePackages = const {},
     this.favoriteReleases = const {},
+    this.errors,
   });
 
   final List<FavoritePackageData> favorites;
   final Map<String, Package> favoritePackages;
   final Map<String, Release> favoriteReleases;
+  final Object? errors;
 
   @override
   List<Object> get props => [
@@ -28,11 +30,13 @@ class FavoritePackageState extends Equatable {
     List<FavoritePackageData>? favorites,
     Map<String, Package>? favoritePackages,
     Map<String, Release>? favoriteReleases,
+    Object? errors,
   }) {
     return FavoritePackageState(
       favorites: favorites ?? this.favorites,
       favoritePackages: favoritePackages ?? this.favoritePackages,
       favoriteReleases: favoriteReleases ?? this.favoriteReleases,
+      errors: errors ?? this.errors,
     );
   }
 }

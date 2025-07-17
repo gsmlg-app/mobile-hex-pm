@@ -43,7 +43,7 @@ class FavoritePackageBloc
       );
       emitter(state.copyWith(favoritePackages: favoritePackages));
     } catch (e) {
-      print(e);
+      emitter(state.copyWith(errors: e));
     }
   }
 
@@ -66,7 +66,7 @@ class FavoritePackageBloc
       );
       emitter(state.copyWith(favoriteReleases: favoriteReleases));
     } catch (e) {
-      print(e);
+      emitter(state.copyWith(errors: e));
     }
   }
 
