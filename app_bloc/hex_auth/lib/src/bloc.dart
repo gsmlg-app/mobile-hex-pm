@@ -74,7 +74,8 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
     HexAuthEventLogout event,
     Emitter<HexAuthState> emitter,
   ) async {
-    emitter(state.copyWith(apiKey: null, currenUser: null));
+    emitter(state.copyWith(clearApiKey: true, clearCurrentUser: true));
     sharedPrefs.remove('HEX_API_KEY');
+    hexApi.dio.interceptors.removeWhere((e) => e is ApiAuthInterceptor);
   }
 }

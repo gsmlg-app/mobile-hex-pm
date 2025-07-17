@@ -28,10 +28,12 @@ class HexAuthState extends Equatable {
     UserWithOrgs? currenUser,
     bool? isLoading,
     Object? error,
+    bool clearApiKey = false,
+    bool clearCurrentUser = false,
   }) {
     return HexAuthState(
-      apiKey: apiKey ?? this.apiKey,
-      currenUser: currenUser ?? this.currenUser,
+      apiKey: clearApiKey ? null : apiKey ?? this.apiKey,
+      currenUser: clearCurrentUser ? null : currenUser ?? this.currenUser,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
     );
