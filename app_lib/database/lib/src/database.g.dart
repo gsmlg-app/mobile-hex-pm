@@ -22,19 +22,21 @@ class $FavoritePackageTable extends FavoritePackage
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   @override
   late final GeneratedColumn<String> description = GeneratedColumn<String>(
       'description', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _licensesMeta =
-      const VerificationMeta('licenses');
   @override
-  late final GeneratedColumn<String> licenses = GeneratedColumn<String>(
-      'licenses', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumnWithTypeConverter<List<String>, String> licenses =
+      GeneratedColumn<String>('licenses', aliasedName, false,
+              type: DriftSqlType.string, requiredDuringInsert: true)
+          .withConverter<List<String>>(
+              $FavoritePackageTable.$converterlicenses);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -72,12 +74,6 @@ class $FavoritePackageTable extends FavoritePackage
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('licenses')) {
-      context.handle(_licensesMeta,
-          licenses.isAcceptableOrUnknown(data['licenses']!, _licensesMeta));
-    } else if (isInserting) {
-      context.missing(_licensesMeta);
-    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -97,8 +93,9 @@ class $FavoritePackageTable extends FavoritePackage
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description'])!,
-      licenses: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}licenses'])!,
+      licenses: $FavoritePackageTable.$converterlicenses.fromSql(
+          attachedDatabase.typeMapping
+              .read(DriftSqlType.string, data['${effectivePrefix}licenses'])!),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at']),
     );
@@ -108,6 +105,9 @@ class $FavoritePackageTable extends FavoritePackage
   $FavoritePackageTable createAlias(String alias) {
     return $FavoritePackageTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<List<String>, String> $converterlicenses =
+      const StringListConverter();
 }
 
 class FavoritePackageData extends DataClass
@@ -115,7 +115,7 @@ class FavoritePackageData extends DataClass
   final int id;
   final String name;
   final String description;
-  final String licenses;
+  final List<String> licenses;
   final DateTime? createdAt;
   const FavoritePackageData(
       {required this.id,
@@ -129,7 +129,10 @@ class FavoritePackageData extends DataClass
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
     map['description'] = Variable<String>(description);
-    map['licenses'] = Variable<String>(licenses);
+    {
+      map['licenses'] = Variable<String>(
+          $FavoritePackageTable.$converterlicenses.toSql(licenses));
+    }
     if (!nullToAbsent || createdAt != null) {
       map['created_at'] = Variable<DateTime>(createdAt);
     }
@@ -155,7 +158,7 @@ class FavoritePackageData extends DataClass
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
-      licenses: serializer.fromJson<String>(json['licenses']),
+      licenses: serializer.fromJson<List<String>>(json['licenses']),
       createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
     );
   }
@@ -166,7 +169,7 @@ class FavoritePackageData extends DataClass
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
-      'licenses': serializer.toJson<String>(licenses),
+      'licenses': serializer.toJson<List<String>>(licenses),
       'createdAt': serializer.toJson<DateTime?>(createdAt),
     };
   }
@@ -175,7 +178,7 @@ class FavoritePackageData extends DataClass
           {int? id,
           String? name,
           String? description,
-          String? licenses,
+          List<String>? licenses,
           Value<DateTime?> createdAt = const Value.absent()}) =>
       FavoritePackageData(
         id: id ?? this.id,
@@ -224,7 +227,7 @@ class FavoritePackageCompanion extends UpdateCompanion<FavoritePackageData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> description;
-  final Value<String> licenses;
+  final Value<List<String>> licenses;
   final Value<DateTime?> createdAt;
   const FavoritePackageCompanion({
     this.id = const Value.absent(),
@@ -237,7 +240,7 @@ class FavoritePackageCompanion extends UpdateCompanion<FavoritePackageData> {
     this.id = const Value.absent(),
     required String name,
     required String description,
-    required String licenses,
+    required List<String> licenses,
     this.createdAt = const Value.absent(),
   })  : name = Value(name),
         description = Value(description),
@@ -262,7 +265,7 @@ class FavoritePackageCompanion extends UpdateCompanion<FavoritePackageData> {
       {Value<int>? id,
       Value<String>? name,
       Value<String>? description,
-      Value<String>? licenses,
+      Value<List<String>>? licenses,
       Value<DateTime?>? createdAt}) {
     return FavoritePackageCompanion(
       id: id ?? this.id,
@@ -286,7 +289,8 @@ class FavoritePackageCompanion extends UpdateCompanion<FavoritePackageData> {
       map['description'] = Variable<String>(description.value);
     }
     if (licenses.present) {
-      map['licenses'] = Variable<String>(licenses.value);
+      map['licenses'] = Variable<String>(
+          $FavoritePackageTable.$converterlicenses.toSql(licenses.value));
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -324,7 +328,7 @@ typedef $$FavoritePackageTableCreateCompanionBuilder = FavoritePackageCompanion
   Value<int> id,
   required String name,
   required String description,
-  required String licenses,
+  required List<String> licenses,
   Value<DateTime?> createdAt,
 });
 typedef $$FavoritePackageTableUpdateCompanionBuilder = FavoritePackageCompanion
@@ -332,7 +336,7 @@ typedef $$FavoritePackageTableUpdateCompanionBuilder = FavoritePackageCompanion
   Value<int> id,
   Value<String> name,
   Value<String> description,
-  Value<String> licenses,
+  Value<List<String>> licenses,
   Value<DateTime?> createdAt,
 });
 
@@ -354,8 +358,10 @@ class $$FavoritePackageTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get licenses => $composableBuilder(
-      column: $table.licenses, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<List<String>, List<String>, String>
+      get licenses => $composableBuilder(
+          column: $table.licenses,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -404,7 +410,7 @@ class $$FavoritePackageTableAnnotationComposer
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<String> get licenses =>
+  GeneratedColumnWithTypeConverter<List<String>, String> get licenses =>
       $composableBuilder(column: $table.licenses, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
@@ -441,7 +447,7 @@ class $$FavoritePackageTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
             Value<String> description = const Value.absent(),
-            Value<String> licenses = const Value.absent(),
+            Value<List<String>> licenses = const Value.absent(),
             Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               FavoritePackageCompanion(
@@ -455,7 +461,7 @@ class $$FavoritePackageTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             required String name,
             required String description,
-            required String licenses,
+            required List<String> licenses,
             Value<DateTime?> createdAt = const Value.absent(),
           }) =>
               FavoritePackageCompanion.insert(
