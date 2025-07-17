@@ -6,12 +6,12 @@ part of 'object.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Object _$ObjectFromJson(Map<String, Object?> json) => Object(
+Object _$ObjectFromJson(Map<String, dynamic> json) => Object(
       level: $enumDecodeNullable(_$LevelEnumMap, json['level']) ??
           Level.maintainer,
     );
 
-Map<String, Object?> _$ObjectToJson(Object instance) => <String, Object?>{
+Map<String, dynamic> _$ObjectToJson(Object instance) => <String, dynamic>{
       'level': _$LevelEnumMap[instance.level]!,
     };
 

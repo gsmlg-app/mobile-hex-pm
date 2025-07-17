@@ -260,9 +260,7 @@ class HomeResultScreen extends StatelessWidget {
                                             name: pkg.name,
                                             description:
                                                 pkg.meta.description ?? '',
-                                            licenses:
-                                                pkg.meta.licenses?.join(',') ??
-                                                    '',
+                                            licenses: pkg.meta.licenses ?? [],
                                           ),
                                         );
                                     context.read<FavoritePackageBloc>().add(

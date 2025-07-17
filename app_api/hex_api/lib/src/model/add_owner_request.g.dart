@@ -16,7 +16,7 @@ AddOwnerRequest _$AddOwnerRequestFromJson(Map<String, dynamic> json) =>
               'level',
               (v) =>
                   $enumDecodeNullable(_$AddOwnerRequestLevelEnumEnumMap, v) ??
-                  AddOwnerRequestLevelEnum.maintainer),
+                  'maintainer'),
         );
         return val;
       },

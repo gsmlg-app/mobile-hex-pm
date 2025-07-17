@@ -14,9 +14,9 @@ class Object {
     this.level = Level.maintainer,
   });
 
-  factory Object.fromJson(Map<String, Object?> json) => _$ObjectFromJson(json);
+  factory Object.fromJson(Map<String, dynamic> json) => _$ObjectFromJson(json);
 
   final Level level;
 
-  Map<String, Object?> toJson() => _$ObjectToJson(this);
+  Map<String, dynamic> toJson() => _$ObjectToJson(this);
 }
