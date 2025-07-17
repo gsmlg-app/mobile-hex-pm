@@ -1,10 +1,9 @@
 import 'package:app_database/app_database.dart';
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:hex_api/hex_api.dart';
 
-part 'event.dart';
-part 'state.dart';
+import 'event.dart';
+import 'state.dart';
 
 class FavoritePackageBloc
     extends Bloc<FavoritePackageEvent, FavoritePackageState> {
@@ -16,6 +15,7 @@ class FavoritePackageBloc
     on<FavoritePackageEventInit>(_onFavoritePackageEventInit);
     on<FavoritePackageEventGetPackage>(_onFavoritePackageEventGetPackage);
     on<FavoritePackageEventGetRelease>(_onFavoritePackageEventGetRelease);
+    on<FavoritePackageEventRemove>(_onFavoritePackageEventRemove);
   }
 
   Future<void> _onFavoritePackageEventInit(
@@ -68,5 +68,19 @@ class FavoritePackageBloc
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> _onFavoritePackageEventRemove(
+    FavoritePackageEventRemove event,
+    Emitter<FavoritePackageState> emitter,
+  ) async {
+    await (database.delete(database.favoritePackage)
+          ..where((tbl) => tbl.name.equals(event.name)))
+        .go();
+
+    final List<FavoritePackageData> favorites =
+        await database.select(database.favoritePackage).get();
+
+    emitter(state.copyWith(favorites: favorites));
   }
 }

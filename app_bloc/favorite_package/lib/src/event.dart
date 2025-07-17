@@ -1,5 +1,3 @@
-part of 'bloc.dart';
-
 sealed class FavoritePackageEvent {
   const FavoritePackageEvent();
 }
@@ -19,5 +17,11 @@ final class FavoritePackageEventGetRelease extends FavoritePackageEvent {
   final String version;
 
   const FavoritePackageEventGetRelease(this.name, this.version);
+}
+
+final class FavoritePackageEventRemove extends FavoritePackageEvent {
+  final String name;
+
+  const FavoritePackageEventRemove(this.name);
 }
 

@@ -68,6 +68,7 @@ dependencies:
   flutter_form_bloc: any
   flutter_adaptive_scaffold: any
   app_web_view: any
+  flutter_slidable: ^4.0.0
 
 dev_dependencies:
   flutter_test:

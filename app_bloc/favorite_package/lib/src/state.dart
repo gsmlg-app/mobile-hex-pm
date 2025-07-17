@@ -1,4 +1,6 @@
-part of 'bloc.dart';
+import 'package:app_database/app_database.dart';
+import 'package:equatable/equatable.dart';
+import 'package:hex_api/hex_api.dart';
 
 class FavoritePackageState extends Equatable {
   factory FavoritePackageState.initial() {
