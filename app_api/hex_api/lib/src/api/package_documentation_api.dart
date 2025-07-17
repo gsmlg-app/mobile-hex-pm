@@ -6,10 +6,8 @@ import 'dart:async';
 
 // ignore: unused_import
 import 'dart:convert';
-import 'package:hex_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:hex_api/src/model/error.dart';
 
 class PackageDocumentationApi {
   final Dio _dio;

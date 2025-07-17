@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:hex_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:hex_api/src/model/error.dart';
 import 'package:hex_api/src/model/package.dart';
 
 class PackagesApi {

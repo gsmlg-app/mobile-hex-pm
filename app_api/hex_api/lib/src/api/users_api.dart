@@ -9,11 +9,9 @@ import 'dart:convert';
 import 'package:hex_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:hex_api/src/model/error.dart';
 import 'package:hex_api/src/model/user.dart';
 import 'package:hex_api/src/model/user_create.dart';
 import 'package:hex_api/src/model/user_with_orgs.dart';
-import 'package:hex_api/src/model/validation_error.dart';
 
 class UsersApi {
   final Dio _dio;

@@ -10,7 +10,6 @@ import 'package:hex_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
 import 'package:hex_api/src/model/add_owner_request.dart';
-import 'package:hex_api/src/model/error.dart';
 import 'package:hex_api/src/model/owner.dart';
 
 class PackageOwnersApi {

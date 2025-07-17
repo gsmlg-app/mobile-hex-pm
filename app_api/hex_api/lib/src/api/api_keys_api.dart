@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:hex_api/src/model/api_key.dart';
 import 'package:hex_api/src/model/api_key_create.dart';
 import 'package:hex_api/src/model/api_key_with_secret.dart';
-import 'package:hex_api/src/model/error.dart';
 
 class APIKeysApi {
   final Dio _dio;
