@@ -75,6 +75,24 @@ class HexSettingsScreen extends StatelessWidget {
                                     )
                                   : null,
                             ),
+                            if (token != null)
+                              SettingsTile(
+                                leading: const Icon(
+                                  Icons.delete_forever_rounded,
+                                  color: Colors.red,
+                                ),
+                                title: Center(
+                                  child: Text(
+                                    'Remove API Key',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                onPressed: (context) {
+                                  context
+                                      .read<HexAuthBloc>()
+                                      .add(HexAuthEventLogout());
+                                },
+                              ),
                           ],
                         ),
                         if (user != null)
