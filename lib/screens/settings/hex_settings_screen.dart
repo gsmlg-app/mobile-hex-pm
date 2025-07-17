@@ -30,10 +30,6 @@ class HexSettingsScreen extends StatelessWidget {
       ),
       destinations: Destinations.navs(context),
       body: (context) {
-        final bloc = context.read<HexAuthBloc>();
-        final user = bloc.state.currenUser;
-        final token = bloc.state.apiKey;
-
         return SafeArea(
           child: CustomScrollView(
             slivers: <Widget>[
@@ -43,6 +39,9 @@ class HexSettingsScreen extends StatelessWidget {
               SliverFillRemaining(
                 child: BlocBuilder<HexAuthBloc, HexAuthState>(
                   builder: (context, state) {
+                    final user = state.currenUser;
+                    final token = state.apiKey;
+
                     return SettingsList(
                       sections: [
                         SettingsSection(
