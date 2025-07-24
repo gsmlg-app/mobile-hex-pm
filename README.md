@@ -2,7 +2,7 @@
 
 Read `hexdocs` offline.
 
-[screenshot](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
+![screenshot](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png)
 
 ## Getting Started
 
