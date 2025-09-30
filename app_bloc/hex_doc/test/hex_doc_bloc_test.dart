@@ -168,10 +168,5 @@ Uint8List _createTestTarGz() {
   final archive = Archive()
     ..addFile(ArchiveFile('index.html', 12, Uint8List.fromList('hello world'.codeUnits)));
   final tarData = TarEncoder().encode(archive);
-  final gzipped = GZipEncoder().encode(tarData);
-  if (gzipped == null) {
-    // This should not happen with the test data, but it's good practice to handle.
-    throw Exception('Gzip encoding failed');
-  }
-  return Uint8List.fromList(gzipped);
+  return Uint8List.fromList(GZipEncoder().encode(tarData)!);
 }
