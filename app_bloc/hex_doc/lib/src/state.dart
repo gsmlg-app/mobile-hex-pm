@@ -27,32 +27,32 @@ class HexDocState extends Equatable {
   }
 
   const HexDocState({
-    this.stats = DocStats.unset,
-    this.indexFile = '',
+    this.status = const {},
+    this.indexFiles = const {},
     this.docs = const {},
     this.expandedState = const {},
     this.error,
   });
 
-  final DocStats stats;
-  final String indexFile;
+  final Map<String, DocStats> status;
+  final Map<String, String> indexFiles;
   final Map<String, List<DocInfo>> docs;
   final Map<String, bool> expandedState;
   final Object? error;
 
   @override
-  List<Object?> get props => [stats, indexFile, docs, expandedState, error];
+  List<Object?> get props => [status, indexFiles, docs, expandedState, error];
 
   HexDocState copyWith({
-    DocStats? stats,
-    String? indexFile,
+    Map<String, DocStats>? status,
+    Map<String, String>? indexFiles,
     Map<String, List<DocInfo>>? docs,
     Map<String, bool>? expandedState,
     Object? error,
   }) {
     return HexDocState(
-      stats: stats ?? this.stats,
-      indexFile: indexFile ?? this.indexFile,
+      status: status ?? this.status,
+      indexFiles: indexFiles ?? this.indexFiles,
       docs: docs ?? this.docs,
       expandedState: expandedState ?? this.expandedState,
       error: error ?? this.error,

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:async/async.dart';
+import 'package:async/async.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +12,12 @@ part 'event.dart';
 part 'state.dart';
 
 class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
-  HexDocBloc(this.appSupportDir, this.tmpDir) : super(const HexDocState()) {
+  HexDocBloc(
+    this.appSupportDir,
+    this.tmpDir, {
+    http.Client? client,
+  })  : _client = client ?? http.Client(),
+        super(const HexDocState()) {
     on<HexDocEventInit>(_onHexDocEventInit);
     on<HexDocEventSetup>(_onHexDocEventSetup);
     on<HexDocEventList>(_onHexDocEventList);
@@ -24,6 +31,8 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
 
   final Directory appSupportDir;
   final Directory tmpDir;
+  final http.Client _client;
+  final Mutex _mutex = Mutex();
 
   Future<void> _onHexDocEventInit(
     HexDocEventInit event,
@@ -46,6 +55,7 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     HexDocEventDelete event,
     Emitter<HexDocState> emitter,
   ) async {
+    final docId = '${event.packageName}-${event.packageVersion}';
     try {
       final packageDir = Directory(p.join(
         appSupportDir.path,
@@ -64,12 +74,24 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
       final newDocs = Map<String, List<DocInfo>>.from(state.docs);
       final versions = newDocs[event.packageName];
       if (versions != null) {
-        versions.removeWhere((doc) => doc.packageVersion == event.packageVersion);
+        versions
+            .removeWhere((doc) => doc.packageVersion == event.packageVersion);
         if (versions.isEmpty) {
           newDocs.remove(event.packageName);
         }
       }
-      emitter(state.copyWith(docs: newDocs));
+
+      final newStatus = Map<String, DocStats>.from(state.status);
+      newStatus.remove(docId);
+
+      final newIndexFiles = Map<String, String>.from(state.indexFiles);
+      newIndexFiles.remove(docId);
+
+      emitter(state.copyWith(
+        docs: newDocs,
+        status: newStatus,
+        indexFiles: newIndexFiles,
+      ));
 
       if (await packageDir.exists()) {
         final remainingFiles = await packageDir.list().toList();
@@ -78,7 +100,9 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
         }
       }
     } catch (e) {
-      emitter(state.copyWith(stats: DocStats.error, error: e));
+      final newStatus = Map<String, DocStats>.from(state.status);
+      newStatus[docId] = DocStats.error;
+      emitter(state.copyWith(status: newStatus, error: e));
     }
   }
 
@@ -116,6 +140,7 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     HexDocEventSetup event,
     Emitter<HexDocState> emitter,
   ) async {
+    final docId = '${event.packageName}-${event.packageVersion}';
     try {
       final dir = p.join(
         appSupportDir.path,
@@ -124,23 +149,50 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
         event.packageVersion,
       );
       final indexFile = File(p.join(dir, 'index.html'));
+
       if (await indexFile.exists()) {
+        final newStatus = Map<String, DocStats>.from(state.status);
+        newStatus[docId] = DocStats.ok;
+        final newIndexFiles = Map<String, String>.from(state.indexFiles);
+        newIndexFiles[docId] = indexFile.path;
+
         emitter(state.copyWith(
-          stats: DocStats.ok,
-          indexFile: indexFile.path,
+          status: newStatus,
+          indexFiles: newIndexFiles,
         ));
-      } else {
-        emitter(state.copyWith(stats: DocStats.downloading));
-        final response = await http.get(Uri.parse(getUrl(
+        return;
+      }
+
+      await _mutex.protect(() async {
+        // Re-check after acquiring lock in case another process downloaded the file.
+        if (await indexFile.exists()) {
+          final newStatus = Map<String, DocStats>.from(state.status);
+          newStatus[docId] = DocStats.ok;
+          final newIndexFiles = Map<String, String>.from(state.indexFiles);
+          newIndexFiles[docId] = indexFile.path;
+          emitter(state.copyWith(
+            status: newStatus,
+            indexFiles: newIndexFiles,
+          ));
+          return;
+        }
+
+        final newStatus = Map<String, DocStats>.from(state.status);
+        newStatus[docId] = DocStats.downloading;
+        emitter(state.copyWith(status: newStatus));
+
+        final response = await _client.get(Uri.parse(getUrl(
           event.packageName,
           event.packageVersion,
         )));
 
         if (response.statusCode == 200) {
-          emitter(state.copyWith(stats: DocStats.extracting));
+          final newStatus = Map<String, DocStats>.from(state.status);
+          newStatus[docId] = DocStats.extracting;
+          emitter(state.copyWith(status: newStatus));
+
           final gzipDecoder = GZipDecoder();
           final tarBytes = gzipDecoder.decodeBytes(response.bodyBytes);
-
           final tarArchive = TarDecoder().decodeBytes(tarBytes);
 
           for (final file in tarArchive.files) {
@@ -157,16 +209,24 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
             }
           }
 
+          final newStatusOk = Map<String, DocStats>.from(state.status);
+          newStatusOk[docId] = DocStats.ok;
+          final newIndexFiles = Map<String, String>.from(state.indexFiles);
+          newIndexFiles[docId] = indexFile.path;
+
           emitter(state.copyWith(
-            stats: DocStats.ok,
-            indexFile: indexFile.path,
+            status: newStatusOk,
+            indexFiles: newIndexFiles,
           ));
         } else {
-          emitter(state.copyWith(stats: DocStats.error));
+          throw Exception(
+              'Failed to download documentation: ${response.statusCode}');
         }
-      }
+      });
     } catch (e) {
-      emitter(state.copyWith(stats: DocStats.error, error: e));
+      final newStatus = Map<String, DocStats>.from(state.status);
+      newStatus[docId] = DocStats.error;
+      emitter(state.copyWith(status: newStatus, error: e));
     }
   }
 }
