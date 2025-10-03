@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -22,6 +24,20 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..enableZoom(true)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            // Inject CSS to improve scrolling behavior
+            _controller.runJavaScript('''
+              document.body.style.overflow = 'auto';
+              document.body.style.webkitOverflowScrolling = 'touch';
+              document.documentElement.style.overflow = 'auto';
+              document.documentElement.style.webkitOverflowScrolling = 'touch';
+            ''');
+          },
+        ),
+      )
       ..loadFile(widget.indexFile);
   }
 
@@ -34,8 +50,20 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
   Widget build(BuildContext context) {
     return WebViewWidget(
       controller: _controller,
-      // Use default gesture recognizers to avoid conflicts with parent scroll views
-      // The webview_flutter package handles nested scrolling properly when using defaults
+      gestureRecognizers: {
+        Factory<VerticalDragGestureRecognizer>(
+          () => VerticalDragGestureRecognizer(),
+        ),
+        Factory<HorizontalDragGestureRecognizer>(
+          () => HorizontalDragGestureRecognizer(),
+        ),
+        Factory<ScaleGestureRecognizer>(
+          () => ScaleGestureRecognizer(),
+        ),
+        Factory<TapGestureRecognizer>(
+          () => TapGestureRecognizer(),
+        ),
+      },
     );
   }
 }

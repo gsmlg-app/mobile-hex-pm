@@ -50,45 +50,17 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
         context,
       ),
       destinations: Destinations.navs(context),
-      body: (context) => CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  if (widget.parentName == FavoriteScreen.name) {
-                    context.goNamed(FavoriteScreen.name);
-                  } else {
-                    context.goNamed(DownloadsScreen.name);
-                  }
-                }
-              },
-            ),
-            title: Text(
-                '${widget.packageName}(${widget.packageVersion}) Document'),
-          ),
-          BlocBuilder<HexDocBloc, HexDocState>(
+      body: (context) {
+        if (Breakpoint.isDesktop(context)) {
+          return BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
               if (state.stats == DocStats.ok && state.indexFile.isNotEmpty) {
-                if (Breakpoint.isDesktop(context)) {
-                  return SliverFillRemaining(
-                    child: Center(
-                      child: ElevatedButton(
-                        onPressed: () =>
-                            launchUrl(Uri.parse('file://${state.indexFile}')),
-                        child: Text(
-                            'Document ${widget.packageName} (${widget.packageVersion}) is ready. Click to open.'),
-                      ),
-                    ),
-                  );
-                }
-                 return SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: LocalHtmlViewer(
-                    indexFile: state.indexFile,
+                return Center(
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        launchUrl(Uri.parse('file://${state.indexFile}')),
+                    child: Text(
+                        'Document ${widget.packageName} (${widget.packageVersion}) is ready. Click to open.'),
                   ),
                 );
               }
@@ -112,15 +84,71 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                       'Document ${widget.packageName} (${widget.packageVersion}) is preparing...';
               }
 
-              return SliverFillRemaining(
-                child: Center(
-                  child: Text(message),
-                ),
+              return Center(
+                child: Text(message),
               );
             },
-          ),
-        ],
-      ),
+          );
+        }
+        
+        // Mobile layout with proper scrolling
+        return Column(
+          children: [
+            AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    if (widget.parentName == FavoriteScreen.name) {
+                      context.goNamed(FavoriteScreen.name);
+                    } else {
+                      context.goNamed(DownloadsScreen.name);
+                    }
+                  }
+                },
+              ),
+              title: Text(
+                  '${widget.packageName}(${widget.packageVersion}) Document'),
+            ),
+            Expanded(
+              child: BlocBuilder<HexDocBloc, HexDocState>(
+                builder: (context, state) {
+                  if (state.stats == DocStats.ok && state.indexFile.isNotEmpty) {
+                    return LocalHtmlViewer(
+                      indexFile: state.indexFile,
+                    );
+                  }
+
+                  String message;
+                  switch (state.stats) {
+                    case DocStats.downloading:
+                      message =
+                          'Document ${widget.packageName} (${widget.packageVersion}) is downloading';
+                      break;
+                    case DocStats.extracting:
+                      message =
+                          'Document ${widget.packageName} (${widget.packageVersion}) is extracting';
+                      break;
+                    case DocStats.error:
+                      message =
+                          'Document ${widget.packageName} (${widget.packageVersion}) setup error';
+                      break;
+                    default:
+                      message =
+                          'Document ${widget.packageName} (${widget.packageVersion}) is preparing...';
+                  }
+
+                  return Center(
+                    child: Text(message),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

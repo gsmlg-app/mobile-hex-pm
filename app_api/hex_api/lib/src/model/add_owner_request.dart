@@ -20,7 +20,7 @@ class AddOwnerRequest {
   });
 
   @JsonKey(
-    defaultValue: 'maintainer',
+    defaultValue: AddOwnerRequestLevelEnum.maintainer,
     name: r'level',
     required: false,
     includeIfNull: false,
