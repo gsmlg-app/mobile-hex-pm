@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -36,11 +34,8 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
   Widget build(BuildContext context) {
     return WebViewWidget(
       controller: _controller,
-      gestureRecognizers: {
-        Factory<VerticalDragGestureRecognizer>(
-          () => VerticalDragGestureRecognizer(),
-        ),
-      },
+      // Use default gesture recognizers to avoid conflicts with parent scroll views
+      // The webview_flutter package handles nested scrolling properly when using defaults
     );
   }
 }

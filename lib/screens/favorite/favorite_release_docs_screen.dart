@@ -85,7 +85,8 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                     ),
                   );
                 }
-                return SliverFillRemaining(
+                 return SliverFillRemaining(
+                  hasScrollBody: false,
                   child: LocalHtmlViewer(
                     indexFile: state.indexFile,
                   ),
