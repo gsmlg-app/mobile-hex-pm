@@ -397,8 +397,8 @@ class HomeResultScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Downloads',
+                       Text(
+                         'Offline Docs',
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium

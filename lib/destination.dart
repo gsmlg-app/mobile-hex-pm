@@ -1,7 +1,7 @@
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mobile_hex_pm/screens/downloads/downloads_screen.dart';
+import 'package:mobile_hex_pm/screens/offline_docs/offline_docs_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:mobile_hex_pm/screens/home/home_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
@@ -21,7 +21,7 @@ class Destinations {
           label: context.l10n.navFavorite,
         ),
         NavigationDestination(
-          key: const Key(DownloadsScreen.name),
+          key: const Key(OfflineDocsScreen.name),
           icon: const Icon(Icons.download_outlined),
           selectedIcon: const Icon(Icons.download),
           label: context.l10n.navDownloads,
@@ -42,7 +42,7 @@ class Destinations {
     void _ = switch (idx) {
       0 => context.goNamed(HomeScreen.name),
       1 => context.goNamed(FavoriteScreen.name),
-      2 => context.goNamed(DownloadsScreen.name),
+      2 => context.goNamed(OfflineDocsScreen.name),
       3 => context.goNamed(SettingsScreen.name),
       int() => context.goNamed(HomeScreen.name),
     };

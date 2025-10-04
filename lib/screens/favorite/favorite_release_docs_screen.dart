@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
-import 'package:mobile_hex_pm/screens/downloads/downloads_screen.dart';
+import 'package:mobile_hex_pm/screens/offline_docs/offline_docs_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_releases_screen.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,7 +44,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
     return AppAdaptiveScaffold(
       selectedIndex: widget.parentName == FavoriteScreen.name
           ? Destinations.indexOf(const Key(FavoriteScreen.name), context)
-          : Destinations.indexOf(const Key(DownloadsScreen.name), context),
+           : Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(
         idx,
         context,
@@ -104,7 +104,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                     if (widget.parentName == FavoriteScreen.name) {
                       context.goNamed(FavoriteScreen.name);
                     } else {
-                      context.goNamed(DownloadsScreen.name);
+                       context.goNamed(OfflineDocsScreen.name);
                     }
                   }
                 },

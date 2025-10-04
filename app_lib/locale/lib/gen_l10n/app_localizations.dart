@@ -169,7 +169,7 @@ abstract class AppLocalizations {
   /// No description provided for @navDownloads.
   ///
   /// In en, this message translates to:
-  /// **'Downloads'**
+  /// **'Offline Docs'**
   String get navDownloads;
 
   /// No description provided for @navSetting.

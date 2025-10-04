@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "dev.gsmlg" "\0"
+            VALUE "CompanyName", "GSMLG" "\0"
             VALUE "FileDescription", "mobile_hex_pm" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "mobile_hex_pm" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2025 dev.gsmlg. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 GSMLG Inc All rights reserved." "\0"
             VALUE "OriginalFilename", "mobile_hex_pm.exe" "\0"
             VALUE "ProductName", "mobile_hex_pm" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

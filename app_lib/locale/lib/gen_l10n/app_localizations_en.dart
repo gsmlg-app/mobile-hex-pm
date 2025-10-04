@@ -45,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navFavorite => 'Favorite';
 
   @override
-  String get navDownloads => 'Downloads';
+  String get navDownloads => 'Offline Docs';
 
   @override
   String get navSetting => 'Setting';

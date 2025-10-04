@@ -6,17 +6,17 @@ import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
 import 'package:mobile_hex_pm/screens/favorite/favorite_release_docs_screen.dart';
 
-class DownloadsScreen extends StatefulWidget {
-  static const name = 'Downloads Screen';
-  static const path = '/downloads';
+class OfflineDocsScreen extends StatefulWidget {
+  static const name = 'Offline Docs Screen';
+  static const path = '/offline-docs';
 
-  const DownloadsScreen({super.key});
+  const OfflineDocsScreen({super.key});
 
   @override
-  State<DownloadsScreen> createState() => _DownloadsScreenState();
+  State<OfflineDocsScreen> createState() => _OfflineDocsScreenState();
 }
 
-class _DownloadsScreenState extends State<DownloadsScreen> {
+class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
   @override
   void initState() {
     super.initState();
@@ -26,14 +26,14 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppAdaptiveScaffold(
-      selectedIndex: Destinations.indexOf(const Key(DownloadsScreen.name), context),
+      selectedIndex: Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
       body: (context) => CustomScrollView(
-        key: const PageStorageKey('downloads_scroll_view'),
+         key: const PageStorageKey('offline_docs_scroll_view'),
         slivers: [
           SliverAppBar(
-            title: const Text('Downloads'),
+            title: const Text('Offline Docs'),
           ),
           BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
@@ -72,7 +72,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                         'package_version': doc.packageVersion,
                                       },
                                       queryParameters: {
-                                        'parentName': DownloadsScreen.name,
+                                        'parentName': OfflineDocsScreen.name,
                                       },
                                     );
                                   },

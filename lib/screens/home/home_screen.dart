@@ -95,6 +95,21 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Text(
+                    'How to use this app:\n'
+                    '• Search packages\n'
+                    '• View package details\n'
+                    '• Add to favorite\n'
+                    '• In favorite, select package and download target version documents\n'
+                    '• View offline docs in Offline Docs menu',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
+                ),
               ],
             ),
           ),
