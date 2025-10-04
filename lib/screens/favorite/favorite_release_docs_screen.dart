@@ -117,6 +117,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                 builder: (context, state) {
                   if (state.stats == DocStats.ok && state.indexFile.isNotEmpty) {
                     return LocalHtmlViewer(
+                      key: ValueKey(state.indexFile),
                       indexFile: state.indexFile,
                     );
                   }
