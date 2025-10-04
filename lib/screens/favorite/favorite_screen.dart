@@ -1,4 +1,5 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:app_locale/app_locale.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
@@ -30,7 +31,7 @@ class FavoriteScreen extends StatelessWidget {
       body: (context) => CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: Text('Favorite Packages'),
+            title: Text(context.l10n.favoritePackages),
           ),
           BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
             builder: (context, state) {

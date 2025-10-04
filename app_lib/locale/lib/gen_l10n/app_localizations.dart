@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// No description provided for @loading.
   ///
   /// In en, this message translates to:
-  /// **'Loading'**
+  /// **'Loading...'**
   String get loading;
 
   /// No description provided for @success.
@@ -207,6 +207,234 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
+
+  /// No description provided for @appTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HEX Packages'**
+  String get appTitle;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @hex.
+  ///
+  /// In en, this message translates to:
+  /// **'hex'**
+  String get hex;
+
+  /// No description provided for @favoritePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Packages'**
+  String get favoritePackages;
+
+  /// No description provided for @releasesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{packageName} Releases'**
+  String releasesTitle(Object packageName);
+
+  /// No description provided for @downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'downloads'**
+  String get downloads;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get yesterday;
+
+  /// No description provided for @last7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'last 7 days'**
+  String get last7Days;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'all time'**
+  String get allTime;
+
+  /// No description provided for @favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get favorite;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @hexAPI.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex API'**
+  String get hexAPI;
+
+  /// No description provided for @hexAPIKey.
+  ///
+  /// In en, this message translates to:
+  /// **'HEX_API_KEY'**
+  String get hexAPIKey;
+
+  /// No description provided for @notSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get notSet;
+
+  /// No description provided for @hidden.
+  ///
+  /// In en, this message translates to:
+  /// **'******'**
+  String get hidden;
+
+  /// No description provided for @hexUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex User'**
+  String get hexUser;
+
+  /// No description provided for @username.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get username;
+
+  /// No description provided for @setAPIKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Set hex.pm API Key'**
+  String get setAPIKey;
+
+  /// No description provided for @removeAPIKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove API Key'**
+  String get removeAPIKey;
+
+  /// No description provided for @confirmRemoveAPIKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove the API key?'**
+  String get confirmRemoveAPIKey;
+
+  /// No description provided for @deleteDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Document'**
+  String get deleteDocument;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @confirmDeleteDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the document for {packageName} ({packageVersion})?'**
+  String confirmDeleteDocument(Object packageName, Object packageVersion);
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @howToUseApp.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use this app:'**
+  String get howToUseApp;
+
+  /// No description provided for @searchPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Search packages'**
+  String get searchPackages;
+
+  /// No description provided for @viewPackageDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View package details'**
+  String get viewPackageDetails;
+
+  /// No description provided for @addToFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorite'**
+  String get addToFavorite;
+
+  /// No description provided for @downloadDocsInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'In favorite, select package and download target version documents'**
+  String get downloadDocsInstruction;
+
+  /// No description provided for @viewOfflineDocsInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'View offline docs in Offline Docs menu'**
+  String get viewOfflineDocsInstruction;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @noPackagesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No packages found for your search'**
+  String get noPackagesFound;
+
+  /// No description provided for @tryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term'**
+  String get tryDifferentSearch;
+
+  /// No description provided for @searchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Search error occurred'**
+  String get searchError;
+
+  /// No description provided for @failedToLoadPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load packages'**
+  String get failedToLoadPackages;
+
+  /// No description provided for @pleaseTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again'**
+  String get pleaseTryAgain;
+
+  /// No description provided for @noReleasesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No releases available'**
+  String get noReleasesAvailable;
+
+  /// No description provided for @packageHasNoReleases.
+  ///
+  /// In en, this message translates to:
+  /// **'This package has no releases'**
+  String get packageHasNoReleases;
 }
 
 class _AppLocalizationsDelegate

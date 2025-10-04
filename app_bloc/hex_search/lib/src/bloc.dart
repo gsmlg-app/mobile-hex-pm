@@ -30,16 +30,19 @@ class HexSearchBloc extends Bloc<HexSearchEvent, HexSearchState> {
     Emitter<HexSearchState> emitter,
   ) async {
     try {
-      emitter(state.copyWith(isLoading: true));
+      emitter(state.copyWith(isLoading: true, error: null));
       final api = hexApi.getPackagesApi();
       final resp = await api.listPackages(
         search: event.name,
         sort: 'recent_downloads',
       );
       final data = resp.data;
-      emitter(state.copyWith(results: data));
+      emitter(state.copyWith(results: data ?? []));
     } catch (e) {
-      emitter(state.copyWith(results: []));
+      emitter(state.copyWith(
+        results: [],
+        error: 'Failed to search packages: ${e.toString()}',
+      ));
     } finally {
       emitter(state.copyWith(isLoading: false));
     }

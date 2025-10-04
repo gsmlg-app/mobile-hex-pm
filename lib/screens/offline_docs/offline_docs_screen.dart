@@ -1,4 +1,5 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,14 +27,15 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
   @override
   Widget build(BuildContext context) {
     return AppAdaptiveScaffold(
-      selectedIndex: Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
+      selectedIndex:
+          Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(idx, context),
       destinations: Destinations.navs(context),
       body: (context) => CustomScrollView(
-         key: const PageStorageKey('offline_docs_scroll_view'),
+        key: const PageStorageKey('offline_docs_scroll_view'),
         slivers: [
           SliverAppBar(
-            title: const Text('Offline Docs'),
+            title: Text(context.l10n.navDownloads),
           ),
           BlocBuilder<HexDocBloc, HexDocState>(
             builder: (context, state) {
@@ -85,22 +87,22 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
                                       builder: (BuildContext context) {
                                         return AlertDialog(
                                           title:
-                                              const Text('Delete Document'),
-                                          content: Text(
-                                              'Are you sure you want to delete the document for ${doc.packageName} (${doc.packageVersion})?'),
+                                              Text(context.l10n.deleteDocument),
+                                          content: Text(context.l10n
+                                              .confirmDeleteDocument(
+                                                  doc.packageName,
+                                                  doc.packageVersion)),
                                           actions: [
                                             TextButton(
-                                              child: const Text('Cancel'),
+                                              child: Text(context.l10n.cancel),
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
                                             ),
                                             TextButton(
-                                              child: const Text('Delete'),
+                                              child: Text(context.l10n.delete),
                                               onPressed: () {
-                                                context
-                                                    .read<HexDocBloc>()
-                                                    .add(
+                                                context.read<HexDocBloc>().add(
                                                       HexDocEventDelete(
                                                         packageName:
                                                             doc.packageName,

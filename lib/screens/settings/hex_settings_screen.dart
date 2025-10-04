@@ -45,18 +45,18 @@ class HexSettingsScreen extends StatelessWidget {
                     return SettingsList(
                       sections: [
                         SettingsSection(
-                          title: Text('Hex API'),
+                          title: Text(context.l10n.hexAPI),
                           tiles: <SettingsTile>[
                             SettingsTile(
                               leading: const Icon(Icons.api),
                               title: Center(
                                 child: Text(
-                                  'HEX_API_KEY',
+                                  context.l10n.hexAPIKey,
                                 ),
                               ),
                               trailing: token == null
-                                  ? Text('Not set')
-                                  : Text('******'),
+                                  ? Text(context.l10n.notSet)
+                                  : Text(context.l10n.hidden),
                               onPressed: (context) {
                                 showSetApiDialog(context);
                               },
@@ -94,13 +94,13 @@ class HexSettingsScreen extends StatelessWidget {
                         ),
                         if (user != null)
                           SettingsSection(
-                            title: Text('Hex User'),
+                            title: Text(context.l10n.hexUser),
                             tiles: <SettingsTile>[
                               SettingsTile(
                                 leading: const Icon(Icons.account_box),
                                 title: Center(
                                   child: Text(
-                                    'Username',
+                                    context.l10n.username,
                                   ),
                                 ),
                                 trailing: Text(user.username),
@@ -157,7 +157,7 @@ class HexSettingsScreen extends StatelessWidget {
   void showSetApiDialog(BuildContext context) {
     showAppDialog(
       context: context,
-      title: Text('Set hex.pm API Key'),
+      title: Text(context.l10n.setAPIKey),
       content: Column(
         children: [
           SizedBox(
@@ -209,8 +209,8 @@ class HexSettingsScreen extends StatelessWidget {
   void showRemoveApiDialog(BuildContext context) {
     showAppDialog(
       context: context,
-      title: Text('Remove API Key'),
-      content: Text('Are you sure you want to remove the API key?'),
+      title: Text(context.l10n.removeAPIKey),
+      content: Text(context.l10n.confirmRemoveAPIKey),
       actions: [
         AppDialogAction(
           onPressed: (context) {
@@ -233,4 +233,3 @@ class HexSettingsScreen extends StatelessWidget {
     );
   }
 }
-

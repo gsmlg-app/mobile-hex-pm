@@ -43,11 +43,11 @@ class SettingsScreen extends StatelessWidget {
                     return SettingsList(
                       sections: [
                         SettingsSection(
-                          title: Text('Hex API'),
+                          title: Text(context.l10n.hexAPI),
                           tiles: <SettingsTile>[
                             SettingsTile.navigation(
                               leading: const Icon(Icons.api),
-                              title: Text('Hex API'),
+                              title: Text(context.l10n.hexAPI),
                               onPressed: (context) {
                                 context.goNamed(HexSettingsScreen.name);
                               },

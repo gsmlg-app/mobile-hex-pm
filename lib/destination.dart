@@ -22,8 +22,8 @@ class Destinations {
         ),
         NavigationDestination(
           key: const Key(OfflineDocsScreen.name),
-          icon: const Icon(Icons.download_outlined),
-          selectedIcon: const Icon(Icons.download),
+          icon: const Icon(Icons.menu_book_outlined),
+          selectedIcon: const Icon(Icons.menu_book),
           label: context.l10n.navDownloads,
         ),
         NavigationDestination(

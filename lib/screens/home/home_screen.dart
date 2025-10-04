@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +36,7 @@ class HomeScreen extends StatelessWidget {
       body: (context) => CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: Text('HEX Packages'),
+            title: Text(context.l10n.appTitle),
           ),
           SliverFillRemaining(
             child: Column(
@@ -88,7 +89,7 @@ class HomeScreen extends StatelessWidget {
                         child: Center(
                           child: TextButton(
                             onPressed: formBloc.submit,
-                            child: Text('Search'),
+                            child: Text(context.l10n.search),
                           ),
                         ),
                       ),
@@ -98,15 +99,15 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Text(
-                    'How to use this app:\n'
-                    '• Search packages\n'
-                    '• View package details\n'
-                    '• Add to favorite\n'
-                    '• In favorite, select package and download target version documents\n'
-                    '• View offline docs in Offline Docs menu',
+                    '${context.l10n.howToUseApp}\n'
+                    '• ${context.l10n.searchPackages}\n'
+                    '• ${context.l10n.viewPackageDetails}\n'
+                    '• ${context.l10n.addToFavorite}\n'
+                    '• ${context.l10n.downloadDocsInstruction}\n'
+                    '• ${context.l10n.viewOfflineDocsInstruction}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+                          color: Colors.grey[600],
+                        ),
                     textAlign: TextAlign.left,
                   ),
                 ),

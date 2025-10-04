@@ -44,7 +44,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
     return AppAdaptiveScaffold(
       selectedIndex: widget.parentName == FavoriteScreen.name
           ? Destinations.indexOf(const Key(FavoriteScreen.name), context)
-           : Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
+          : Destinations.indexOf(const Key(OfflineDocsScreen.name), context),
       onSelectedIndexChange: (idx) => Destinations.changeHandler(
         idx,
         context,
@@ -90,7 +90,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
             },
           );
         }
-        
+
         // Mobile layout with proper scrolling
         return Column(
           children: [
@@ -104,7 +104,7 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
                     if (widget.parentName == FavoriteScreen.name) {
                       context.goNamed(FavoriteScreen.name);
                     } else {
-                       context.goNamed(OfflineDocsScreen.name);
+                      context.goNamed(OfflineDocsScreen.name);
                     }
                   }
                 },
@@ -115,7 +115,8 @@ class _FavoriteReleaseDocsScreenState extends State<FavoriteReleaseDocsScreen> {
             Expanded(
               child: BlocBuilder<HexDocBloc, HexDocState>(
                 builder: (context, state) {
-                  if (state.stats == DocStats.ok && state.indexFile.isNotEmpty) {
+                  if (state.stats == DocStats.ok &&
+                      state.indexFile.isNotEmpty) {
                     return LocalHtmlViewer(
                       key: ValueKey(state.indexFile),
                       indexFile: state.indexFile,

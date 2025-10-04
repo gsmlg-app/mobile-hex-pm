@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
+import 'package:app_locale/app_locale.dart';
 import 'package:app_database/app_database.dart';
 import 'package:app_feedback/app_feedback.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
@@ -55,7 +56,7 @@ class HomeResultScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('hex'),
+                  Text(context.l10n.hex),
                   SizedBox(
                     width: 12,
                   ),
@@ -80,7 +81,7 @@ class HomeResultScreen extends StatelessWidget {
                     height: 54,
                     child: TextButton(
                       onPressed: formBloc.submit,
-                      child: Text('Search'),
+                      child: Text(context.l10n.search),
                     ),
                   ),
                 ],
@@ -96,10 +97,136 @@ class HomeResultScreen extends StatelessWidget {
                   ),
                 );
               }
+
+              // Handle error state
+              if (state.error != null) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          context.l10n.searchError,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          context.l10n.failedToLoadPackages,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          context.l10n.pleaseTryAgain,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            // Retry the last search
+                            final currentSearch = context
+                                .read<HexSearchFormBloc>()
+                                .searchName
+                                .value;
+                            if (currentSearch.isNotEmpty) {
+                              context.read<HexSearchBloc>().add(
+                                    HexSearchEventSearch(currentSearch),
+                                  );
+                            }
+                          },
+                          icon: Icon(Icons.refresh),
+                          label: Text(context.l10n.retry),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               final List<Package> results = state.results;
+
+              // Handle empty results
+              if (results.isEmpty) {
+                return SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.search_off,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          context.l10n.noResultsFound,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          context.l10n.noPackagesFound,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          context.l10n.tryDifferentSearch,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               return SliverList.builder(
                 itemBuilder: (context, idx) {
                   final Package pkg = results[idx];
+
+                  // Handle packages with no releases
+                  if (pkg.releases.isEmpty) {
+                    return ListTile(
+                      leading: pkg.private == true
+                          ? Icon(Icons.lock)
+                          : Icon(Icons.public),
+                      title: Text(pkg.name),
+                      subtitle: Text(context.l10n.packageHasNoReleases),
+                      trailing: Icon(Icons.info_outline,
+                          color: Theme.of(context).colorScheme.secondary),
+                    );
+                  }
+
                   final lastVersion = pkg.releases.first;
                   return ListTile(
                     leading: pkg.private == true
@@ -147,7 +274,7 @@ class HomeResultScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text('${pkg.downloads.all}'),
-                        Text('downloads'),
+                        Text(context.l10n.downloads),
                       ],
                     ),
                   );
@@ -271,8 +398,8 @@ class HomeResultScreen extends StatelessWidget {
                                   }
                                 },
                           child: isSaved
-                              ? Text('Favorite')
-                              : Text('Add to Favorites'),
+                              ? Text(context.l10n.favorite)
+                              : Text(context.l10n.addToFavorites),
                         );
                       },
                     ),
@@ -397,8 +524,8 @@ class HomeResultScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       Text(
-                         'Offline Docs',
+                      Text(
+                        'Offline Docs',
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -423,7 +550,7 @@ class HomeResultScreen extends StatelessWidget {
                                           .secondary,
                                     ),
                               ),
-                              Text('yesterday'),
+                              Text(context.l10n.yesterday),
                             ],
                           ),
                           Column(
@@ -440,7 +567,7 @@ class HomeResultScreen extends StatelessWidget {
                                           .secondary,
                                     ),
                               ),
-                              Text('last 7 days'),
+                              Text(context.l10n.last7Days),
                             ],
                           ),
                           Column(
@@ -457,7 +584,7 @@ class HomeResultScreen extends StatelessWidget {
                                           .secondary,
                                     ),
                               ),
-                              Text('all time'),
+                              Text(context.l10n.allTime),
                             ],
                           ),
                         ],
