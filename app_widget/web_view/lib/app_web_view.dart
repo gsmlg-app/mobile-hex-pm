@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -17,28 +20,118 @@ class LocalHtmlViewer extends StatefulWidget {
 
 class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
   late final WebViewController _controller;
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
+    _initializeWebViewWithRetry();
+  }
 
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..enableZoom(true)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) {
-            // Inject CSS to improve scrolling behavior
-            _controller.runJavaScript('''
-              document.body.style.overflow = 'auto';
-              document.body.style.webkitOverflowScrolling = 'touch';
-              document.documentElement.style.overflow = 'auto';
-              document.documentElement.style.webkitOverflowScrolling = 'touch';
-            ''');
-          },
-        ),
-      )
-      ..loadFile(widget.indexFile);
+  void _initializeWebViewWithRetry() async {
+    const maxRetries = 5;
+    int attempt = 0;
+    
+    while (attempt < maxRetries) {
+      debugPrint('LocalHtmlViewer: Attempt ${attempt + 1} of $maxRetries at ${DateTime.now()}');
+      
+      final success = await _initializeWebView();
+      if (success) {
+        debugPrint('LocalHtmlViewer: Successfully loaded on attempt ${attempt + 1}');
+        return;
+      }
+      
+      attempt++;
+      if (attempt < maxRetries) {
+        // Use shorter delays for first attempts, then increase
+        final delaySeconds = attempt <= 2 ? 1 : attempt;
+        debugPrint('LocalHtmlViewer: Retrying in $delaySeconds seconds...');
+        await Future.delayed(Duration(seconds: delaySeconds));
+      }
+    }
+    
+    // If all retries failed, show final error
+    setState(() {
+      _isLoading = false;
+      _error = 'Failed to load document after $maxRetries attempts. Please try again.';
+    });
+  }
+
+  Future<bool> _initializeWebView() async {
+    try {
+      debugPrint('LocalHtmlViewer: Loading file ${widget.indexFile}');
+      debugPrint('LocalHtmlViewer: File exists: ${File(widget.indexFile).existsSync()}');
+      
+      // Normalize the file path for the platform
+      final normalizedPath = Uri.file(widget.indexFile).toFilePath();
+      debugPrint('LocalHtmlViewer: Normalized path: $normalizedPath');
+      
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Check if file exists before loading
+      final file = File(widget.indexFile);
+      
+      // Wait a bit for file to be fully written (if just extracted)
+      int retries = 0;
+      while (!file.existsSync() && retries < 20) { // Increased retries
+        debugPrint('LocalHtmlViewer: File not found, waiting... retry $retries');
+        await Future.delayed(Duration(milliseconds: 200)); // Increased delay
+        retries++;
+      }
+      
+      if (!file.existsSync()) {
+        debugPrint('LocalHtmlViewer: File does not exist: ${widget.indexFile}');
+        return false; // Return failure instead of setting final error
+      }
+      
+      debugPrint('LocalHtmlViewer: File found, size: ${file.lengthSync()} bytes');
+      
+      // Additional wait time to ensure file is fully released by OS
+      await Future.delayed(Duration(milliseconds: 500));
+      debugPrint('LocalHtmlViewer: Finished waiting for file system to settle');
+
+      _controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..enableZoom(true)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageStarted: (String url) {
+              setState(() {
+                _isLoading = true;
+              });
+            },
+            onPageFinished: (String url) {
+              // Inject CSS to improve scrolling behavior
+              _controller.runJavaScript('''
+                document.body.style.overflow = 'auto';
+                document.body.style.webkitOverflowScrolling = 'touch';
+                document.documentElement.style.overflow = 'auto';
+                document.documentElement.style.webkitOverflowScrolling = 'touch';
+              ''');
+              setState(() {
+                _isLoading = false;
+              });
+            },
+              onWebResourceError: (WebResourceError error) {
+                debugPrint('WebView resource error: ${error.description}');
+                // Don't set state here, let the loadFile catch block handle it
+              },
+          ),
+        );
+      
+      // Load the file with proper error handling
+      await _controller.loadFile(widget.indexFile);
+      debugPrint('LocalHtmlViewer: WebView loadFile completed for: ${widget.indexFile}');
+      return true; // Success
+    } catch (e, stackTrace) {
+      debugPrint('LocalHtmlViewer: Error loading file: $e');
+      debugPrint('LocalHtmlViewer: Stack trace: $stackTrace');
+      return false; // Failure
+    }
   }
 
   @override
@@ -48,22 +141,60 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(
-      controller: _controller,
-      gestureRecognizers: {
-        Factory<VerticalDragGestureRecognizer>(
-          () => VerticalDragGestureRecognizer(),
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              'Failed to load document',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _initializeWebViewWithRetry,
+              child: const Text('Retry'),
+            ),
+          ],
         ),
-        Factory<HorizontalDragGestureRecognizer>(
-          () => HorizontalDragGestureRecognizer(),
+      );
+    }
+
+    return Stack(
+      children: [
+        WebViewWidget(
+          controller: _controller,
+          gestureRecognizers: {
+            Factory<VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer(),
+            ),
+            Factory<HorizontalDragGestureRecognizer>(
+              () => HorizontalDragGestureRecognizer(),
+            ),
+            Factory<ScaleGestureRecognizer>(
+              () => ScaleGestureRecognizer(),
+            ),
+            Factory<TapGestureRecognizer>(
+              () => TapGestureRecognizer(),
+            ),
+          },
         ),
-        Factory<ScaleGestureRecognizer>(
-          () => ScaleGestureRecognizer(),
-        ),
-        Factory<TapGestureRecognizer>(
-          () => TapGestureRecognizer(),
-        ),
-      },
+        if (_isLoading)
+          Container(
+            color: Colors.white.withValues(alpha: 0.8),
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+      ],
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
@@ -124,7 +125,11 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
         event.packageVersion,
       );
       final indexFile = File(p.join(dir, 'index.html'));
+      debugPrint('HexDocBloc: Checking for index file at: ${indexFile.path}');
+      debugPrint('HexDocBloc: File exists: ${await indexFile.exists()}');
+      
       if (await indexFile.exists()) {
+        debugPrint('HexDocBloc: Found existing index file, using: ${indexFile.path}');
         emitter(state.copyWith(
           stats: DocStats.ok,
           indexFile: indexFile.path,
@@ -141,26 +146,29 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
           final gzipDecoder = GZipDecoder();
           final tarBytes = gzipDecoder.decodeBytes(response.bodyBytes);
 
-          final tarArchive = TarDecoder().decodeBytes(tarBytes);
+           final tarArchive = TarDecoder().decodeBytes(tarBytes);
+           debugPrint('HexDocBloc: Extracted ${tarArchive.files.length} files from archive');
 
-          for (final file in tarArchive.files) {
-            final filename = file.name;
-            final filePath = p.join(dir, filename);
+           for (final file in tarArchive.files) {
+             final filename = file.name;
+             final filePath = p.join(dir, filename);
+             debugPrint('HexDocBloc: Extracting file: $filename -> $filePath');
 
-            if (file.isFile) {
-              final outFile = File(filePath);
-              await outFile.create(recursive: true);
-              await outFile.writeAsBytes(file.content as List<int>);
-            } else {
-              final dir = Directory(filePath);
-              await dir.create(recursive: true);
-            }
-          }
+             if (file.isFile) {
+               final outFile = File(filePath);
+               await outFile.create(recursive: true);
+               await outFile.writeAsBytes(file.content as List<int>);
+             } else {
+               final dir = Directory(filePath);
+               await dir.create(recursive: true);
+             }
+           }
 
-          emitter(state.copyWith(
-            stats: DocStats.ok,
-            indexFile: indexFile.path,
-          ));
+           debugPrint('HexDocBloc: Extraction complete, index file: ${indexFile.path}');
+           emitter(state.copyWith(
+             stats: DocStats.ok,
+             indexFile: indexFile.path,
+           ));
         } else {
           emitter(state.copyWith(stats: DocStats.error));
         }
