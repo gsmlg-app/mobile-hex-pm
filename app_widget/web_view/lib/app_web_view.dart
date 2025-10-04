@@ -19,8 +19,9 @@ class LocalHtmlViewer extends StatefulWidget {
 }
 
 class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
-  late final WebViewController _controller;
+  WebViewController? _controller;
   String? _error;
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -91,7 +92,11 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
       await Future.delayed(Duration(milliseconds: 500));
       debugPrint('LocalHtmlViewer: Finished waiting for file system to settle');
 
-      _controller = WebViewController()
+      // Create the controller first
+      final controller = WebViewController();
+      
+      // Configure the controller
+      controller
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..enableZoom(true)
         ..setNavigationDelegate(
@@ -101,7 +106,7 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
             },
             onPageFinished: (String url) {
               // Inject CSS to improve scrolling behavior
-              _controller.runJavaScript('''
+              controller.runJavaScript('''
                 document.body.style.overflow = 'auto';
                 document.body.style.webkitOverflowScrolling = 'touch';
                 document.documentElement.style.overflow = 'auto';
@@ -117,8 +122,15 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
         );
       
       // Load the file with proper error handling
-      await _controller.loadFile(widget.indexFile);
+      await controller.loadFile(widget.indexFile);
       debugPrint('LocalHtmlViewer: WebView loadFile completed for: ${widget.indexFile}');
+      
+      // Set the controller and mark as initialized
+      setState(() {
+        _controller = controller;
+        _isInitialized = true;
+      });
+      
       return true; // Success
     } catch (e, stackTrace) {
       debugPrint('LocalHtmlViewer: Error loading file: $e');
@@ -161,8 +173,13 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
       );
     }
 
+    // Show empty container while initializing (will be very brief due to retry mechanism)
+    if (!_isInitialized || _controller == null) {
+      return Container(); // Empty container during initialization
+    }
+
     return WebViewWidget(
-      controller: _controller,
+      controller: _controller!,
       gestureRecognizers: {
         Factory<VerticalDragGestureRecognizer>(
           () => VerticalDragGestureRecognizer(),
