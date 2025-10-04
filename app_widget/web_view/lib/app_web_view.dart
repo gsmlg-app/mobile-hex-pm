@@ -20,7 +20,6 @@ class LocalHtmlViewer extends StatefulWidget {
 
 class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
   late final WebViewController _controller;
-  bool _isLoading = true;
   String? _error;
 
   @override
@@ -53,7 +52,6 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
     
     // If all retries failed, show final error
     setState(() {
-      _isLoading = false;
       _error = 'Failed to load document after $maxRetries attempts. Please try again.';
     });
   }
@@ -68,7 +66,6 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
       debugPrint('LocalHtmlViewer: Normalized path: $normalizedPath');
       
       setState(() {
-        _isLoading = true;
         _error = null;
       });
 
@@ -100,9 +97,7 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
         ..setNavigationDelegate(
           NavigationDelegate(
             onPageStarted: (String url) {
-              setState(() {
-                _isLoading = true;
-              });
+              debugPrint('LocalHtmlViewer: Page started loading: $url');
             },
             onPageFinished: (String url) {
               // Inject CSS to improve scrolling behavior
@@ -112,9 +107,7 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
                 document.documentElement.style.overflow = 'auto';
                 document.documentElement.style.webkitOverflowScrolling = 'touch';
               ''');
-              setState(() {
-                _isLoading = false;
-              });
+              debugPrint('LocalHtmlViewer: Page finished loading: $url');
             },
               onWebResourceError: (WebResourceError error) {
                 debugPrint('WebView resource error: ${error.description}');
@@ -168,33 +161,22 @@ class _LocalHtmlViewerState extends State<LocalHtmlViewer> {
       );
     }
 
-    return Stack(
-      children: [
-        WebViewWidget(
-          controller: _controller,
-          gestureRecognizers: {
-            Factory<VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer(),
-            ),
-            Factory<HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-            ),
-            Factory<ScaleGestureRecognizer>(
-              () => ScaleGestureRecognizer(),
-            ),
-            Factory<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-            ),
-          },
+    return WebViewWidget(
+      controller: _controller,
+      gestureRecognizers: {
+        Factory<VerticalDragGestureRecognizer>(
+          () => VerticalDragGestureRecognizer(),
         ),
-        if (_isLoading)
-          Container(
-            color: Colors.white.withValues(alpha: 0.8),
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-      ],
+        Factory<HorizontalDragGestureRecognizer>(
+          () => HorizontalDragGestureRecognizer(),
+        ),
+        Factory<ScaleGestureRecognizer>(
+          () => ScaleGestureRecognizer(),
+        ),
+        Factory<TapGestureRecognizer>(
+          () => TapGestureRecognizer(),
+        ),
+      },
     );
   }
 }
