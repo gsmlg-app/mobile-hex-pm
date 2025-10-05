@@ -35,7 +35,14 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen.storyboard</string>
+	<string>LaunchScreen</string>
+    <key>UILaunchScreen</key>
+    <dict>
+    <key>UIColorName</key>
+    <string>LaunchScreenBackground</string>
+    <key>UIImageName</key>
+    <string>LaunchImage</string>
+    </dict>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
