@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:app_database/app_database.dart';
+import 'package:app_logging/app_logging.dart';
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
-import 'package:logging/logging.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
@@ -16,7 +16,6 @@ import 'states.dart';
 class OfflineDocsServerBloc
     extends Bloc<OfflineDocsServerEvent, OfflineDocsServerState> {
   final AppDatabase _database;
-  final Logger _logger = Logger('OfflineDocsServerBloc');
   HttpServer? _server;
 
   OfflineDocsServerBloc(this._database) : super(const OfflineDocsServerInitial()) {
@@ -40,7 +39,7 @@ class OfflineDocsServerBloc
       final status = _server != null ? ServerStatus.running : ServerStatus.stopped;
       final serverAddress = await _getServerAddress(config.host, config.port);
 
-      _logger.info('Server configuration loaded successfully: ${config.host}:${config.port}');
+      AppLogging.logServerOperation('Server configuration loaded successfully: ${config.host}:${config.port}');
 
       emit(OfflineDocsServerLoadSuccess(
         config: config,
@@ -48,7 +47,7 @@ class OfflineDocsServerBloc
         serverAddress: serverAddress,
       ));
     } catch (e) {
-      _logger.severe('Failed to load server config: $e');
+      AppLogging.logServerError('load server config', e);
       emit(OfflineDocsServerFailure('Failed to load configuration: $e'));
     }
   }
@@ -93,7 +92,7 @@ class OfflineDocsServerBloc
         serverAddress: serverAddress,
       ));
     } catch (e) {
-      _logger.severe('Failed to start server: $e');
+      AppLogging.logServerError('start server', e);
       emit(currentState.copyWith(
         status: ServerStatus.error,
         errorMessage: 'Failed to start server: $e',
@@ -119,7 +118,7 @@ class OfflineDocsServerBloc
         serverAddress: null,
       ));
     } catch (e) {
-      _logger.severe('Failed to stop server: $e');
+      AppLogging.logServerError('stop server', e);
       emit(currentState.copyWith(
         status: ServerStatus.error,
         errorMessage: 'Failed to stop server: $e',
@@ -162,14 +161,19 @@ class OfflineDocsServerBloc
         serverAddress: null,
       ));
 
-      _logger.info('Configuration saved successfully');
+      AppLogging.logConfigUpdate(
+        host: event.host,
+        port: event.port,
+        autoStart: event.autoStart,
+        enabled: event.enabled,
+      );
 
       // Auto-start if enabled
       if (event.autoStart && event.enabled) {
         add(const OfflineDocsServerStarted());
       }
     } catch (e) {
-      _logger.severe('Failed to update config: $e');
+      AppLogging.logServerError('update config', e);
       emit(currentState.copyWith(
         status: ServerStatus.error,
         errorMessage: 'Failed to update configuration: $e',
@@ -183,7 +187,7 @@ class OfflineDocsServerBloc
 
       if (configs.isNotEmpty) {
         final config = configs.first;
-        _logger.info('Found existing server config: ${config.host}:${config.port}');
+        AppLogging.logServerOperation('Found existing server config: ${config.host}:${config.port}');
         return ServerConfig(
           host: config.host,
           port: config.port,
@@ -194,7 +198,7 @@ class OfflineDocsServerBloc
       }
 
       // Create default config
-      _logger.info('No existing server config found, creating default');
+      AppLogging.logServerOperation('No existing server config found, creating default');
       final defaultConfig = ServerConfig(
         host: 'localhost',
         port: 8080,
@@ -212,12 +216,12 @@ class OfflineDocsServerBloc
         ),
       );
 
-      _logger.info('Default server config created successfully');
+      AppLogging.logServerOperation('Default server config created successfully');
       return defaultConfig;
     } catch (e) {
-      _logger.severe('Database error in _getOrCreateConfig: $e');
+      AppLogging.logServerError('getOrCreateConfig database operation', e);
       // Return hardcoded default config as fallback
-      _logger.warning('Using fallback default config');
+      AppLogging.logServerWarning('Using fallback default config', 'Database error, using hardcoded defaults');
       return ServerConfig(
         host: 'localhost',
         port: 8080,
@@ -242,7 +246,7 @@ class OfflineDocsServerBloc
           enabled: Value(config.enabled),
           updatedAt: Value(config.updatedAt),
         ));
-        _logger.info('Server config updated successfully: ${config.host}:${config.port}');
+        AppLogging.logServerOperation('Server config updated successfully: ${config.host}:${config.port}');
       } else {
         await _database.into(_database.docsServerConfig).insert(
           DocsServerConfigCompanion.insert(
@@ -253,10 +257,10 @@ class OfflineDocsServerBloc
             updatedAt: Value(config.updatedAt),
           ),
         );
-        _logger.info('Server config created successfully: ${config.host}:${config.port}');
+        AppLogging.logServerOperation('Server config created successfully: ${config.host}:${config.port}');
       }
     } catch (e) {
-      _logger.severe('Database error in _updateConfigInDatabase: $e');
+      AppLogging.logServerError('updateConfigInDatabase database operation', e);
       // Re-throw the error so the UI can handle it properly
       throw Exception('Failed to save configuration: $e');
     }
@@ -272,20 +276,20 @@ class OfflineDocsServerBloc
       final appDir = await getApplicationDocumentsDirectory();
       final docsDir = Directory('${appDir.path}/offline_docs');
 
-      _logger.info('Starting offline docs server...');
-      _logger.info('Application documents directory: ${appDir.path}');
-      _logger.info('Target docs directory: ${docsDir.path}');
+      AppLogging.logServerOperation('Starting offline docs server...');
+      AppLogging.logServerOperation('Application documents directory: ${appDir.path}');
+      AppLogging.logServerOperation('Target docs directory: ${docsDir.path}');
 
       // Create directory if it doesn't exist
       if (!await docsDir.exists()) {
-        _logger.info('Directory does not exist, creating...');
+        AppLogging.logServerOperation('Directory does not exist, creating...');
         await docsDir.create(recursive: true);
-        _logger.info('✅ Created offline docs directory: ${docsDir.path}');
+        AppLogging.logServerOperation('✅ Created offline docs directory: ${docsDir.path}');
 
         // Create a default index.html file
         await _createDefaultIndexFile(docsDir);
       } else {
-        _logger.info('✅ Directory already exists: ${docsDir.path}');
+        AppLogging.logServerOperation('✅ Directory already exists: ${docsDir.path}');
       }
 
       // Create static file handler
@@ -293,10 +297,10 @@ class OfflineDocsServerBloc
 
       // Count files in directory for logging
       final files = await docsDir.list().toList();
-      final fileCount = files.where((f) => f is File).length;
-      final dirCount = files.where((f) => f is Directory).length;
+      final fileCount = files.whereType<File>().length;
+      final dirCount = files.whereType<Directory>().length;
 
-      _logger.info('Found $fileCount files and $dirCount directories in docs root');
+      AppLogging.logServerOperation('Found $fileCount files and $dirCount directories in docs root');
 
       // Start server
       _server = await shelf_io.serve(
@@ -305,30 +309,28 @@ class OfflineDocsServerBloc
         config.port,
       );
 
-      // Print comprehensive server details
-      _logger.info('=== OFFLINE DOCS SERVER STARTED ===');
-      _logger.info('Server Status: RUNNING');
-      _logger.info('Local URL: ${config.serverUrl}');
-      _logger.info('Host: ${config.host}');
-      _logger.info('Port: ${config.port}');
-      _logger.info('Document Root: ${docsDir.path}');
-      _logger.info('Auto Start: ${config.autoStart}');
-      _logger.info('Server Enabled: ${config.enabled}');
-
       // Try to get network IP for additional access URL
+      String? networkUrl;
       try {
-        final networkUrl = await _getNetworkServerAddress(config.host, config.port);
-        if (networkUrl != null && networkUrl != config.serverUrl) {
-          _logger.info('Network URL: $networkUrl');
-          _logger.info('Devices on same network can access: $networkUrl');
-        }
+        networkUrl = await _getNetworkServerAddress(config.host, config.port);
       } catch (e) {
-        _logger.warning('Could not determine network URL: $e');
+        AppLogging.logServerWarning('Could not determine network URL', e);
       }
 
-      _logger.info('=====================================');
+      // Log comprehensive server details using app_logging
+      AppLogging.logServerStart(
+        host: config.host,
+        port: config.port,
+        documentRoot: docsDir.path,
+        localUrl: config.serverUrl,
+        networkUrl: networkUrl,
+        autoStart: config.autoStart,
+        enabled: config.enabled,
+        fileCount: fileCount,
+        directoryCount: dirCount,
+      );
     } catch (e) {
-      _logger.severe('Failed to start server: $e');
+      AppLogging.logServerError('start server', e);
       rethrow;
     }
   }
@@ -337,16 +339,14 @@ class OfflineDocsServerBloc
     if (_server != null) {
       final serverAddress = _server!.address;
       final serverPort = _server!.port;
+      final previousUrl = 'http://$serverAddress:$serverPort';
 
       await _server!.close();
       _server = null;
 
-      _logger.info('=== OFFLINE DOCS SERVER STOPPED ===');
-      _logger.info('Server Status: STOPPED');
-      _logger.info('Previously running on: http://$serverAddress:$serverPort');
-      _logger.info('=====================================');
+      AppLogging.logServerStop(previousUrl: previousUrl);
     } else {
-      _logger.info('Server was not running');
+      AppLogging.logServerOperation('Server was not running');
     }
   }
 
@@ -364,7 +364,7 @@ class OfflineDocsServerBloc
       }
       return 'http://$host:$port';
     } catch (e) {
-      _logger.warning('Failed to get server address: $e');
+      AppLogging.logServerWarning('Failed to get server address', e);
       return null;
     }
   }
@@ -381,7 +381,7 @@ class OfflineDocsServerBloc
       }
       return 'http://$host:$port';
     } catch (e) {
-      _logger.warning('Failed to get network server address: $e');
+      AppLogging.logServerWarning('Failed to get network server address', e);
       return null;
     }
   }
@@ -466,10 +466,10 @@ class OfflineDocsServerBloc
 </html>''';
 
         await indexFile.writeAsString(htmlContent);
-        _logger.info('✅ Created default index.html file with welcome page');
+        AppLogging.logServerOperation('✅ Created default index.html file with welcome page');
       }
     } catch (e) {
-      _logger.warning('Failed to create default index.html file: $e');
+      AppLogging.logServerWarning('Failed to create default index.html file', e);
       // Don't rethrow - the server can still work without the index file
     }
   }

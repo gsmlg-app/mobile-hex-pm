@@ -304,6 +304,63 @@ class _ServerSettingsContentState extends State<ServerSettingsContent> {
                     ],
                   ],
                 ),
+                const SizedBox(height: 16),
+                // Server Address (only shown when server is running)
+                if (isRunning) ...[
+                  Text(
+                    context.l10n.serverAddress,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
+                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
+                            style: const TextStyle(fontFamily: 'monospace'),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => _copyToClipboard(
+                            context,
+                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
+                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
+                          ),
+                          icon: const Icon(Icons.copy),
+                          tooltip: 'Copy URL',
+                        ),
+                        if (Platform.isAndroid || Platform.isIOS)
+                          IconButton(
+                            onPressed: () => _shareUrl(
+                              context,
+                              (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
+                              (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
+                            ),
+                            icon: const Icon(Icons.share),
+                            tooltip: context.l10n.shareServerUrl,
+                          ),
+                        IconButton(
+                          onPressed: () => _openUrl(
+                            context,
+                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
+                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
+                          ),
+                          icon: const Icon(Icons.open_in_browser),
+                          tooltip: 'Open in browser',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -366,75 +423,6 @@ class _ServerSettingsContentState extends State<ServerSettingsContent> {
             ),
           ),
         ),
-
-        const SizedBox(height: 16),
-
-        // Server Info Card (only shown when server is running)
-        if (widget.state is OfflineDocsServerLoadSuccess &&
-            (widget.state as OfflineDocsServerLoadSuccess).status == ServerStatus.running)
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    context.l10n.serverAddress,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
-                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
-                            style: const TextStyle(fontFamily: 'monospace'),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => _copyToClipboard(
-                            context,
-                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
-                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
-                          ),
-                          icon: const Icon(Icons.copy),
-                          tooltip: 'Copy URL',
-                        ),
-                        if (Platform.isAndroid || Platform.isIOS)
-                          IconButton(
-                            onPressed: () => _shareUrl(
-                              context,
-                              (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
-                              (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
-                            ),
-                            icon: const Icon(Icons.share),
-                            tooltip: context.l10n.shareServerUrl,
-                          ),
-                        IconButton(
-                          onPressed: () => _openUrl(
-                            context,
-                            (widget.state as OfflineDocsServerLoadSuccess).serverAddress ??
-                            (widget.state as OfflineDocsServerLoadSuccess).config.serverUrl,
-                          ),
-                          icon: const Icon(Icons.open_in_browser),
-                          tooltip: 'Open in browser',
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
       ],
     );
   }

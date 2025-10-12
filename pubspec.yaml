@@ -12,6 +12,7 @@ workspace:
   - app_lib/locale
   - app_lib/provider
   - app_lib/database
+  - app_lib/logging
   - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
@@ -55,6 +56,7 @@ dependencies:
   app_locale: any
   app_provider: any
   app_database: any
+  app_logging: any
   app_artwork: any
   app_feedback: any
   app_adaptive_widgets: any

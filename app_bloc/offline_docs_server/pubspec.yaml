@@ -10,12 +10,12 @@ dependencies:
   bloc: ^9.0.0
   equatable: ^2.0.5
   app_database: any
+  app_logging: any
   drift: ^2.26.1
   shelf: ^1.4.1
   shelf_static: ^1.1.2
   network_info_plus: ^6.1.2
   path_provider: ^2.1.5
-  logging: ^1.2.0
 
 dev_dependencies:
   test: ^1.20.1
