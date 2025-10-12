@@ -51,7 +51,7 @@ void main() {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    'The package manager for the Erlang and Elixir ecosystem',
+                    'Search packages and save offline docs',
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -70,7 +70,7 @@ void main() {
 
       expect(find.text('Hex.pm'), findsOneWidget);
       expect(find.text('Welcome to Hex.pm'), findsOneWidget);
-      expect(find.text('The package manager for the Erlang and Elixir ecosystem'), findsOneWidget);
+      expect(find.text('Search packages and save offline docs'), findsOneWidget);
       expect(find.text('Search Packages'), findsOneWidget);
       expect(find.byIcon(Icons.inventory_2), findsOneWidget);
       expect(find.byIcon(Icons.search), findsOneWidget);
@@ -89,7 +89,7 @@ void main() {
               child: Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'The package manager for the Erlang and Elixir ecosystem',
+                  'Search packages and save offline docs',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
                 ),
@@ -99,7 +99,7 @@ void main() {
         ),
       );
 
-      expect(find.text('The package manager for the Erlang and Elixir ecosystem'), findsOneWidget);
+      expect(find.text('Search packages and save offline docs'), findsOneWidget);
       expect(find.byType(Padding), findsOneWidget);
       expect(find.byType(Center), findsOneWidget);
       expect(find.byType(Scaffold), findsOneWidget);

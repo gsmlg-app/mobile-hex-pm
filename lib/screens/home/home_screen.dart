@@ -46,7 +46,7 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Text(
-                    'The package manager for the Erlang and Elixir ecosystem',
+                    'Search packages and save offline docs',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
