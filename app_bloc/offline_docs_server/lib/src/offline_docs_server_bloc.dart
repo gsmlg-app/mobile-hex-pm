@@ -8,8 +8,8 @@ import 'package:drift/drift.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:shelf_static/shelf_static.dart';
 
-import 'directory_browser_handler.dart';
 import 'events.dart';
 import 'states.dart';
 
@@ -292,8 +292,12 @@ class OfflineDocsServerBloc
         AppLogging.logServerOperation('✅ Directory already exists: ${docsDir.path}');
       }
 
-      // Create directory browser handler with directory browsing support
-      final handler = createDirectoryBrowserHandler(docsDir.path);
+      // Create static file handler with directory browsing support
+      final handler = createStaticHandler(
+        docsDir.path,
+        defaultDocument: 'index.html',
+        listDirectories: true,
+      );
 
       // Count files in directory for logging
       final files = await docsDir.list().toList();
