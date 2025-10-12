@@ -272,24 +272,24 @@ class OfflineDocsServerBloc
     }
 
     try {
-      // Get documents directory
-      final appDir = await getApplicationDocumentsDirectory();
-      final docsDir = Directory('${appDir.path}/offline_docs');
+      // Get app support directory where hex docs are stored
+      final appSupportDir = await getApplicationSupportDirectory();
+      final docsDir = Directory('${appSupportDir.path}/hex_docs');
 
       AppLogging.logServerOperation('Starting offline docs server...');
-      AppLogging.logServerOperation('Application documents directory: ${appDir.path}');
+      AppLogging.logServerOperation('Application support directory: ${appSupportDir.path}');
       AppLogging.logServerOperation('Target docs directory: ${docsDir.path}');
 
       // Create directory if it doesn't exist
       if (!await docsDir.exists()) {
-        AppLogging.logServerOperation('Directory does not exist, creating...');
+        AppLogging.logServerOperation('Hex docs directory does not exist, creating...');
         await docsDir.create(recursive: true);
-        AppLogging.logServerOperation('✅ Created offline docs directory: ${docsDir.path}');
+        AppLogging.logServerOperation('✅ Created hex docs directory: ${docsDir.path}');
 
         // Create a default index.html file
         await _createDefaultIndexFile(docsDir);
       } else {
-        AppLogging.logServerOperation('✅ Directory already exists: ${docsDir.path}');
+        AppLogging.logServerOperation('✅ Hex docs directory already exists: ${docsDir.path}');
       }
 
       // Create static file handler with directory browsing support
@@ -400,7 +400,7 @@ class OfflineDocsServerBloc
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline Docs Server</title>
+    <title>Hex Documentation Server</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -438,27 +438,27 @@ class OfflineDocsServerBloc
 <body>
     <div class="container">
         <div class="logo">📚</div>
-        <h1>Offline Documentation Server</h1>
+        <h1>Hex Documentation Server</h1>
 
         <div class="info">
-            <h3>Welcome to your offline docs server!</h3>
-            <p>This server is running and ready to serve your offline documentation files.</p>
+            <h3>Welcome to your Hex documentation server!</h3>
+            <p>This server is running and ready to serve your downloaded Hex package documentation.</p>
             <p><strong>Server URL:</strong> <span id="server-url"></span></p>
         </div>
 
         <div class="placeholder">
-            <p>📝 No documentation files found yet.</p>
-            <p>Place your HTML, CSS, JavaScript, or other documentation files in this directory to serve them offline.</p>
-            <p>🌐 This server supports directory browsing - you can navigate through subdirectories!</p>
+            <p>📦 No Hex documentation files found yet.</p>
+            <p>Download Hex package documentation from the app's Downloads tab to serve them offline.</p>
+            <p>🌐 This server supports directory browsing - you can navigate through package and version directories!</p>
         </div>
 
         <div class="info">
             <h3>How to use:</h3>
             <ul style="text-align: left; max-width: 500px; margin: 0 auto;">
-                <li>Add your documentation files to this directory</li>
-                <li>Create an <code>index.html</code> file as the main entry point</li>
-                <li>Access your files through the server URL</li>
-                <li>Perfect for offline documentation viewing</li>
+                <li>Download Hex package documentation from the app</li>
+                <li>Browse packages and versions through this server</li>
+                <li>Access documentation files through the server URL</li>
+                <li>Perfect for offline Hex package documentation viewing</li>
             </ul>
         </div>
     </div>
