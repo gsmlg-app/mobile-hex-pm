@@ -185,4 +185,83 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get packageHasNoReleases => 'This package has no releases';
+
+  @override
+  String get serverSettings => 'Server Settings';
+
+  @override
+  String get serverStatus => 'Server Status';
+
+  @override
+  String get serverRunning => 'Server Running';
+
+  @override
+  String get serverStopped => 'Server Stopped';
+
+  @override
+  String get serverStarting => 'Server Starting...';
+
+  @override
+  String get serverStopping => 'Server Stopping...';
+
+  @override
+  String get serverError => 'Server Error';
+
+  @override
+  String get startServer => 'Start Server';
+
+  @override
+  String get stopServer => 'Stop Server';
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get serverHost => 'Host';
+
+  @override
+  String get serverPort => 'Port';
+
+  @override
+  String get autoStartServer => 'Auto-start Server';
+
+  @override
+  String get enableServer => 'Enable Server';
+
+  @override
+  String get serverConfig => 'Server Configuration';
+
+  @override
+  String get serverAddress => 'Server Address';
+
+  @override
+  String get shareServerUrl => 'Share Server URL';
+
+  @override
+  String get serverNotRunning => 'Server is not running';
+
+  @override
+  String get serverLogs => 'Server Logs';
+
+  @override
+  String get restartServer => 'Restart Server';
+
+  @override
+  String get serverStartedSuccessfully => 'Server started successfully';
+
+  @override
+  String get serverStoppedSuccessfully => 'Server stopped successfully';
+
+  @override
+  String get serverFailedToStart => 'Failed to start server';
+
+  @override
+  String get serverFailedToStop => 'Failed to stop server';
+
+  @override
+  String get serverConfigUpdated => 'Server configuration updated';
+
+  @override
+  String get serverConfigUpdateFailed =>
+      'Failed to update server configuration';
 }

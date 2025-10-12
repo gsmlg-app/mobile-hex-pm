@@ -17,6 +17,7 @@ workspace:
   - app_bloc/hex_search
   - app_bloc/favorite_package
   - app_bloc/hex_doc
+  - app_bloc/offline_docs_server
   - app_widget/adaptive
   - app_widget/artwork
   - app_widget/feedback
@@ -64,11 +65,17 @@ dependencies:
   hex_search_bloc: any
   favorite_package_bloc: any
   hex_doc_bloc: any
+  offline_docs_server: any
   form_bloc: any
   flutter_form_bloc: any
   flutter_adaptive_scaffold: any
   app_web_view: any
   flutter_slidable: ^4.0.0
+
+  # server dependencies
+  shelf: ^1.4.1
+  shelf_static: ^1.1.2
+  network_info_plus: ^6.1.2
 
 dev_dependencies:
   flutter_test:

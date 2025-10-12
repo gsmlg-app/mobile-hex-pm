@@ -435,6 +435,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This package has no releases'**
   String get packageHasNoReleases;
+
+  /// No description provided for @serverSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Settings'**
+  String get serverSettings;
+
+  /// No description provided for @serverStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Status'**
+  String get serverStatus;
+
+  /// No description provided for @serverRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Running'**
+  String get serverRunning;
+
+  /// No description provided for @serverStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Stopped'**
+  String get serverStopped;
+
+  /// No description provided for @serverStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Starting...'**
+  String get serverStarting;
+
+  /// No description provided for @serverStopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Stopping...'**
+  String get serverStopping;
+
+  /// No description provided for @serverError.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Error'**
+  String get serverError;
+
+  /// No description provided for @startServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Server'**
+  String get startServer;
+
+  /// No description provided for @stopServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Server'**
+  String get stopServer;
+
+  /// No description provided for @serverUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverUrl;
+
+  /// No description provided for @serverHost.
+  ///
+  /// In en, this message translates to:
+  /// **'Host'**
+  String get serverHost;
+
+  /// No description provided for @serverPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Port'**
+  String get serverPort;
+
+  /// No description provided for @autoStartServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-start Server'**
+  String get autoStartServer;
+
+  /// No description provided for @enableServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Server'**
+  String get enableServer;
+
+  /// No description provided for @serverConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Configuration'**
+  String get serverConfig;
+
+  /// No description provided for @serverAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Address'**
+  String get serverAddress;
+
+  /// No description provided for @shareServerUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Server URL'**
+  String get shareServerUrl;
+
+  /// No description provided for @serverNotRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Server is not running'**
+  String get serverNotRunning;
+
+  /// No description provided for @serverLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Logs'**
+  String get serverLogs;
+
+  /// No description provided for @restartServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Server'**
+  String get restartServer;
+
+  /// No description provided for @serverStartedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Server started successfully'**
+  String get serverStartedSuccessfully;
+
+  /// No description provided for @serverStoppedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Server stopped successfully'**
+  String get serverStoppedSuccessfully;
+
+  /// No description provided for @serverFailedToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start server'**
+  String get serverFailedToStart;
+
+  /// No description provided for @serverFailedToStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to stop server'**
+  String get serverFailedToStop;
+
+  /// No description provided for @serverConfigUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Server configuration updated'**
+  String get serverConfigUpdated;
+
+  /// No description provided for @serverConfigUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update server configuration'**
+  String get serverConfigUpdateFailed;
 }
 
 class _AppLocalizationsDelegate

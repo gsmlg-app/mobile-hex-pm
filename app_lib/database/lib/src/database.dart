@@ -1,4 +1,5 @@
 import 'package:app_database/src/favorite_package.dart';
+import 'package:app_database/src/docs_server_config.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,7 +8,7 @@ import './type_converter.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [FavoritePackage])
+@DriftDatabase(tables: [FavoritePackage, DocsServerConfig])
 class AppDatabase extends _$AppDatabase {
   // After generating code, this class needs to define a `schemaVersion` getter
   // and a constructor telling drift where the database should be stored.
@@ -15,7 +16,21 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from <= 1) {
+          await m.createTable(docsServerConfig);
+        }
+      },
+    );
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(

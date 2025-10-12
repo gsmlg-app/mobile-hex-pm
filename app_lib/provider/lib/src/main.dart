@@ -8,6 +8,7 @@ import 'package:hex_api/hex_api.dart';
 import 'package:hex_auth_bloc/hex_auth_bloc.dart';
 import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:hex_search_bloc/hex_search_bloc.dart';
+import 'package:offline_docs_server/offline_docs_server_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
@@ -70,6 +71,11 @@ class MainProvider extends StatelessWidget {
           ),
           BlocProvider<HexDocBloc>(
             create: (context) => HexDocBloc(appSupportDir, tmpDir),
+          ),
+          BlocProvider<OfflineDocsServerBloc>(
+            create: (context) => OfflineDocsServerBloc(
+              context.read<AppDatabase>(),
+            ),
           ),
         ],
         child: child,
