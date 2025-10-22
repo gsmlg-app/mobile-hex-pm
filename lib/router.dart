@@ -9,6 +9,8 @@ import 'package:mobile_hex_pm/screens/favorite/favorite_screen.dart';
 import 'package:mobile_hex_pm/screens/home/home_result_screen.dart';
 import 'package:mobile_hex_pm/screens/home/home_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/server_control_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/server_config_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_settings_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
 
@@ -148,6 +150,28 @@ class AppRouter {
               key: state.pageKey,
               restorationId: state.pageKey.value,
               child: const ServerSettingsScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: ServerControlScreen.name,
+          path: ServerControlScreen.path,
+          pageBuilder: (context, state) {
+            return NoTransitionPage<void>(
+              key: state.pageKey,
+              restorationId: state.pageKey.value,
+              child: const ServerControlScreen(),
+            );
+          },
+        ),
+        GoRoute(
+          name: ServerConfigScreen.name,
+          path: ServerConfigScreen.path,
+          pageBuilder: (context, state) {
+            return NoTransitionPage<void>(
+              key: state.pageKey,
+              restorationId: state.pageKey.value,
+              child: const ServerConfigScreen(),
             );
           },
         ),

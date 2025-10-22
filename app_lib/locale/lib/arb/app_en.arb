@@ -64,6 +64,8 @@
   "noReleasesAvailable": "No releases available",
   "packageHasNoReleases": "This package has no releases",
   "serverSettings": "Server Settings",
+  "serverControl": "Server Control",
+  "serverConfiguration": "Server Configuration",
   "serverStatus": "Server Status",
   "serverRunning": "Server Running",
   "serverStopped": "Server Stopped",

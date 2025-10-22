@@ -442,6 +442,18 @@ abstract class AppLocalizations {
   /// **'Server Settings'**
   String get serverSettings;
 
+  /// No description provided for @serverControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Control'**
+  String get serverControl;
+
+  /// No description provided for @serverConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Configuration'**
+  String get serverConfiguration;
+
   /// No description provided for @serverStatus.
   ///
   /// In en, this message translates to:

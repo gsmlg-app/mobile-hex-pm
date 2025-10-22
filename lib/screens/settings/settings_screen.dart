@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_hex_pm/destination.dart';
 import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
-import 'package:mobile_hex_pm/screens/settings/server_settings_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/server_control_screen.dart';
+import 'package:mobile_hex_pm/screens/settings/server_config_screen.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
@@ -59,10 +60,17 @@ class SettingsScreen extends StatelessWidget {
                           title: Text(context.l10n.serverSettings),
                           tiles: <SettingsTile>[
                             SettingsTile.navigation(
-                              leading: const Icon(Icons.dns),
-                              title: Text(context.l10n.serverSettings),
+                              leading: const Icon(Icons.power_settings_new),
+                              title: Text(context.l10n.serverControl),
                               onPressed: (context) {
-                                context.goNamed(ServerSettingsScreen.name);
+                                context.goNamed(ServerControlScreen.name);
+                              },
+                            ),
+                            SettingsTile.navigation(
+                              leading: const Icon(Icons.settings),
+                              title: Text(context.l10n.serverConfiguration),
+                              onPressed: (context) {
+                                context.goNamed(ServerConfigScreen.name);
                               },
                             )
                           ],

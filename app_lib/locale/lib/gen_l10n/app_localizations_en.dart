@@ -190,6 +190,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serverSettings => 'Server Settings';
 
   @override
+  String get serverControl => 'Server Control';
+
+  @override
+  String get serverConfiguration => 'Server Configuration';
+
+  @override
   String get serverStatus => 'Server Status';
 
   @override

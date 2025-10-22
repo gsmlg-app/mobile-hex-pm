@@ -86,10 +86,15 @@ class OfflineDocsServerBloc
         currentState.config.port,
       );
 
+      // Ensure we always have a valid server address
+      final finalServerAddress = serverAddress ?? currentState.config.serverUrl;
+
+      AppLogging.logServerOperation('Server started successfully with address: $finalServerAddress');
+
       emit(currentState.copyWith(
         status: ServerStatus.running,
         errorMessage: null,
-        serverAddress: serverAddress,
+        serverAddress: finalServerAddress,
       ));
     } catch (e) {
       AppLogging.logServerError('start server', e);
@@ -283,13 +288,29 @@ class OfflineDocsServerBloc
       // Create directory if it doesn't exist
       if (!await docsDir.exists()) {
         AppLogging.logServerOperation('Hex docs directory does not exist, creating...');
-        await docsDir.create(recursive: true);
-        AppLogging.logServerOperation('✅ Created hex docs directory: ${docsDir.path}');
+        try {
+          await docsDir.create(recursive: true);
+          AppLogging.logServerOperation('✅ Created hex docs directory: ${docsDir.path}');
 
-        // Create a default index.html file
-        await _createDefaultIndexFile(docsDir);
+          // Create a default index.html file
+          await _createDefaultIndexFile(docsDir);
+        } catch (e) {
+          AppLogging.logServerError('Failed to create docs directory', e);
+          throw Exception('Failed to create server directory: $e');
+        }
       } else {
         AppLogging.logServerOperation('✅ Hex docs directory already exists: ${docsDir.path}');
+
+        // Ensure index.html exists even if directory exists
+        try {
+          final indexFile = File('${docsDir.path}/index.html');
+          if (!await indexFile.exists()) {
+            AppLogging.logServerOperation('Index file not found, creating default...');
+            await _createDefaultIndexFile(docsDir);
+          }
+        } catch (e) {
+          AppLogging.logServerWarning('Could not check/create index file', e);
+        }
       }
 
       // Create static file handler with directory browsing support
@@ -304,14 +325,30 @@ class OfflineDocsServerBloc
       final fileCount = files.whereType<File>().length;
       final dirCount = files.whereType<Directory>().length;
 
+      // Specifically check for index.html
+      final indexFile = File('${docsDir.path}/index.html');
+      final hasIndexFile = await indexFile.exists();
+
       AppLogging.logServerOperation('Found $fileCount files and $dirCount directories in docs root');
+      AppLogging.logServerOperation('Index.html present: $hasIndexFile');
+
+      if (!hasIndexFile) {
+        AppLogging.logServerWarning('No index.html found', 'Creating default index file');
+        await _createDefaultIndexFile(docsDir);
+      }
 
       // Start server
-      _server = await shelf_io.serve(
-        handler,
-        config.host,
-        config.port,
-      );
+      try {
+        _server = await shelf_io.serve(
+          handler,
+          config.host,
+          config.port,
+        );
+        AppLogging.logServerOperation('✅ Server started successfully on ${config.host}:${config.port}');
+      } catch (e) {
+        AppLogging.logServerError('Failed to start server on ${config.host}:${config.port}', e);
+        throw Exception('Failed to start server: Could not bind to ${config.host}:${config.port}. Error: $e');
+      }
 
       // Try to get network IP for additional access URL
       String? networkUrl;
@@ -355,21 +392,38 @@ class OfflineDocsServerBloc
   }
 
   Future<String?> _getServerAddress(String host, int port) async {
-    if (_server == null) return null;
+    if (_server == null) {
+      AppLogging.logServerWarning('Server is null when getting address', 'Server instance is null');
+      return null;
+    }
 
     try {
+      // Always provide a fallback URL using the configured host and port
+      String fallbackUrl = 'http://$host:$port';
+
       if (host == 'localhost' || host == '127.0.0.1') {
-        // Get local IP address
-        final info = NetworkInfo();
-        final wifiIP = await info.getWifiIP();
-        if (wifiIP != null) {
-          return 'http://$wifiIP:$port';
+        // Try to get local IP address for network access
+        try {
+          final info = NetworkInfo();
+          final wifiIP = await info.getWifiIP();
+          if (wifiIP != null && wifiIP.isNotEmpty) {
+            String networkUrl = 'http://$wifiIP:$port';
+            AppLogging.logServerOperation('Network URL detected: $networkUrl');
+            return networkUrl;
+          } else {
+            AppLogging.logServerWarning('Could not get WiFi IP', 'WiFi IP is null or empty');
+          }
+        } catch (e) {
+          AppLogging.logServerWarning('Failed to get WiFi IP address', e);
         }
       }
-      return 'http://$host:$port';
+
+      AppLogging.logServerOperation('Using fallback server URL: $fallbackUrl');
+      return fallbackUrl;
     } catch (e) {
       AppLogging.logServerWarning('Failed to get server address', e);
-      return null;
+      // Always return a valid URL even if there's an error
+      return 'http://$host:$port';
     }
   }
 
@@ -402,6 +456,11 @@ class OfflineDocsServerBloc
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hex Documentation Server</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 800px;
@@ -409,29 +468,111 @@ class OfflineDocsServerBloc
             padding: 2rem;
             line-height: 1.6;
             color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .container {
             text-align: center;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
         }
         .logo {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
         h1 {
             color: #2c3e50;
             margin-bottom: 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
         }
         .info {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
             margin: 2rem 0;
-            border-left: 4px solid #007bff;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .info h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        .info p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
         }
         .placeholder {
+            background: #f8f9fa;
             color: #6c757d;
-            font-style: italic;
+            padding: 2rem;
+            border-radius: 15px;
             margin: 2rem 0;
+            border: 2px dashed #dee2e6;
+        }
+        .placeholder p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .status {
+            background: #e8f5e8;
+            color: #28a745;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #28a745;
+            font-weight: 600;
+        }
+        .url-display {
+            background: #2c3e50;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            word-break: break-all;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        .feature h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .feature p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .container { padding: 2rem; }
+            h1 { font-size: 2rem; }
+            .logo { font-size: 3rem; }
         }
     </style>
 </head>
@@ -440,42 +581,87 @@ class OfflineDocsServerBloc
         <div class="logo">📚</div>
         <h1>Hex Documentation Server</h1>
 
+        <div class="status">
+            ✅ Server is running successfully!
+        </div>
+
         <div class="info">
-            <h3>Welcome to your Hex documentation server!</h3>
-            <p>This server is running and ready to serve your downloaded Hex package documentation.</p>
-            <p><strong>Server URL:</strong> <span id="server-url"></span></p>
+            <h3>🎉 Welcome to your Hex documentation server!</h3>
+            <p>Your server is up and running, ready to serve Hex package documentation.</p>
+            <div class="url-display">
+                <strong>Server URL:</strong> <span id="server-url"></span>
+            </div>
         </div>
 
         <div class="placeholder">
-            <p>📦 No Hex documentation files found yet.</p>
-            <p>Download Hex package documentation from the app's Downloads tab to serve them offline.</p>
-            <p>🌐 This server supports directory browsing - you can navigate through package and version directories!</p>
+            <p>📦 <strong>No Hex documentation files found yet?</strong></p>
+            <p>Don't worry! This is normal when you first start the server.</p>
+            <p>🌐 <strong>Next steps:</strong></p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <h4>📥 Download Docs</h4>
+                <p>Go to the Downloads tab in the app and download Hex package documentation</p>
+            </div>
+            <div class="feature">
+                <h4>🔍 Browse Content</h4>
+                <p>Navigate through packages and versions using the server's directory browsing</p>
+            </div>
+            <div class="feature">
+                <h4>📖 View Offline</h4>
+                <p>Access documentation files offline through this server URL</p>
+            </div>
+            <div class="feature">
+                <h4>⚡ Quick Access</h4>
+                <p>Perfect for offline Hex package documentation viewing on mobile devices</p>
+            </div>
         </div>
 
         <div class="info">
-            <h3>How to use:</h3>
-            <ul style="text-align: left; max-width: 500px; margin: 0 auto;">
-                <li>Download Hex package documentation from the app</li>
-                <li>Browse packages and versions through this server</li>
-                <li>Access documentation files through the server URL</li>
-                <li>Perfect for offline Hex package documentation viewing</li>
-            </ul>
+            <h3>💡 Pro Tips:</h3>
+            <p>• Use the server's directory browsing to explore available packages</p>
+            <p>• Bookmark this URL for quick access to your offline documentation</p>
+            <p>• The server automatically detects and serves downloaded Hex docs</p>
         </div>
     </div>
 
     <script>
-        // Display the current server URL
-        document.getElementById('server-url').textContent = window.location.origin;
+        // Display the current server URL and ensure page loads correctly
+        document.addEventListener('DOMContentLoaded', function() {
+            const serverUrl = window.location.origin;
+            const urlElement = document.getElementById('server-url');
+            if (urlElement) {
+                urlElement.textContent = serverUrl;
+            }
+
+            // Ensure the page is visible and properly rendered
+            document.body.style.visibility = 'visible';
+
+            // Log for debugging
+            console.log('Hex Documentation Server loaded successfully');
+            console.log('Server URL:', serverUrl);
+        });
     </script>
 </body>
 </html>''';
 
         await indexFile.writeAsString(htmlContent);
         AppLogging.logServerOperation('✅ Created default index.html file with welcome page');
+
+        // Verify the file was created successfully
+        if (await indexFile.exists() && await indexFile.length() > 0) {
+          AppLogging.logServerOperation('✅ Index file verified: ${await indexFile.length()} bytes');
+        } else {
+          throw Exception('Index file was not created properly');
+        }
+      } else {
+        AppLogging.logServerOperation('ℹ️ Index file already exists, skipping creation');
       }
     } catch (e) {
-      AppLogging.logServerWarning('Failed to create default index.html file', e);
-      // Don't rethrow - the server can still work without the index file
+      AppLogging.logServerError('Failed to create default index.html file', e);
+      // Re-throw the error so the server startup can handle it properly
+      throw Exception('Failed to create server index file: $e');
     }
   }
 
