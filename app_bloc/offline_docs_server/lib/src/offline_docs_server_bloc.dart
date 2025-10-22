@@ -6,6 +6,7 @@ import 'package:app_logging/app_logging.dart';
 import 'package:bloc/bloc.dart';
 import 'package:drift/drift.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_static/shelf_static.dart';
@@ -332,9 +333,50 @@ class OfflineDocsServerBloc
       AppLogging.logServerOperation('Found $fileCount files and $dirCount directories in docs root');
       AppLogging.logServerOperation('Index.html present: $hasIndexFile');
 
+      // Detailed directory structure logging
+      AppLogging.logServerOperation('=== DETAILED DIRECTORY STRUCTURE ===');
+      AppLogging.logServerOperation('Base directory: ${docsDir.path}');
+      AppLogging.logServerOperation('Directory exists: ${await docsDir.exists()}');
+      AppLogging.logServerOperation('Directory is readable: ${await _isDirectoryReadable(docsDir)}');
+
+      for (final entity in files) {
+        if (entity is Directory) {
+          AppLogging.logServerOperation('📁 Directory: ${entity.path}');
+          try {
+            final subFiles = await entity.list().toList();
+            final subFileCount = subFiles.whereType<File>().length;
+            final subDirCount = subFiles.whereType<Directory>().length;
+            AppLogging.logServerOperation('  └── $subFileCount files, $subDirCount subdirectories');
+
+            // List first few files in each directory
+            for (final subEntity in subFiles.take(5)) {
+              if (subEntity is File) {
+                AppLogging.logServerOperation('    📄 ${p.basename(subEntity.path)}');
+              } else if (subEntity is Directory) {
+                AppLogging.logServerOperation('    📁 ${p.basename(subEntity.path)}/');
+              }
+            }
+            if (subFiles.length > 5) {
+              AppLogging.logServerOperation('    ... and ${subFiles.length - 5} more items');
+            }
+          } catch (e) {
+            AppLogging.logServerWarning('Could not list subdirectory contents', '${entity.path}: $e');
+          }
+        } else if (entity is File) {
+          AppLogging.logServerOperation('📄 File: ${entity.path} (${await entity.length()} bytes)');
+        }
+      }
+      AppLogging.logServerOperation('=== END DIRECTORY STRUCTURE ===');
+
       if (!hasIndexFile) {
-        AppLogging.logServerWarning('No index.html found', 'Creating default index file');
-        await _createDefaultIndexFile(docsDir);
+        AppLogging.logServerWarning('No index.html found', 'Creating dynamic index file with package listing');
+        await _createDynamicIndexFile(docsDir, files);
+      } else {
+        // Even if index.html exists, create a dynamic one if we have packages
+        if (dirCount > 0) {
+          AppLogging.logServerOperation('Found $dirCount package directories, creating enhanced index');
+          await _createDynamicIndexFile(docsDir, files);
+        }
       }
 
       // Start server
@@ -441,6 +483,246 @@ class OfflineDocsServerBloc
     } catch (e) {
       AppLogging.logServerWarning('Failed to get network server address', e);
       return null;
+    }
+  }
+
+  Future<bool> _isDirectoryReadable(Directory dir) async {
+    try {
+      // Try to list the directory contents to check if it's readable
+      await dir.list().take(1).toList();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> _createDynamicIndexFile(Directory docsDir, List<FileSystemEntity> entities) async {
+    try {
+      // Find all package directories
+      final packageDirs = entities.whereType<Directory>().toList();
+
+      AppLogging.logServerOperation('Creating dynamic index with ${packageDirs.length} packages');
+
+      final indexFile = File('${docsDir.path}/index.html');
+
+      // Build package list HTML
+      final packageListHtml = packageDirs.map((dir) {
+        final packageName = p.basename(dir.path);
+        return '''
+          <div class="package-card" onclick="location.href='./$packageName/'">
+            <div class="package-icon">📦</div>
+            <div class="package-info">
+              <h3>$packageName</h3>
+              <p>Click to browse documentation</p>
+            </div>
+            <div class="package-arrow">→</div>
+          </div>''';
+      }).join('\n');
+
+      final htmlContent = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Documentation Server - Available Packages</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .stats h2 {
+            margin-bottom: 0.5rem;
+        }
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .package-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .package-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        .package-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .package-info {
+            flex: 1;
+        }
+        .package-info h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .package-info p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .package-arrow {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+        .no-packages {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 3rem;
+            margin: 2rem 0;
+        }
+        .no-packages h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .no-packages p {
+            color: #7f8c8d;
+            margin-bottom: 1rem;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .instructions h3 {
+            margin-bottom: 1rem;
+        }
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .instructions li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .instructions li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .package-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Hex Documentation Server</h1>
+            <p>Your offline documentation is ready to browse!</p>
+        </div>
+
+        <div class="stats">
+            <h2>${packageDirs.length} Packages Available</h2>
+            <p>Click on any package to browse its documentation</p>
+        </div>
+
+        <div class="package-grid">
+            $packageListHtml
+        </div>
+
+        <div class="instructions">
+            <h3>💡 How to use this server:</h3>
+            <ul>
+                <li>Click on any package card to browse its documentation</li>
+                <li>Navigate through different versions using the directory browser</li>
+                <li>Bookmark this page for quick access to your offline docs</li>
+                <li>The server automatically detects new packages you download</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Hex Documentation Server loaded with ${packageDirs.length} packages');
+
+            // Add click handlers to package cards
+            document.querySelectorAll('.package-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    console.log('Navigating to package:', this.querySelector('h3').textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>''';
+
+      await indexFile.writeAsString(htmlContent);
+      AppLogging.logServerOperation('✅ Created dynamic index.html with ${packageDirs.length} packages');
+
+      // Verify the file was created successfully
+      if (await indexFile.exists() && await indexFile.length() > 0) {
+        AppLogging.logServerOperation('✅ Dynamic index file verified: ${await indexFile.length()} bytes');
+      } else {
+        throw Exception('Dynamic index file was not created properly');
+      }
+    } catch (e) {
+      AppLogging.logServerError('Failed to create dynamic index file', e);
+      // Fall back to default index file
+      await _createDefaultIndexFile(docsDir);
     }
   }
 

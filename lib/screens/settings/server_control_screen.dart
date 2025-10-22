@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
 import 'package:mobile_hex_pm/screens/settings/settings_screen.dart';
 import 'package:offline_docs_server/offline_docs_server_bloc.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -495,21 +496,32 @@ class _ServerControlContentState extends State<ServerControlContent> {
       final appSupportDir = await getApplicationSupportDirectory();
       final docsDir = Directory('${appSupportDir.path}/hex_docs');
 
+      debugPrint('Checking server content in: ${docsDir.path}');
+
       if (await docsDir.exists()) {
         final files = await docsDir.list().toList();
         final fileCount = files.whereType<File>().length;
         final dirCount = files.whereType<Directory>().length;
 
+        // Detailed analysis
+        final packageDirs = files.whereType<Directory>().toList();
+        final packageNames = packageDirs.map((d) => p.basename(d.path)).toList();
+
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Server content: $fileCount files, $dirCount directories',
+                'Found: $dirCount packages, $fileCount files\\nPackages: ${packageNames.take(3).join(', ')}${packageNames.length > 3 ? '...' : ''}',
               ),
               backgroundColor: Colors.blue,
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 4),
             ),
           );
+        }
+
+        // Show detailed info in a dialog
+        if (context.mounted) {
+          _showDetailedContentDialog(context, docsDir, packageDirs, fileCount, dirCount);
         }
       } else {
         if (context.mounted) {
@@ -532,6 +544,71 @@ class _ServerControlContentState extends State<ServerControlContent> {
           ),
         );
       }
+    }
+  }
+
+  void _showDetailedContentDialog(
+    BuildContext context,
+    Directory docsDir,
+    List<Directory> packageDirs,
+    int fileCount,
+    int dirCount,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Server Content Details'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('📁 Base Directory: ${docsDir.path}'),
+              Text('📊 Total: $dirCount packages, $fileCount files'),
+              const SizedBox(height: 16),
+              const Text('📦 Available Packages:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              ...packageDirs.map((dir) => FutureBuilder<List<FileSystemEntity>>(
+                future: dir.list().toList(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final versions = snapshot.data!.whereType<Directory>().length;
+                    final files = snapshot.data!.whereType<File>().length;
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 8, bottom: 4),
+                      child: Text(
+                        '  • ${p.basename(dir.path)}: $versions versions, $files files',
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              )),
+              const SizedBox(height: 16),
+              const Text('🔍 Debug Info:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('  • Directory exists: ${docsDir.existsSync()}'),
+              Text('  • Directory readable: ${_isDirectoryReadableSync(docsDir)}'),
+              Text('  • Has index.html: ${File('${docsDir.path}/index.html').existsSync()}'),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _isDirectoryReadableSync(Directory dir) {
+    try {
+      dir.listSync().take(1).toList();
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
