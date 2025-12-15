@@ -104,6 +104,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hexAPI => 'Hex API';
 
   @override
+  String get hexSection => 'HEX';
+
+  @override
+  String get hexData => 'Hex Data';
+
+  @override
+  String get resetDownloadedDocs => 'Reset Downloaded Docs';
+
+  @override
+  String get confirmResetDownloadedDocs =>
+      'Are you sure you want to delete all downloaded documentation? This action cannot be undone.';
+
+  @override
+  String get resetFavoritePackages => 'Reset Favorite Packages';
+
+  @override
+  String get confirmResetFavoritePackages =>
+      'Are you sure you want to remove all favorite packages? This action cannot be undone.';
+
+  @override
+  String get resetSuccessful => 'Reset successful';
+
+  @override
+  String get noDownloadedDocs => 'No downloaded documentation found';
+
+  @override
+  String get noFavoritePackages => 'No favorite packages found';
+
+  @override
   String get hexAPIKey => 'HEX_API_KEY';
 
   @override

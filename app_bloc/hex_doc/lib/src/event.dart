@@ -36,3 +36,7 @@ final class HexDocEventSetup extends HexDocEvent {
     required this.packageVersion,
   });
 }
+
+final class HexDocEventDeleteAll extends HexDocEvent {
+  const HexDocEventDeleteAll();
+}

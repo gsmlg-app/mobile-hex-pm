@@ -25,3 +25,6 @@ final class FavoritePackageEventRemove extends FavoritePackageEvent {
   const FavoritePackageEventRemove(this.name);
 }
 
+final class FavoritePackageEventResetAll extends FavoritePackageEvent {
+  const FavoritePackageEventResetAll();
+}

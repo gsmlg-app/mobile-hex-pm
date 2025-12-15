@@ -16,6 +16,7 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
     on<HexDocEventSetup>(_onHexDocEventSetup);
     on<HexDocEventList>(_onHexDocEventList);
     on<HexDocEventDelete>(_onHexDocEventDelete);
+    on<HexDocEventDeleteAll>(_onHexDocEventDeleteAll);
     on<HexDocEventToggleExpanded>(_onHexDocEventToggleExpanded);
   }
 
@@ -78,6 +79,21 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
           await packageDir.delete();
         }
       }
+    } catch (e) {
+      emitter(state.copyWith(stats: DocStats.error, error: e));
+    }
+  }
+
+  Future<void> _onHexDocEventDeleteAll(
+    HexDocEventDeleteAll event,
+    Emitter<HexDocState> emitter,
+  ) async {
+    try {
+      final docsDir = Directory(p.join(appSupportDir.path, 'hex_docs'));
+      if (await docsDir.exists()) {
+        await docsDir.delete(recursive: true);
+      }
+      emitter(state.copyWith(docs: {}, expandedState: {}));
     } catch (e) {
       emitter(state.copyWith(stats: DocStats.error, error: e));
     }

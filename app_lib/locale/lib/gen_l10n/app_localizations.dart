@@ -280,6 +280,60 @@ abstract class AppLocalizations {
   /// **'Hex API'**
   String get hexAPI;
 
+  /// No description provided for @hexSection.
+  ///
+  /// In en, this message translates to:
+  /// **'HEX'**
+  String get hexSection;
+
+  /// No description provided for @hexData.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex Data'**
+  String get hexData;
+
+  /// No description provided for @resetDownloadedDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Downloaded Docs'**
+  String get resetDownloadedDocs;
+
+  /// No description provided for @confirmResetDownloadedDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all downloaded documentation? This action cannot be undone.'**
+  String get confirmResetDownloadedDocs;
+
+  /// No description provided for @resetFavoritePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Favorite Packages'**
+  String get resetFavoritePackages;
+
+  /// No description provided for @confirmResetFavoritePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all favorite packages? This action cannot be undone.'**
+  String get confirmResetFavoritePackages;
+
+  /// No description provided for @resetSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset successful'**
+  String get resetSuccessful;
+
+  /// No description provided for @noDownloadedDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'No downloaded documentation found'**
+  String get noDownloadedDocs;
+
+  /// No description provided for @noFavoritePackages.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite packages found'**
+  String get noFavoritePackages;
+
   /// No description provided for @hexAPIKey.
   ///
   /// In en, this message translates to:

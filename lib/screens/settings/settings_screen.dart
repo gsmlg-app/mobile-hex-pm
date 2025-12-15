@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_hex_pm/destination.dart';
+import 'package:mobile_hex_pm/screens/settings/hex_data_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_control_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_config_screen.dart';
@@ -45,7 +46,7 @@ class SettingsScreen extends StatelessWidget {
                     return SettingsList(
                       sections: [
                         SettingsSection(
-                          title: Text(context.l10n.hexAPI),
+                          title: Text(context.l10n.hexSection),
                           tiles: <SettingsTile>[
                             SettingsTile.navigation(
                               leading: const Icon(Icons.api),
@@ -53,7 +54,14 @@ class SettingsScreen extends StatelessWidget {
                               onPressed: (context) {
                                 context.goNamed(HexSettingsScreen.name);
                               },
-                            )
+                            ),
+                            SettingsTile.navigation(
+                              leading: const Icon(Icons.storage),
+                              title: Text(context.l10n.hexData),
+                              onPressed: (context) {
+                                context.goNamed(HexDataScreen.name);
+                              },
+                            ),
                           ],
                         ),
                         SettingsSection(

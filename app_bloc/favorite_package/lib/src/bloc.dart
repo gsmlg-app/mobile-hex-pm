@@ -16,6 +16,7 @@ class FavoritePackageBloc
     on<FavoritePackageEventGetPackage>(_onFavoritePackageEventGetPackage);
     on<FavoritePackageEventGetRelease>(_onFavoritePackageEventGetRelease);
     on<FavoritePackageEventRemove>(_onFavoritePackageEventRemove);
+    on<FavoritePackageEventResetAll>(_onFavoritePackageEventResetAll);
   }
 
   Future<void> _onFavoritePackageEventInit(
@@ -82,5 +83,18 @@ class FavoritePackageBloc
         await database.select(database.favoritePackage).get();
 
     emitter(state.copyWith(favorites: favorites));
+  }
+
+  Future<void> _onFavoritePackageEventResetAll(
+    FavoritePackageEventResetAll event,
+    Emitter<FavoritePackageState> emitter,
+  ) async {
+    await database.delete(database.favoritePackage).go();
+
+    emitter(state.copyWith(
+      favorites: [],
+      favoritePackages: {},
+      favoriteReleases: {},
+    ));
   }
 }
