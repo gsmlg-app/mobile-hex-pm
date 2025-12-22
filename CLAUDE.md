@@ -27,6 +27,13 @@ melos run test                 # Run all tests
 melos run test:flutter         # Flutter tests only
 melos run test:dart            # Dart tests only
 flutter test test/path/to/test_file.dart  # Single test file
+
+# Deployment (Fastlane)
+bundle install                 # Install Ruby dependencies
+cd ios && bundle exec fastlane deploy_staging      # iOS to TestFlight
+cd ios && bundle exec fastlane deploy_production   # iOS to App Store
+cd android && bundle exec fastlane deploy_staging  # Android to internal track
+cd android && bundle exec fastlane deploy_production  # Android to beta track
 ```
 
 ## Architecture

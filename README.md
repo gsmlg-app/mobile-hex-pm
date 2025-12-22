@@ -145,6 +145,48 @@ melos run outdated
 melos run validate-dependencies
 ```
 
+## Deployment
+
+This project uses [Fastlane](https://fastlane.tools/) for automated deployment to App Store and Google Play.
+
+### Setup
+```bash
+# Install Ruby dependencies
+bundle install
+```
+
+### iOS Deployment
+```bash
+# Deploy to TestFlight (staging)
+./ios/run_fastlane.sh <build_number>
+
+# Or run specific lanes
+cd ios && bundle exec fastlane deploy_staging      # TestFlight
+cd ios && bundle exec fastlane deploy_production   # App Store
+```
+
+### Android Deployment
+```bash
+# Deploy to Play Store internal track (staging)
+./android/run_fastlane.sh <build_number>
+
+# Or run specific lanes
+cd android && bundle exec fastlane deploy_staging     # Internal track
+cd android && bundle exec fastlane deploy_production  # Beta track
+```
+
+### Required Environment Variables
+
+**iOS:**
+- `APP_STORE_CONNECT_KEY_IDENTIFIER` - App Store Connect API key ID
+- `APP_STORE_CONNECT_ISSUER_ID` - App Store Connect API issuer ID
+- `APP_STORE_CONNECT_PRIVATE_KEY` - App Store Connect API private key
+- `TEAM_ID` - Apple Developer Team ID
+- `ITC_TEAM_ID` - App Store Connect Team ID
+
+**Android:**
+- `PLAY_CONSOLE_SA` - Google Play Console service account JSON key content
+
 ## Project Structure
 
 ```
