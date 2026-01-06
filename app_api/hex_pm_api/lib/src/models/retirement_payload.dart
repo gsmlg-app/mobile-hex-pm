@@ -14,9 +14,10 @@ class RetirementPayload {
     required this.reason,
     this.message,
   });
-  
-  factory RetirementPayload.fromJson(Map<String, Object?> json) => _$RetirementPayloadFromJson(json);
-  
+
+  factory RetirementPayload.fromJson(Map<String, Object?> json) =>
+      _$RetirementPayloadFromJson(json);
+
   /// Reason for retiring the release.
   final RetirementPayloadReason reason;
 

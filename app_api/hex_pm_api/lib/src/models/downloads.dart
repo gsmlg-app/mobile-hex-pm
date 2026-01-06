@@ -13,9 +13,10 @@ class Downloads {
     this.week,
     this.day,
   });
-  
-  factory Downloads.fromJson(Map<String, Object?> json) => _$DownloadsFromJson(json);
-  
+
+  factory Downloads.fromJson(Map<String, Object?> json) =>
+      _$DownloadsFromJson(json);
+
   final int? all;
   final int? week;
   final int? day;

@@ -18,9 +18,9 @@ class ApiKey {
     required this.url,
     this.revokedAt,
   });
-  
+
   factory ApiKey.fromJson(Map<String, Object?> json) => _$ApiKeyFromJson(json);
-  
+
   final String name;
   final List<Permissions> permissions;
   @JsonKey(name: 'revoked_at')

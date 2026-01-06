@@ -59,15 +59,22 @@ class HexPmApi {
 
   UsersClient get users => _users ??= UsersClient(_dio, baseUrl: _baseUrl);
 
-  RepositoriesClient get repositories => _repositories ??= RepositoriesClient(_dio, baseUrl: _baseUrl);
+  RepositoriesClient get repositories =>
+      _repositories ??= RepositoriesClient(_dio, baseUrl: _baseUrl);
 
-  PackagesClient get packages => _packages ??= PackagesClient(_dio, baseUrl: _baseUrl);
+  PackagesClient get packages =>
+      _packages ??= PackagesClient(_dio, baseUrl: _baseUrl);
 
-  PackageReleasesClient get packageReleases => _packageReleases ??= PackageReleasesClient(_dio, baseUrl: _baseUrl);
+  PackageReleasesClient get packageReleases =>
+      _packageReleases ??= PackageReleasesClient(_dio, baseUrl: _baseUrl);
 
-  PackageDocumentationClient get packageDocumentation => _packageDocumentation ??= PackageDocumentationClient(_dio, baseUrl: _baseUrl);
+  PackageDocumentationClient get packageDocumentation =>
+      _packageDocumentation ??=
+          PackageDocumentationClient(_dio, baseUrl: _baseUrl);
 
-  PackageOwnersClient get packageOwners => _packageOwners ??= PackageOwnersClient(_dio, baseUrl: _baseUrl);
+  PackageOwnersClient get packageOwners =>
+      _packageOwners ??= PackageOwnersClient(_dio, baseUrl: _baseUrl);
 
-  ApiKeysClient get apiKeys => _apiKeys ??= ApiKeysClient(_dio, baseUrl: _baseUrl);
+  ApiKeysClient get apiKeys =>
+      _apiKeys ??= ApiKeysClient(_dio, baseUrl: _baseUrl);
 }

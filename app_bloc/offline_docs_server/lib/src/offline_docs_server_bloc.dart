@@ -19,7 +19,8 @@ class OfflineDocsServerBloc
   final AppDatabase _database;
   HttpServer? _server;
 
-  OfflineDocsServerBloc(this._database) : super(const OfflineDocsServerInitial()) {
+  OfflineDocsServerBloc(this._database)
+      : super(const OfflineDocsServerInitial()) {
     on<OfflineDocsServerConfigRequested>(_onConfigRequested);
     on<OfflineDocsServerStatusRequested>(_onStatusRequested);
     on<OfflineDocsServerStarted>(_onStarted);
@@ -37,10 +38,12 @@ class OfflineDocsServerBloc
       await DatabaseInitializer.ensureServerConfigTableExists(_database);
 
       final config = await _getOrCreateConfig();
-      final status = _server != null ? ServerStatus.running : ServerStatus.stopped;
+      final status =
+          _server != null ? ServerStatus.running : ServerStatus.stopped;
       final serverAddress = await _getServerAddress(config.host, config.port);
 
-      AppLogging.logServerOperation('Server configuration loaded successfully: ${config.host}:${config.port}');
+      AppLogging.logServerOperation(
+          'Server configuration loaded successfully: ${config.host}:${config.port}');
 
       emit(OfflineDocsServerLoadSuccess(
         config: config,
@@ -90,7 +93,8 @@ class OfflineDocsServerBloc
       // Ensure we always have a valid server address
       final finalServerAddress = serverAddress ?? currentState.config.serverUrl;
 
-      AppLogging.logServerOperation('Server started successfully with address: $finalServerAddress');
+      AppLogging.logServerOperation(
+          'Server started successfully with address: $finalServerAddress');
 
       emit(currentState.copyWith(
         status: ServerStatus.running,
@@ -189,11 +193,13 @@ class OfflineDocsServerBloc
 
   Future<ServerConfig> _getOrCreateConfig() async {
     try {
-      final configs = await (_database.select(_database.docsServerConfig)..limit(1)).get();
+      final configs =
+          await (_database.select(_database.docsServerConfig)..limit(1)).get();
 
       if (configs.isNotEmpty) {
         final config = configs.first;
-        AppLogging.logServerOperation('Found existing server config: ${config.host}:${config.port}');
+        AppLogging.logServerOperation(
+            'Found existing server config: ${config.host}:${config.port}');
         return ServerConfig(
           host: config.host,
           port: config.port,
@@ -204,7 +210,8 @@ class OfflineDocsServerBloc
       }
 
       // Create default config
-      AppLogging.logServerOperation('No existing server config found, creating default');
+      AppLogging.logServerOperation(
+          'No existing server config found, creating default');
       final defaultConfig = ServerConfig(
         host: 'localhost',
         port: 8080,
@@ -214,20 +221,22 @@ class OfflineDocsServerBloc
       );
 
       await _database.into(_database.docsServerConfig).insert(
-        DocsServerConfigCompanion.insert(
-          host: Value(defaultConfig.host),
-          port: Value(defaultConfig.port),
-          autoStart: Value(defaultConfig.autoStart),
-          enabled: Value(defaultConfig.enabled),
-        ),
-      );
+            DocsServerConfigCompanion.insert(
+              host: Value(defaultConfig.host),
+              port: Value(defaultConfig.port),
+              autoStart: Value(defaultConfig.autoStart),
+              enabled: Value(defaultConfig.enabled),
+            ),
+          );
 
-      AppLogging.logServerOperation('Default server config created successfully');
+      AppLogging.logServerOperation(
+          'Default server config created successfully');
       return defaultConfig;
     } catch (e) {
       AppLogging.logServerError('getOrCreateConfig database operation', e);
       // Return hardcoded default config as fallback
-      AppLogging.logServerWarning('Using fallback default config', 'Database error, using hardcoded defaults');
+      AppLogging.logServerWarning('Using fallback default config',
+          'Database error, using hardcoded defaults');
       return ServerConfig(
         host: 'localhost',
         port: 8080,
@@ -240,11 +249,13 @@ class OfflineDocsServerBloc
 
   Future<void> _updateConfigInDatabase(ServerConfig config) async {
     try {
-      final existingConfigs = await (_database.select(_database.docsServerConfig)..limit(1)).get();
+      final existingConfigs =
+          await (_database.select(_database.docsServerConfig)..limit(1)).get();
 
       if (existingConfigs.isNotEmpty) {
         final configId = existingConfigs.first.id;
-        await (_database.update(_database.docsServerConfig)..where((tbl) => tbl.id.equals(configId)))
+        await (_database.update(_database.docsServerConfig)
+              ..where((tbl) => tbl.id.equals(configId)))
             .write(DocsServerConfigCompanion(
           host: Value(config.host),
           port: Value(config.port),
@@ -252,18 +263,20 @@ class OfflineDocsServerBloc
           enabled: Value(config.enabled),
           updatedAt: Value(config.updatedAt),
         ));
-        AppLogging.logServerOperation('Server config updated successfully: ${config.host}:${config.port}');
+        AppLogging.logServerOperation(
+            'Server config updated successfully: ${config.host}:${config.port}');
       } else {
         await _database.into(_database.docsServerConfig).insert(
-          DocsServerConfigCompanion.insert(
-            host: Value(config.host),
-            port: Value(config.port),
-            autoStart: Value(config.autoStart),
-            enabled: Value(config.enabled),
-            updatedAt: Value(config.updatedAt),
-          ),
-        );
-        AppLogging.logServerOperation('Server config created successfully: ${config.host}:${config.port}');
+              DocsServerConfigCompanion.insert(
+                host: Value(config.host),
+                port: Value(config.port),
+                autoStart: Value(config.autoStart),
+                enabled: Value(config.enabled),
+                updatedAt: Value(config.updatedAt),
+              ),
+            );
+        AppLogging.logServerOperation(
+            'Server config created successfully: ${config.host}:${config.port}');
       }
     } catch (e) {
       AppLogging.logServerError('updateConfigInDatabase database operation', e);
@@ -283,15 +296,18 @@ class OfflineDocsServerBloc
       final docsDir = Directory('${appSupportDir.path}/hex_docs');
 
       AppLogging.logServerOperation('Starting offline docs server...');
-      AppLogging.logServerOperation('Application support directory: ${appSupportDir.path}');
+      AppLogging.logServerOperation(
+          'Application support directory: ${appSupportDir.path}');
       AppLogging.logServerOperation('Target docs directory: ${docsDir.path}');
 
       // Create directory if it doesn't exist
       if (!await docsDir.exists()) {
-        AppLogging.logServerOperation('Hex docs directory does not exist, creating...');
+        AppLogging.logServerOperation(
+            'Hex docs directory does not exist, creating...');
         try {
           await docsDir.create(recursive: true);
-          AppLogging.logServerOperation('✅ Created hex docs directory: ${docsDir.path}');
+          AppLogging.logServerOperation(
+              '✅ Created hex docs directory: ${docsDir.path}');
 
           // Create a default index.html file
           await _createDefaultIndexFile(docsDir);
@@ -300,13 +316,15 @@ class OfflineDocsServerBloc
           throw Exception('Failed to create server directory: $e');
         }
       } else {
-        AppLogging.logServerOperation('✅ Hex docs directory already exists: ${docsDir.path}');
+        AppLogging.logServerOperation(
+            '✅ Hex docs directory already exists: ${docsDir.path}');
 
         // Ensure index.html exists even if directory exists
         try {
           final indexFile = File('${docsDir.path}/index.html');
           if (!await indexFile.exists()) {
-            AppLogging.logServerOperation('Index file not found, creating default...');
+            AppLogging.logServerOperation(
+                'Index file not found, creating default...');
             await _createDefaultIndexFile(docsDir);
           }
         } catch (e) {
@@ -330,14 +348,17 @@ class OfflineDocsServerBloc
       final indexFile = File('${docsDir.path}/index.html');
       final hasIndexFile = await indexFile.exists();
 
-      AppLogging.logServerOperation('Found $fileCount files and $dirCount directories in docs root');
+      AppLogging.logServerOperation(
+          'Found $fileCount files and $dirCount directories in docs root');
       AppLogging.logServerOperation('Index.html present: $hasIndexFile');
 
       // Detailed directory structure logging
       AppLogging.logServerOperation('=== DETAILED DIRECTORY STRUCTURE ===');
       AppLogging.logServerOperation('Base directory: ${docsDir.path}');
-      AppLogging.logServerOperation('Directory exists: ${await docsDir.exists()}');
-      AppLogging.logServerOperation('Directory is readable: ${await _isDirectoryReadable(docsDir)}');
+      AppLogging.logServerOperation(
+          'Directory exists: ${await docsDir.exists()}');
+      AppLogging.logServerOperation(
+          'Directory is readable: ${await _isDirectoryReadable(docsDir)}');
 
       for (final entity in files) {
         if (entity is Directory) {
@@ -346,35 +367,43 @@ class OfflineDocsServerBloc
             final subFiles = await entity.list().toList();
             final subFileCount = subFiles.whereType<File>().length;
             final subDirCount = subFiles.whereType<Directory>().length;
-            AppLogging.logServerOperation('  └── $subFileCount files, $subDirCount subdirectories');
+            AppLogging.logServerOperation(
+                '  └── $subFileCount files, $subDirCount subdirectories');
 
             // List first few files in each directory
             for (final subEntity in subFiles.take(5)) {
               if (subEntity is File) {
-                AppLogging.logServerOperation('    📄 ${p.basename(subEntity.path)}');
+                AppLogging.logServerOperation(
+                    '    📄 ${p.basename(subEntity.path)}');
               } else if (subEntity is Directory) {
-                AppLogging.logServerOperation('    📁 ${p.basename(subEntity.path)}/');
+                AppLogging.logServerOperation(
+                    '    📁 ${p.basename(subEntity.path)}/');
               }
             }
             if (subFiles.length > 5) {
-              AppLogging.logServerOperation('    ... and ${subFiles.length - 5} more items');
+              AppLogging.logServerOperation(
+                  '    ... and ${subFiles.length - 5} more items');
             }
           } catch (e) {
-            AppLogging.logServerWarning('Could not list subdirectory contents', '${entity.path}: $e');
+            AppLogging.logServerWarning(
+                'Could not list subdirectory contents', '${entity.path}: $e');
           }
         } else if (entity is File) {
-          AppLogging.logServerOperation('📄 File: ${entity.path} (${await entity.length()} bytes)');
+          AppLogging.logServerOperation(
+              '📄 File: ${entity.path} (${await entity.length()} bytes)');
         }
       }
       AppLogging.logServerOperation('=== END DIRECTORY STRUCTURE ===');
 
       if (!hasIndexFile) {
-        AppLogging.logServerWarning('No index.html found', 'Creating dynamic index file with package listing');
+        AppLogging.logServerWarning('No index.html found',
+            'Creating dynamic index file with package listing');
         await _createDynamicIndexFile(docsDir, files);
       } else {
         // Even if index.html exists, create a dynamic one if we have packages
         if (dirCount > 0) {
-          AppLogging.logServerOperation('Found $dirCount package directories, creating enhanced index');
+          AppLogging.logServerOperation(
+              'Found $dirCount package directories, creating enhanced index');
           await _createDynamicIndexFile(docsDir, files);
         }
       }
@@ -386,10 +415,13 @@ class OfflineDocsServerBloc
           config.host,
           config.port,
         );
-        AppLogging.logServerOperation('✅ Server started successfully on ${config.host}:${config.port}');
+        AppLogging.logServerOperation(
+            '✅ Server started successfully on ${config.host}:${config.port}');
       } catch (e) {
-        AppLogging.logServerError('Failed to start server on ${config.host}:${config.port}', e);
-        throw Exception('Failed to start server: Could not bind to ${config.host}:${config.port}. Error: $e');
+        AppLogging.logServerError(
+            'Failed to start server on ${config.host}:${config.port}', e);
+        throw Exception(
+            'Failed to start server: Could not bind to ${config.host}:${config.port}. Error: $e');
       }
 
       // Try to get network IP for additional access URL
@@ -435,7 +467,8 @@ class OfflineDocsServerBloc
 
   Future<String?> _getServerAddress(String host, int port) async {
     if (_server == null) {
-      AppLogging.logServerWarning('Server is null when getting address', 'Server instance is null');
+      AppLogging.logServerWarning(
+          'Server is null when getting address', 'Server instance is null');
       return null;
     }
 
@@ -453,7 +486,8 @@ class OfflineDocsServerBloc
             AppLogging.logServerOperation('Network URL detected: $networkUrl');
             return networkUrl;
           } else {
-            AppLogging.logServerWarning('Could not get WiFi IP', 'WiFi IP is null or empty');
+            AppLogging.logServerWarning(
+                'Could not get WiFi IP', 'WiFi IP is null or empty');
           }
         } catch (e) {
           AppLogging.logServerWarning('Failed to get WiFi IP address', e);
@@ -496,12 +530,14 @@ class OfflineDocsServerBloc
     }
   }
 
-  Future<void> _createDynamicIndexFile(Directory docsDir, List<FileSystemEntity> entities) async {
+  Future<void> _createDynamicIndexFile(
+      Directory docsDir, List<FileSystemEntity> entities) async {
     try {
       // Find all package directories
       final packageDirs = entities.whereType<Directory>().toList();
 
-      AppLogging.logServerOperation('Creating dynamic index with ${packageDirs.length} packages');
+      AppLogging.logServerOperation(
+          'Creating dynamic index with ${packageDirs.length} packages');
 
       final indexFile = File('${docsDir.path}/index.html');
 
@@ -711,11 +747,13 @@ class OfflineDocsServerBloc
 </html>''';
 
       await indexFile.writeAsString(htmlContent);
-      AppLogging.logServerOperation('✅ Created dynamic index.html with ${packageDirs.length} packages');
+      AppLogging.logServerOperation(
+          '✅ Created dynamic index.html with ${packageDirs.length} packages');
 
       // Verify the file was created successfully
       if (await indexFile.exists() && await indexFile.length() > 0) {
-        AppLogging.logServerOperation('✅ Dynamic index file verified: ${await indexFile.length()} bytes');
+        AppLogging.logServerOperation(
+            '✅ Dynamic index file verified: ${await indexFile.length()} bytes');
       } else {
         throw Exception('Dynamic index file was not created properly');
       }
@@ -929,16 +967,19 @@ class OfflineDocsServerBloc
 </html>''';
 
         await indexFile.writeAsString(htmlContent);
-        AppLogging.logServerOperation('✅ Created default index.html file with welcome page');
+        AppLogging.logServerOperation(
+            '✅ Created default index.html file with welcome page');
 
         // Verify the file was created successfully
         if (await indexFile.exists() && await indexFile.length() > 0) {
-          AppLogging.logServerOperation('✅ Index file verified: ${await indexFile.length()} bytes');
+          AppLogging.logServerOperation(
+              '✅ Index file verified: ${await indexFile.length()} bytes');
         } else {
           throw Exception('Index file was not created properly');
         }
       } else {
-        AppLogging.logServerOperation('ℹ️ Index file already exists, skipping creation');
+        AppLogging.logServerOperation(
+            'ℹ️ Index file already exists, skipping creation');
       }
     } catch (e) {
       AppLogging.logServerError('Failed to create default index.html file', e);

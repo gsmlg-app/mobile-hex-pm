@@ -14,9 +14,10 @@ class Permissions {
     this.domain,
     this.resource,
   });
-  
-  factory Permissions.fromJson(Map<String, Object?> json) => _$PermissionsFromJson(json);
-  
+
+  factory Permissions.fromJson(Map<String, Object?> json) =>
+      _$PermissionsFromJson(json);
+
   final Domain? domain;
   final String? resource;
 

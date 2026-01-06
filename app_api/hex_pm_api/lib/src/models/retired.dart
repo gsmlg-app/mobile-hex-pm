@@ -14,9 +14,10 @@ class Retired {
     this.reason,
     this.message,
   });
-  
-  factory Retired.fromJson(Map<String, Object?> json) => _$RetiredFromJson(json);
-  
+
+  factory Retired.fromJson(Map<String, Object?> json) =>
+      _$RetiredFromJson(json);
+
   final Reason? reason;
   final String? message;
 

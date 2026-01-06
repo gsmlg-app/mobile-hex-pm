@@ -19,9 +19,10 @@ class ApiKeyWithSecret {
     required this.secret,
     this.revokedAt,
   });
-  
-  factory ApiKeyWithSecret.fromJson(Map<String, Object?> json) => _$ApiKeyWithSecretFromJson(json);
-  
+
+  factory ApiKeyWithSecret.fromJson(Map<String, Object?> json) =>
+      _$ApiKeyWithSecretFromJson(json);
+
   final String name;
   final List<Permissions> permissions;
   @JsonKey(name: 'revoked_at')

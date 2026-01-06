@@ -26,13 +26,13 @@ void main() {
     test('Database should insert and retrieve server config', () async {
       // Insert a test config
       await database.into(database.docsServerConfig).insert(
-        DocsServerConfigCompanion.insert(
-          host: Value('test-host'),
-          port: Value(9999),
-          autoStart: Value(true),
-          enabled: Value(false),
-        ),
-      );
+            DocsServerConfigCompanion.insert(
+              host: Value('test-host'),
+              port: Value(9999),
+              autoStart: Value(true),
+              enabled: Value(false),
+            ),
+          );
 
       // Retrieve the config
       final configs = await database.select(database.docsServerConfig).get();
@@ -50,16 +50,17 @@ void main() {
     test('Database should update existing server config', () async {
       // Insert initial config
       await database.into(database.docsServerConfig).insert(
-        DocsServerConfigCompanion.insert(
-          host: Value('initial-host'),
-          port: Value(8080),
-          autoStart: Value(false),
-          enabled: Value(true),
-        ),
-      );
+            DocsServerConfigCompanion.insert(
+              host: Value('initial-host'),
+              port: Value(8080),
+              autoStart: Value(false),
+              enabled: Value(true),
+            ),
+          );
 
       // Update the config
-      await (database.update(database.docsServerConfig)..where((tbl) => tbl.id.equals(1)))
+      await (database.update(database.docsServerConfig)
+            ..where((tbl) => tbl.id.equals(1)))
           .write(DocsServerConfigCompanion(
         host: Value('updated-host'),
         port: Value(9090),

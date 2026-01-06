@@ -42,4 +42,3 @@ export 'models/owner_level.dart';
 export 'models/domain.dart';
 // Root client
 export 'hex_pm_api.dart';
-

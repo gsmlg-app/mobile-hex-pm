@@ -18,9 +18,10 @@ class UserWithOrgs {
     required this.url,
     required this.organizations,
   });
-  
-  factory UserWithOrgs.fromJson(Map<String, Object?> json) => _$UserWithOrgsFromJson(json);
-  
+
+  factory UserWithOrgs.fromJson(Map<String, Object?> json) =>
+      _$UserWithOrgsFromJson(json);
+
   /// User's unique username.
   final String username;
 

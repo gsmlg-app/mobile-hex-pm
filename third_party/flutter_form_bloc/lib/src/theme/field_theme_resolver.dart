@@ -18,13 +18,13 @@ class FieldThemeResolver {
     if (fieldDecorationTheme != null) {
       return fieldDecorationTheme;
     }
-    
+
     // Check formTheme second
     final formDecorationTheme = formTheme.decorationTheme;
     if (formDecorationTheme != null) {
       return formDecorationTheme;
     }
-    
+
     // Fall back to theme
     return theme.inputDecorationTheme;
   }

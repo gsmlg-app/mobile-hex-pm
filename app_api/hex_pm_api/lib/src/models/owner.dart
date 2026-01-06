@@ -18,9 +18,9 @@ class Owner {
     required this.url,
     required this.level,
   });
-  
+
   factory Owner.fromJson(Map<String, Object?> json) => _$OwnerFromJson(json);
-  
+
   /// User's unique username.
   final String username;
 

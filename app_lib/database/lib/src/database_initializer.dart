@@ -5,17 +5,22 @@ import 'database.dart';
 class DatabaseInitializer {
   static final Logger _logger = Logger('DatabaseInitializer');
 
-  static Future<void> ensureServerConfigTableExists(AppDatabase database) async {
+  static Future<void> ensureServerConfigTableExists(
+      AppDatabase database) async {
     try {
       // Try to query the docs_server_config table
       await database.select(database.docsServerConfig).get();
       _logger.info('docs_server_config table exists');
     } catch (e) {
-      _logger.warning('docs_server_config table does not exist, creating it: $e');
+      _logger
+          .warning('docs_server_config table does not exist, creating it: $e');
 
       try {
         // Create the table manually using raw SQL
-        final result = await database.customSelect('SELECT name FROM sqlite_master WHERE type=\'table\' AND name=\'docs_server_config\'').get();
+        final result = await database
+            .customSelect(
+                'SELECT name FROM sqlite_master WHERE type=\'table\' AND name=\'docs_server_config\'')
+            .get();
 
         if (result.isEmpty) {
           // Table doesn't exist, create it
@@ -44,10 +49,12 @@ class DatabaseInitializer {
             WHERE id = 1
           ''');
 
-          _logger.info('docs_server_config table created and default config inserted');
+          _logger.info(
+              'docs_server_config table created and default config inserted');
         }
       } catch (createError) {
-        _logger.severe('Failed to create docs_server_config table: $createError');
+        _logger
+            .severe('Failed to create docs_server_config table: $createError');
       }
     }
   }

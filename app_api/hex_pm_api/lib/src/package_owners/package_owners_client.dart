@@ -12,7 +12,8 @@ part 'package_owners_client.g.dart';
 
 @RestApi()
 abstract class PackageOwnersClient {
-  factory PackageOwnersClient(Dio dio, {String? baseUrl}) = _PackageOwnersClient;
+  factory PackageOwnersClient(Dio dio, {String? baseUrl}) =
+      _PackageOwnersClient;
 
   /// Fetch Package Owners.
   ///

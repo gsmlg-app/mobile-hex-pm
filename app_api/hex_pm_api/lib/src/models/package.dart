@@ -25,9 +25,10 @@ class Package {
     this.htmlUrl,
     this.docsHtmlUrl,
   });
-  
-  factory Package.fromJson(Map<String, Object?> json) => _$PackageFromJson(json);
-  
+
+  factory Package.fromJson(Map<String, Object?> json) =>
+      _$PackageFromJson(json);
+
   final String name;
   final String? repository;
   final bool? private;

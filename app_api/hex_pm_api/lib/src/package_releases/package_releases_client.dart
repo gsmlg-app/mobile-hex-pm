@@ -14,7 +14,8 @@ part 'package_releases_client.g.dart';
 
 @RestApi()
 abstract class PackageReleasesClient {
-  factory PackageReleasesClient(Dio dio, {String? baseUrl}) = _PackageReleasesClient;
+  factory PackageReleasesClient(Dio dio, {String? baseUrl}) =
+      _PackageReleasesClient;
 
   /// Fetch a Release.
   ///

@@ -57,7 +57,8 @@ class AppLogging {
     _logger.i('Server Access: $method $path from $remoteAddress');
     _logger.i('User-Agent: $userAgent');
     if (statusCode != null) {
-      _logger.i('Status: $statusCode${contentLength != null ? ', Size: $contentLength bytes' : ''}');
+      _logger.i(
+          'Status: $statusCode${contentLength != null ? ', Size: $contentLength bytes' : ''}');
     }
   }
 
@@ -82,7 +83,8 @@ class AppLogging {
   }
 
   /// Log server errors
-  static void logServerError(String operation, dynamic error, [StackTrace? stackTrace]) {
+  static void logServerError(String operation, dynamic error,
+      [StackTrace? stackTrace]) {
     _logger.e('Server error in $operation: $error', error, stackTrace);
   }
 

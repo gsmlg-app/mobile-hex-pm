@@ -66,7 +66,8 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
       final newDocs = Map<String, List<DocInfo>>.from(state.docs);
       final versions = newDocs[event.packageName];
       if (versions != null) {
-        versions.removeWhere((doc) => doc.packageVersion == event.packageVersion);
+        versions
+            .removeWhere((doc) => doc.packageVersion == event.packageVersion);
         if (versions.isEmpty) {
           newDocs.remove(event.packageName);
         }
@@ -143,9 +144,10 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
       final indexFile = File(p.join(dir, 'index.html'));
       debugPrint('HexDocBloc: Checking for index file at: ${indexFile.path}');
       debugPrint('HexDocBloc: File exists: ${await indexFile.exists()}');
-      
+
       if (await indexFile.exists()) {
-        debugPrint('HexDocBloc: Found existing index file, using: ${indexFile.path}');
+        debugPrint(
+            'HexDocBloc: Found existing index file, using: ${indexFile.path}');
         emitter(state.copyWith(
           stats: DocStats.ok,
           indexFile: indexFile.path,
@@ -162,29 +164,31 @@ class HexDocBloc extends Bloc<HexDocEvent, HexDocState> {
           final gzipDecoder = GZipDecoder();
           final tarBytes = gzipDecoder.decodeBytes(response.bodyBytes);
 
-           final tarArchive = TarDecoder().decodeBytes(tarBytes);
-           debugPrint('HexDocBloc: Extracted ${tarArchive.files.length} files from archive');
+          final tarArchive = TarDecoder().decodeBytes(tarBytes);
+          debugPrint(
+              'HexDocBloc: Extracted ${tarArchive.files.length} files from archive');
 
-           for (final file in tarArchive.files) {
-             final filename = file.name;
-             final filePath = p.join(dir, filename);
-             debugPrint('HexDocBloc: Extracting file: $filename -> $filePath');
+          for (final file in tarArchive.files) {
+            final filename = file.name;
+            final filePath = p.join(dir, filename);
+            debugPrint('HexDocBloc: Extracting file: $filename -> $filePath');
 
-             if (file.isFile) {
-               final outFile = File(filePath);
-               await outFile.create(recursive: true);
-               await outFile.writeAsBytes(file.content as List<int>);
-             } else {
-               final dir = Directory(filePath);
-               await dir.create(recursive: true);
-             }
-           }
+            if (file.isFile) {
+              final outFile = File(filePath);
+              await outFile.create(recursive: true);
+              await outFile.writeAsBytes(file.content as List<int>);
+            } else {
+              final dir = Directory(filePath);
+              await dir.create(recursive: true);
+            }
+          }
 
-           debugPrint('HexDocBloc: Extraction complete, index file: ${indexFile.path}');
-           emitter(state.copyWith(
-             stats: DocStats.ok,
-             indexFile: indexFile.path,
-           ));
+          debugPrint(
+              'HexDocBloc: Extraction complete, index file: ${indexFile.path}');
+          emitter(state.copyWith(
+            stats: DocStats.ok,
+            indexFile: indexFile.path,
+          ));
         } else {
           emitter(state.copyWith(stats: DocStats.error));
         }

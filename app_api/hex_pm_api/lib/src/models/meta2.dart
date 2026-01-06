@@ -11,9 +11,9 @@ class Meta2 {
   const Meta2({
     this.buildTools,
   });
-  
+
   factory Meta2.fromJson(Map<String, Object?> json) => _$Meta2FromJson(json);
-  
+
   @JsonKey(name: 'build_tools')
   final List<String>? buildTools;
 

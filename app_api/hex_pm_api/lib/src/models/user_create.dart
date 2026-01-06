@@ -13,9 +13,10 @@ class UserCreate {
     required this.password,
     required this.email,
   });
-  
-  factory UserCreate.fromJson(Map<String, Object?> json) => _$UserCreateFromJson(json);
-  
+
+  factory UserCreate.fromJson(Map<String, Object?> json) =>
+      _$UserCreateFromJson(json);
+
   /// Alphanumeric characters, underscores, hyphens, and dots. Case insensitive.
   final String username;
 

@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 
-
 class PackageDocumentationApi {
   final Dio _dio;
 

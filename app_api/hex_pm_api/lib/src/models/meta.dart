@@ -13,9 +13,9 @@ class Meta {
     this.licenses,
     this.links,
   });
-  
+
   factory Meta.fromJson(Map<String, Object?> json) => _$MetaFromJson(json);
-  
+
   final String? description;
   final List<String>? licenses;
   final Map<String, String>? links;

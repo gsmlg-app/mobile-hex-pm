@@ -11,7 +11,8 @@ part 'package_documentation_client.g.dart';
 
 @RestApi()
 abstract class PackageDocumentationClient {
-  factory PackageDocumentationClient(Dio dio, {String? baseUrl}) = _PackageDocumentationClient;
+  factory PackageDocumentationClient(Dio dio, {String? baseUrl}) =
+      _PackageDocumentationClient;
 
   /// Publish Package Documentation.
   ///

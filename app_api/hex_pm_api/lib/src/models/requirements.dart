@@ -14,9 +14,10 @@ class Requirements {
     this.optional,
     this.app,
   });
-  
-  factory Requirements.fromJson(Map<String, Object?> json) => _$RequirementsFromJson(json);
-  
+
+  factory Requirements.fromJson(Map<String, Object?> json) =>
+      _$RequirementsFromJson(json);
+
   final String? name;
   final String? requirement;
   final bool? optional;
