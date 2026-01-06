@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('adds one to input values', () {
+  test('ThemeMode.light toString returns expected value', () {
     final lightTheme = ThemeMode.light.toString();
-    expect(lightTheme, 'Light');
+    expect(lightTheme, 'ThemeMode.light');
   });
 }
