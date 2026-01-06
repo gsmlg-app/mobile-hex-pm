@@ -14,8 +14,6 @@ dependencies:
   hex_api: any
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   test: ^1.20.1
   bloc_test: ^10.0.0
   mocktail: ^1.0.3

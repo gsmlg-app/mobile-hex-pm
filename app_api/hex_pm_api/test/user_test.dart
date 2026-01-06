@@ -4,10 +4,19 @@ import 'package:dio/dio.dart';
 import 'package:hex_pm_api/hex_pm_api.dart';
 import 'package:test/test.dart';
 
-// tests for User
-void main() async {
-  final dio = Dio();
+// Integration tests for User - requires HEX_API_KEY environment variable
+void main() {
   final String? token = Platform.environment['HEX_API_KEY'];
+
+  // Skip integration tests if API key is not available (e.g., in CI)
+  if (token == null || token.isEmpty) {
+    test('skipped - HEX_API_KEY not set', () {
+      // This test is intentionally empty - integration tests require API key
+    }, skip: 'HEX_API_KEY environment variable not set');
+    return;
+  }
+
+  final dio = Dio();
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
@@ -19,11 +28,14 @@ void main() async {
     ),
   );
   final hexApi = HexPmApi(dio, baseUrl: 'https://hex.pm/api');
-  final userApi = hexApi.users;
-  final resp = await userApi.getCurrentUser();
-  final UserWithOrgs instance = resp;
 
   group(User, () {
+    late UserWithOrgs instance;
+
+    setUpAll(() async {
+      final userApi = hexApi.users;
+      instance = await userApi.getCurrentUser();
+    });
     // User's unique username.
     // String username
     test('to test the property `username`', () async {
