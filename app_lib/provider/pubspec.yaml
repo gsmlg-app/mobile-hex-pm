@@ -20,6 +20,7 @@ dependencies:
   hex_search_bloc: any
   favorite_package_bloc: any
   hex_doc_bloc: any
+  offline_docs_server: any
   app_database: any
 
 dev_dependencies:

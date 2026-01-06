@@ -16,17 +16,17 @@ class FieldThemeResolver {
     // Check fieldTheme first
     final fieldDecorationTheme = fieldTheme?.decorationTheme;
     if (fieldDecorationTheme != null) {
-      return fieldDecorationTheme as InputDecorationThemeData;
+      return fieldDecorationTheme;
     }
     
     // Check formTheme second
     final formDecorationTheme = formTheme.decorationTheme;
     if (formDecorationTheme != null) {
-      return formDecorationTheme as InputDecorationThemeData;
+      return formDecorationTheme;
     }
     
     // Fall back to theme
-    return theme.inputDecorationTheme as InputDecorationThemeData;
+    return theme.inputDecorationTheme;
   }
 
   TextStyle get textStyle {
