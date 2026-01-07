@@ -11,12 +11,9 @@ dependencies:
   equatable: ^2.0.5
   app_database: any
   app_logging: any
+  docs_server: any
   drift: ^2.26.1
-  shelf: ^1.4.1
-  shelf_static: ^1.1.2
-  network_info_plus: ^6.1.2
   path_provider: ^2.1.5
-  path: ^1.8.0
 
 dev_dependencies:
   lints: ^6.0.0

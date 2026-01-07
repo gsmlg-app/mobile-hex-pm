@@ -13,6 +13,7 @@ workspace:
   - app_lib/provider
   - app_lib/database
   - app_lib/logging
+  - app_lib/docs_server
   - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
@@ -58,6 +59,7 @@ dependencies:
   app_provider: any
   app_database: any
   app_logging: any
+  docs_server: any
   app_artwork: any
   app_feedback: any
   app_adaptive_widgets: any
