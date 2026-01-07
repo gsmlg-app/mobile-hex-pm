@@ -29,7 +29,6 @@ workspace:
   - third_party/flutter_adaptive_scaffold
   - third_party/settings_ui
   - app_api/hex_api
-  - app_api/hex_pm_api
 
 dependencies:
   flutter:
