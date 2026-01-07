@@ -7,7 +7,7 @@ analyzer:
     always_use_package_imports: warning
   language:
     strict-casts: true
-    strict-raw-types: false
+    strict-raw-types: true
 
 linter:
   rules:

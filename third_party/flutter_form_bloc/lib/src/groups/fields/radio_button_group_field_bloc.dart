@@ -1,4 +1,3 @@
-// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_bloc/src/features/appear/can_show_field_bloc_builder.dart';
@@ -201,8 +200,10 @@ class RadioButtonGroupFieldBlocBuilder<Value> extends StatelessWidget {
               fillColor: fieldTheme.radioTheme?.fillColor,
               overlayColor: fieldTheme.radioTheme?.overlayColor,
               splashRadius: fieldTheme.radioTheme?.splashRadius,
+              // ignore: deprecated_member_use
               groupValue: state.value,
               toggleable: fieldTheme.canDeselect,
+              // ignore: deprecated_member_use
               onChanged: onChanged,
             ),
             content: fieldItem,

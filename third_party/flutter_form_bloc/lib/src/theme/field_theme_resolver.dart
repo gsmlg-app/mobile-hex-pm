@@ -12,21 +12,13 @@ class FieldThemeResolver {
 
   const FieldThemeResolver(this.theme, this.formTheme, [this.fieldTheme]);
 
-  InputDecorationThemeData get decorationTheme {
-    // Check fieldTheme first
-    final fieldDecorationTheme = fieldTheme?.decorationTheme;
-    if (fieldDecorationTheme != null) {
-      return fieldDecorationTheme;
-    }
-
-    // Check formTheme second
-    final formDecorationTheme = formTheme.decorationTheme;
-    if (formDecorationTheme != null) {
-      return formDecorationTheme;
-    }
-
-    // Fall back to theme
-    return theme.inputDecorationTheme;
+  InputDecorationTheme get decorationTheme {
+    final InputDecorationTheme? fieldDecorationTheme =
+        fieldTheme?.decorationTheme;
+    final InputDecorationTheme? formDecorationTheme = formTheme.decorationTheme;
+    return fieldDecorationTheme ??
+        formDecorationTheme ??
+        theme.inputDecorationTheme as InputDecorationTheme;
   }
 
   TextStyle get textStyle {
@@ -56,7 +48,7 @@ abstract class FieldTheme extends Equatable {
   final WidgetStateProperty<Color?>? textColor;
 
   /// The theme for InputDecoration of this field
-  final InputDecorationThemeData? decorationTheme;
+  final InputDecorationTheme? decorationTheme;
 
   const FieldTheme({
     this.textStyle,
