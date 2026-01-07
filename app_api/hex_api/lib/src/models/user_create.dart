@@ -13,9 +13,10 @@ class UserCreate {
     required this.password,
     required this.email,
   });
-  
-  factory UserCreate.fromJson(Map<String, Object?> json) => _$UserCreateFromJson(json);
-  
+
+  factory UserCreate.fromJson(Map<String, Object?> json) =>
+      _$UserCreateFromJson(json);
+
   final String username;
   final String password;
   final String email;

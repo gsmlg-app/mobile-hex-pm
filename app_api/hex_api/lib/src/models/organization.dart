@@ -12,9 +12,10 @@ class Organization {
     required this.name,
     required this.role,
   });
-  
-  factory Organization.fromJson(Map<String, Object?> json) => _$OrganizationFromJson(json);
-  
+
+  factory Organization.fromJson(Map<String, Object?> json) =>
+      _$OrganizationFromJson(json);
+
   final String name;
   final String role;
 

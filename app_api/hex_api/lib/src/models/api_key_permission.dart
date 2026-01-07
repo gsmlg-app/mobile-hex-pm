@@ -14,9 +14,10 @@ class ApiKeyPermission {
     this.domain,
     this.resource,
   });
-  
-  factory ApiKeyPermission.fromJson(Map<String, Object?> json) => _$ApiKeyPermissionFromJson(json);
-  
+
+  factory ApiKeyPermission.fromJson(Map<String, Object?> json) =>
+      _$ApiKeyPermissionFromJson(json);
+
   final ApiKeyPermissionDomain? domain;
   final String? resource;
 

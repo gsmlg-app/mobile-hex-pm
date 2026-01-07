@@ -13,9 +13,10 @@ class PackageMeta {
     this.licenses,
     this.links,
   });
-  
-  factory PackageMeta.fromJson(Map<String, Object?> json) => _$PackageMetaFromJson(json);
-  
+
+  factory PackageMeta.fromJson(Map<String, Object?> json) =>
+      _$PackageMetaFromJson(json);
+
   final String? description;
   final List<String>? licenses;
   final Map<String, String>? links;

@@ -11,7 +11,8 @@ part 'documentation_client.g.dart';
 
 @RestApi()
 abstract class DocumentationClient {
-  factory DocumentationClient(Dio dio, {String? baseUrl}) = _DocumentationClient;
+  factory DocumentationClient(Dio dio, {String? baseUrl}) =
+      _DocumentationClient;
 
   /// Publish Package Documentation
   @POST('/packages/{name}/releases/{version}/docs')

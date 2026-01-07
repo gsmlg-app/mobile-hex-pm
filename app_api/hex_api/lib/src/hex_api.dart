@@ -37,15 +37,20 @@ class HexApi {
 
   UsersClient get users => _users ??= UsersClient(_dio, baseUrl: _baseUrl);
 
-  RepositoriesClient get repositories => _repositories ??= RepositoriesClient(_dio, baseUrl: _baseUrl);
+  RepositoriesClient get repositories =>
+      _repositories ??= RepositoriesClient(_dio, baseUrl: _baseUrl);
 
-  PackagesClient get packages => _packages ??= PackagesClient(_dio, baseUrl: _baseUrl);
+  PackagesClient get packages =>
+      _packages ??= PackagesClient(_dio, baseUrl: _baseUrl);
 
-  ReleasesClient get releases => _releases ??= ReleasesClient(_dio, baseUrl: _baseUrl);
+  ReleasesClient get releases =>
+      _releases ??= ReleasesClient(_dio, baseUrl: _baseUrl);
 
-  DocumentationClient get documentation => _documentation ??= DocumentationClient(_dio, baseUrl: _baseUrl);
+  DocumentationClient get documentation =>
+      _documentation ??= DocumentationClient(_dio, baseUrl: _baseUrl);
 
   OwnersClient get owners => _owners ??= OwnersClient(_dio, baseUrl: _baseUrl);
 
-  ApiKeysClient get apiKeys => _apiKeys ??= ApiKeysClient(_dio, baseUrl: _baseUrl);
+  ApiKeysClient get apiKeys =>
+      _apiKeys ??= ApiKeysClient(_dio, baseUrl: _baseUrl);
 }

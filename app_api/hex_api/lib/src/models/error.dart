@@ -12,9 +12,9 @@ class Error {
     this.status,
     this.message,
   });
-  
+
   factory Error.fromJson(Map<String, Object?> json) => _$ErrorFromJson(json);
-  
+
   final int? status;
   final String? message;
 

@@ -13,9 +13,10 @@ class AddOwnerRequest {
   const AddOwnerRequest({
     this.level = AddOwnerRequestLevel.maintainer,
   });
-  
-  factory AddOwnerRequest.fromJson(Map<String, Object?> json) => _$AddOwnerRequestFromJson(json);
-  
+
+  factory AddOwnerRequest.fromJson(Map<String, Object?> json) =>
+      _$AddOwnerRequestFromJson(json);
+
   final AddOwnerRequestLevel level;
 
   Map<String, Object?> toJson() => _$AddOwnerRequestToJson(this);

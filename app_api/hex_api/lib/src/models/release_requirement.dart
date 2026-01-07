@@ -14,9 +14,10 @@ class ReleaseRequirement {
     this.optional,
     this.app,
   });
-  
-  factory ReleaseRequirement.fromJson(Map<String, Object?> json) => _$ReleaseRequirementFromJson(json);
-  
+
+  factory ReleaseRequirement.fromJson(Map<String, Object?> json) =>
+      _$ReleaseRequirementFromJson(json);
+
   final String? name;
   final String? requirement;
   final bool? optional;

@@ -14,9 +14,10 @@ class ApiKeyCreate {
     required this.name,
     this.permissions,
   });
-  
-  factory ApiKeyCreate.fromJson(Map<String, Object?> json) => _$ApiKeyCreateFromJson(json);
-  
+
+  factory ApiKeyCreate.fromJson(Map<String, Object?> json) =>
+      _$ApiKeyCreateFromJson(json);
+
   final String name;
   final List<ApiKeyPermission>? permissions;
 

@@ -12,9 +12,10 @@ class PackageRelease {
     this.version,
     this.url,
   });
-  
-  factory PackageRelease.fromJson(Map<String, Object?> json) => _$PackageReleaseFromJson(json);
-  
+
+  factory PackageRelease.fromJson(Map<String, Object?> json) =>
+      _$PackageReleaseFromJson(json);
+
   final String? version;
   final String? url;
 

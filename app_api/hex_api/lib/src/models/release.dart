@@ -26,9 +26,10 @@ class Release {
     this.htmlUrl,
     this.docsHtmlUrl,
   });
-  
-  factory Release.fromJson(Map<String, Object?> json) => _$ReleaseFromJson(json);
-  
+
+  factory Release.fromJson(Map<String, Object?> json) =>
+      _$ReleaseFromJson(json);
+
   final String version;
   @JsonKey(name: 'has_docs')
   final bool hasDocs;

@@ -11,9 +11,10 @@ class ReleaseMeta {
   const ReleaseMeta({
     this.buildTools,
   });
-  
-  factory ReleaseMeta.fromJson(Map<String, Object?> json) => _$ReleaseMetaFromJson(json);
-  
+
+  factory ReleaseMeta.fromJson(Map<String, Object?> json) =>
+      _$ReleaseMetaFromJson(json);
+
   @JsonKey(name: 'build_tools')
   final List<String>? buildTools;
 

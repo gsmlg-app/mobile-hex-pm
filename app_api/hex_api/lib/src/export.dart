@@ -41,4 +41,3 @@ export 'models/add_owner_request_level.dart';
 export 'models/api_key_permission_domain.dart';
 // Root client
 export 'hex_api.dart';
-

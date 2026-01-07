@@ -15,9 +15,9 @@ class User {
     required this.updatedAt,
     required this.url,
   });
-  
+
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
-  
+
   final String username;
   final String email;
   @JsonKey(name: 'inserted_at')

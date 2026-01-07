@@ -16,9 +16,10 @@ class Repository {
     required this.insertedAt,
     required this.updatedAt,
   });
-  
-  factory Repository.fromJson(Map<String, Object?> json) => _$RepositoryFromJson(json);
-  
+
+  factory Repository.fromJson(Map<String, Object?> json) =>
+      _$RepositoryFromJson(json);
+
   final String name;
   final bool public;
   final bool active;

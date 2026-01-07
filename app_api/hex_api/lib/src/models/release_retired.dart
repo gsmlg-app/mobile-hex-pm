@@ -14,9 +14,10 @@ class ReleaseRetired {
     this.reason,
     this.message,
   });
-  
-  factory ReleaseRetired.fromJson(Map<String, Object?> json) => _$ReleaseRetiredFromJson(json);
-  
+
+  factory ReleaseRetired.fromJson(Map<String, Object?> json) =>
+      _$ReleaseRetiredFromJson(json);
+
   final ReleaseRetiredReason? reason;
   final String? message;
 

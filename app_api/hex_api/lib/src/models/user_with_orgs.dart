@@ -18,9 +18,10 @@ class UserWithOrgs {
     required this.url,
     required this.organizations,
   });
-  
-  factory UserWithOrgs.fromJson(Map<String, Object?> json) => _$UserWithOrgsFromJson(json);
-  
+
+  factory UserWithOrgs.fromJson(Map<String, Object?> json) =>
+      _$UserWithOrgsFromJson(json);
+
   final String username;
   final String email;
   @JsonKey(name: 'inserted_at')

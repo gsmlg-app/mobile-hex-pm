@@ -13,9 +13,10 @@ class ValidationError {
     this.message,
     this.errors,
   });
-  
-  factory ValidationError.fromJson(Map<String, Object?> json) => _$ValidationErrorFromJson(json);
-  
+
+  factory ValidationError.fromJson(Map<String, Object?> json) =>
+      _$ValidationErrorFromJson(json);
+
   final int? status;
   final String? message;
   final Map<String, String>? errors;
