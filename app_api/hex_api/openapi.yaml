@@ -1,0 +1,901 @@
+openapi: 3.0.0
+info:
+  title: Hex API
+  version: 1.0.0
+  description: API for hex.pm package registry
+servers:
+  - url: https://hex.pm/api
+    description: Production server
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create a User
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserCreate"
+      responses:
+        "201":
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "422":
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+  /users/{username}:
+    get:
+      tags:
+        - Users
+      summary: Fetch a User
+      operationId: getUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: The username
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Fetch Currently Authenticated User
+      operationId: getCurrentUser
+      security:
+        - apiTokenAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithOrgs"
+        "401":
+          description: Unauthorized
+  /repos:
+    get:
+      tags:
+        - Repositories
+      summary: List all Repositories
+      operationId: listRepos
+      security:
+        - apiTokenAuth: []
+      responses:
+        "200":
+          description: A list of repositories.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Repository"
+  /repos/{name}:
+    get:
+      tags:
+        - Repositories
+      summary: Fetch a Repository
+      operationId: getRepo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Repository"
+        "404":
+          description: Not found
+  /packages:
+    get:
+      tags:
+        - Packages
+      summary: List all Packages
+      operationId: listPackages
+      parameters:
+        - name: sort
+          in: query
+          description: Field to sort by.
+          schema:
+            type: string
+            enum:
+              - name
+              - downloads
+              - inserted_at
+              - updated_at
+            default: name
+        - name: search
+          in: query
+          description: Search string.
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number for pagination.
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: A paginated list of packages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Package"
+  /packages/{name}:
+    get:
+      tags:
+        - Packages
+      summary: Fetch a Package
+      operationId: getPackage
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of the package.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Package"
+        "404":
+          description: Not found
+  /packages/{name}/releases/{version}:
+    get:
+      tags:
+        - Releases
+      summary: Fetch a Release
+      operationId: getRelease
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: The name of the package.
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          description: The release version.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Release"
+        "404":
+          description: Not found
+  /publish:
+    post:
+      tags:
+        - Releases
+      summary: Publish a Release
+      operationId: publishRelease
+      security:
+        - apiTokenAuth: []
+      requestBody:
+        description: A gzipped tarball containing the package contents.
+        required: true
+        content:
+          application/gzip:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: Release published successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Release"
+        "401":
+          description: Unauthorized
+  /packages/{name}/releases/{version}/retire:
+    post:
+      tags:
+        - Releases
+      summary: Mark Release as Retired
+      operationId: retireRelease
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RetirementPayload"
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - Releases
+      summary: Unmark Release as Retired
+      operationId: unretireRelease
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      responses:
+        "204":
+          description: Success
+        "401":
+          description: Unauthorized
+  /packages/{name}/releases/{version}/docs:
+    post:
+      tags:
+        - Documentation
+      summary: Publish Package Documentation
+      operationId: publishDocs
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      requestBody:
+        required: true
+        content:
+          application/gzip:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "201":
+          description: Documentation published successfully.
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - Documentation
+      summary: Remove Package Documentation
+      operationId: deleteDocs
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      responses:
+        "204":
+          description: Documentation removed successfully.
+        "401":
+          description: Unauthorized
+  /packages/{name}/owners:
+    get:
+      tags:
+        - Owners
+      summary: Fetch Package Owners
+      operationId: getOwners
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      responses:
+        "200":
+          description: A list of package owners.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Owner"
+        "401":
+          description: Unauthorized
+  /packages/{name}/owners/{email}:
+    put:
+      tags:
+        - Owners
+      summary: Add a Package Owner
+      operationId: addOwner
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      security:
+        - apiTokenAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddOwnerRequest"
+      responses:
+        "204":
+          description: Owner added successfully.
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - Owners
+      summary: Remove a Package Owner
+      operationId: removeOwner
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+            format: email
+      security:
+        - apiTokenAuth: []
+      responses:
+        "204":
+          description: Owner removed successfully.
+        "401":
+          description: Unauthorized
+  /keys:
+    get:
+      tags:
+        - APIKeys
+      summary: List all API Keys
+      operationId: listKeys
+      security:
+        - apiTokenAuth: []
+      responses:
+        "200":
+          description: A list of the user's API keys.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApiKey"
+        "401":
+          description: Unauthorized
+    post:
+      tags:
+        - APIKeys
+      summary: Create an API Key
+      operationId: createKey
+      security:
+        - basicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApiKeyCreate"
+      responses:
+        "201":
+          description: API Key created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKeyWithSecret"
+        "401":
+          description: Unauthorized
+  /keys/{name}:
+    get:
+      tags:
+        - APIKeys
+      summary: Fetch an API Key
+      operationId: getKey
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      responses:
+        "200":
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiKey"
+        "401":
+          description: Unauthorized
+    delete:
+      tags:
+        - APIKeys
+      summary: Remove an API Key
+      operationId: removeKey
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      security:
+        - apiTokenAuth: []
+      responses:
+        "204":
+          description: Key removed successfully.
+        "401":
+          description: Unauthorized
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+      description: Basic Authentication used for creating API tokens.
+    apiTokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API Token authentication.
+  schemas:
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+    ValidationError:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+    User:
+      type: object
+      required:
+        - username
+        - email
+        - inserted_at
+        - updated_at
+        - url
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+    UserCreate:
+      type: object
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        email:
+          type: string
+          format: email
+    UserWithOrgs:
+      type: object
+      required:
+        - username
+        - email
+        - inserted_at
+        - updated_at
+        - url
+        - organizations
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        organizations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Organization"
+    Organization:
+      type: object
+      required:
+        - name
+        - role
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+    Repository:
+      type: object
+      required:
+        - name
+        - public
+        - active
+        - billing_active
+        - inserted_at
+        - updated_at
+      properties:
+        name:
+          type: string
+        public:
+          type: boolean
+        active:
+          type: boolean
+        billing_active:
+          type: boolean
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Package:
+      type: object
+      required:
+        - name
+        - meta
+        - downloads
+        - releases
+        - inserted_at
+        - updated_at
+        - url
+      properties:
+        name:
+          type: string
+        repository:
+          type: string
+        private:
+          type: boolean
+        meta:
+          $ref: "#/components/schemas/PackageMeta"
+        downloads:
+          $ref: "#/components/schemas/PackageDownloads"
+        releases:
+          type: array
+          items:
+            $ref: "#/components/schemas/PackageRelease"
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        html_url:
+          type: string
+          format: uri
+        docs_html_url:
+          type: string
+          format: uri
+    PackageMeta:
+      type: object
+      properties:
+        description:
+          type: string
+        licenses:
+          type: array
+          items:
+            type: string
+        links:
+          type: object
+          additionalProperties:
+            type: string
+    PackageDownloads:
+      type: object
+      properties:
+        all:
+          type: integer
+        week:
+          type: integer
+        day:
+          type: integer
+    PackageRelease:
+      type: object
+      properties:
+        version:
+          type: string
+        url:
+          type: string
+          format: uri
+    Release:
+      type: object
+      required:
+        - version
+        - has_docs
+        - meta
+        - downloads
+        - inserted_at
+        - updated_at
+        - url
+        - package_url
+      properties:
+        version:
+          type: string
+        has_docs:
+          type: boolean
+        meta:
+          $ref: "#/components/schemas/ReleaseMeta"
+        requirements:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/ReleaseRequirement"
+        retired:
+          $ref: "#/components/schemas/ReleaseRetired"
+        downloads:
+          type: integer
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        package_url:
+          type: string
+          format: uri
+        html_url:
+          type: string
+          format: uri
+        docs_html_url:
+          type: string
+          format: uri
+    ReleaseMeta:
+      type: object
+      properties:
+        build_tools:
+          type: array
+          items:
+            type: string
+    ReleaseRequirement:
+      type: object
+      properties:
+        name:
+          type: string
+        requirement:
+          type: string
+        optional:
+          type: boolean
+        app:
+          type: string
+    ReleaseRetired:
+      type: object
+      properties:
+        reason:
+          type: string
+          enum:
+            - other
+            - invalid
+            - security
+            - deprecated
+            - renamed
+        message:
+          type: string
+    RetirementPayload:
+      type: object
+      required:
+        - reason
+      properties:
+        reason:
+          type: string
+          enum:
+            - other
+            - invalid
+            - security
+            - deprecated
+            - renamed
+        message:
+          type: string
+    Owner:
+      type: object
+      required:
+        - username
+        - email
+        - inserted_at
+        - updated_at
+        - url
+        - level
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        level:
+          type: string
+          enum:
+            - full
+            - maintainer
+    AddOwnerRequest:
+      type: object
+      properties:
+        level:
+          type: string
+          enum:
+            - full
+            - maintainer
+          default: maintainer
+    ApiKey:
+      type: object
+      required:
+        - name
+        - permissions
+        - inserted_at
+        - updated_at
+        - url
+      properties:
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiKeyPermission"
+        revoked_at:
+          type: string
+          format: date-time
+          nullable: true
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+    ApiKeyPermission:
+      type: object
+      properties:
+        domain:
+          type: string
+          enum:
+            - api
+            - repository
+            - repositories
+        resource:
+          type: string
+    ApiKeyCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiKeyPermission"
+    ApiKeyWithSecret:
+      type: object
+      required:
+        - name
+        - permissions
+        - inserted_at
+        - updated_at
+        - url
+        - secret
+      properties:
+        name:
+          type: string
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiKeyPermission"
+        revoked_at:
+          type: string
+          format: date-time
+          nullable: true
+        inserted_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        secret:
+          type: string

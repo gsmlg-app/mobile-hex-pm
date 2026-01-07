@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:app_database/app_database.dart';
+import 'package:dio/dio.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,8 +39,13 @@ class MainProvider extends StatelessWidget {
         RepositoryProvider<AppDatabase>(
           create: (BuildContext context) => database,
         ),
+        RepositoryProvider<Dio>(
+          create: (BuildContext context) => Dio(
+            BaseOptions(baseUrl: 'https://hex.pm/api'),
+          ),
+        ),
         RepositoryProvider<HexApi>(
-          create: (BuildContext context) => HexApi(),
+          create: (BuildContext context) => HexApi(context.read<Dio>()),
         ),
       ],
       child: MultiBlocProvider(
@@ -51,6 +57,7 @@ class MainProvider extends StatelessWidget {
           ),
           BlocProvider<HexAuthBloc>(
             create: (context) => HexAuthBloc(
+              context.read<Dio>(),
               context.read<HexApi>(),
               context.read<SharedPreferences>(),
             ),

@@ -35,11 +35,11 @@ class FavoritePackageBloc
   ) async {
     try {
       final name = event.name;
-      final pkg = await hexApi.getPackagesApi().getPackage(name: name);
+      final pkg = await hexApi.packages.getPackage(name: name);
       final favoritePackages = Map<String, Package>.unmodifiable(
         {
           ...state.favoritePackages,
-          name: pkg.data!,
+          name: pkg,
         },
       );
       emitter(state.copyWith(favoritePackages: favoritePackages));
@@ -55,14 +55,14 @@ class FavoritePackageBloc
     try {
       final name = event.name;
       final version = event.version;
-      final release = await hexApi.getPackageReleasesApi().getRelease(
-            name: name,
-            version: version,
-          );
+      final release = await hexApi.releases.getRelease(
+        name: name,
+        version: version,
+      );
       final favoriteReleases = Map<String, Release>.unmodifiable(
         {
           ...state.favoriteReleases,
-          '$name-$version': release.data!,
+          '$name-$version': release,
         },
       );
       emitter(state.copyWith(favoriteReleases: favoriteReleases));

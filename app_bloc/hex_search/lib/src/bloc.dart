@@ -31,13 +31,11 @@ class HexSearchBloc extends Bloc<HexSearchEvent, HexSearchState> {
   ) async {
     try {
       emitter(state.copyWith(isLoading: true, error: null));
-      final api = hexApi.getPackagesApi();
-      final resp = await api.listPackages(
+      final packages = await hexApi.packages.listPackages(
         search: event.name,
-        sort: 'recent_downloads',
+        sort: Sort.downloads,
       );
-      final data = resp.data;
-      emitter(state.copyWith(results: data ?? []));
+      emitter(state.copyWith(results: packages));
     } catch (e) {
       emitter(state.copyWith(
         results: [],
@@ -53,13 +51,11 @@ class HexSearchBloc extends Bloc<HexSearchEvent, HexSearchState> {
     Emitter<HexSearchState> emitter,
   ) async {
     try {
-      final api = hexApi.getPackageOwnersApi();
-      final resp = await api.getOwners(name: event.name);
-      final owners = resp.data;
+      final owners = await hexApi.owners.getOwners(name: event.name);
       final stateOwners = Map<String, List<Owner>>.unmodifiable(
         {
           ...state.owners,
-          event.name: owners ?? <Owner>[],
+          event.name: owners,
         },
       );
       emitter(state.copyWith(owners: stateOwners));
@@ -75,16 +71,14 @@ class HexSearchBloc extends Bloc<HexSearchEvent, HexSearchState> {
     Emitter<HexSearchState> emitter,
   ) async {
     try {
-      final api = hexApi.getPackageReleasesApi();
-      final resp = await api.getRelease(
+      final release = await hexApi.releases.getRelease(
         name: event.name,
         version: event.version,
       );
-      final release = resp.data;
       final stateReleases = Map<String, Release>.unmodifiable(
         {
           ...state.releases,
-          event.name: release!,
+          event.name: release,
         },
       );
       emitter(state.copyWith(releases: stateReleases));

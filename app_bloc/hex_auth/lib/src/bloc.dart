@@ -9,10 +9,12 @@ part 'event.dart';
 part 'state.dart';
 
 class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
+  final Dio dio;
   final HexApi hexApi;
   final SharedPreferences sharedPrefs;
 
-  HexAuthBloc(this.hexApi, this.sharedPrefs) : super(HexAuthState.initial()) {
+  HexAuthBloc(this.dio, this.hexApi, this.sharedPrefs)
+      : super(HexAuthState.initial()) {
     on<HexAuthEventInit>(_onHexAuthEventInit);
     on<HexAuthEventLogin>(_onHexAuthEventLogin);
     on<HexAuthEventLogout>(_onHexAuthEventLogout);
@@ -29,15 +31,13 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
     if (apiKey != null) {
       try {
         emitter(state.copyWith(isLoading: true));
-        final api = hexApi.getUsersApi();
-        final resp = await api.getCurrentUser(
-          headers: {
-            'Authorization': apiKey,
-          },
-        );
-        emitter(state.copyWith(currenUser: resp.data));
-        hexApi.dio.interceptors.add(ApiAuthInterceptor(apiKey));
+        // Add auth interceptor before making the authenticated request
+        dio.interceptors.add(ApiAuthInterceptor(apiKey));
+        final user = await hexApi.users.getCurrentUser();
+        emitter(state.copyWith(currenUser: user));
       } catch (e) {
+        // Remove interceptor on failure
+        dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
         emitter(state.copyWith(error: e));
       } finally {
         emitter(state.copyWith(isLoading: false));
@@ -52,18 +52,18 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
     emitter(state.copyWith(apiKey: event.apiKey));
     try {
       emitter(state.copyWith(isLoading: true));
-      final api = hexApi.getUsersApi();
-      final resp = await api.getCurrentUser(
-        headers: {
-          'Authorization': event.apiKey,
-        },
-      );
-      emitter(state.copyWith(currenUser: resp.data, error: ''));
+      // Add auth interceptor for this login attempt
+      dio.interceptors.add(ApiAuthInterceptor(event.apiKey));
+      final user = await hexApi.users.getCurrentUser();
+      emitter(state.copyWith(currenUser: user, error: ''));
       sharedPrefs.setString('HEX_API_KEY', event.apiKey);
-      hexApi.dio.interceptors.add(ApiAuthInterceptor(event.apiKey));
     } on DioException catch (e) {
+      // Remove interceptor on failure
+      dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
       emitter(state.copyWith(error: e.message));
     } catch (e) {
+      // Remove interceptor on failure
+      dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
       emitter(state.copyWith(error: e));
     } finally {
       emitter(state.copyWith(isLoading: false));
@@ -76,6 +76,6 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
   ) async {
     emitter(state.copyWith(clearApiKey: true, clearCurrentUser: true));
     sharedPrefs.remove('HEX_API_KEY');
-    hexApi.dio.interceptors.removeWhere((e) => e is ApiAuthInterceptor);
+    dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
   }
 }

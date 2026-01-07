@@ -629,7 +629,7 @@ class HomeResultScreen extends StatelessWidget {
                     final releaseMap = state.releases;
                     final release = releaseMap[pkg.name];
                     final requirements = release?.requirements ??
-                        <String, ReleaseRequirementsValue>{};
+                        <String, ReleaseRequirement>{};
                     print('requirements: $requirements');
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
