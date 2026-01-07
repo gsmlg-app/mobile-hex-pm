@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Flutter App Template';
+  String get appName => 'Mobile Hex.pm';
 
   @override
   String get errorOccurred => 'Error Occurred';

@@ -280,7 +280,7 @@ jobs:
       - name: Package macOS build
         run: |
           cd build/macos/Build/Products/Release
-          zip -r ../../../../../flutter-app-${{ inputs.build-name }}-macos.zip "Flutter App Template.app"
+          zip -r ../../../../../flutter-app-${{ inputs.build-name }}-macos.zip "Mobile hex.pm.app"
 
       - name: Upload macOS to Release
         uses: svenstaro/upload-release-action@v2

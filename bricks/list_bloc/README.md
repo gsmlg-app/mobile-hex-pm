@@ -560,4 +560,4 @@ When modifying this brick:
 
 ## License
 
-This brick is part of the Flutter App Template project. See the main project license for details.
+This brick is part of the Mobile Hex.pm project. See the main project license for details.
