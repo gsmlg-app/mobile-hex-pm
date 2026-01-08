@@ -62,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Hex Package Manager',
+                          'Hex Docs Viewer',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: colorScheme.onPrimaryContainer,
@@ -70,7 +70,7 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Search, explore, and save Elixir packages for offline reading',
+                          'Browse hex.pm packages and read documentation offline',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onPrimaryContainer.withAlpha(204),
                           ),
