@@ -299,4 +299,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get serverConfigUpdateFailed =>
       'Failed to update server configuration';
+
+  @override
+  String get docsServer => 'Docs Server';
+
+  @override
+  String get copy => 'Copy';
+
+  @override
+  String get copiedToClipboard => 'Copied to clipboard';
+
+  @override
+  String get openInBrowser => 'Open in Browser';
 }

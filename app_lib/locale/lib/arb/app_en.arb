@@ -100,5 +100,9 @@
   "serverFailedToStop": "Failed to stop server",
   "serverConfigUpdated": "Server configuration updated",
   "serverConfigUpdateFailed": "Failed to update server configuration",
+  "docsServer": "Docs Server",
+  "copy": "Copy",
+  "copiedToClipboard": "Copied to clipboard",
+  "openInBrowser": "Open in Browser",
   "@@description": "App description"
 }

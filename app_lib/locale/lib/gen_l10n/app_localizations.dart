@@ -657,6 +657,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to update server configuration'**
   String get serverConfigUpdateFailed;
+
+  /// No description provided for @docsServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Docs Server'**
+  String get docsServer;
+
+  /// No description provided for @copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copy;
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get copiedToClipboard;
+
+  /// No description provided for @openInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Browser'**
+  String get openInBrowser;
 }
 
 class _AppLocalizationsDelegate
