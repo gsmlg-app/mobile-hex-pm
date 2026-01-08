@@ -12,7 +12,7 @@ class FavoriteScreen extends StatelessWidget {
   static const name = 'Favorite Screen';
   static const path = '/favorite';
 
-  FavoriteScreen({super.key});
+  const FavoriteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +36,38 @@ class FavoriteScreen extends StatelessWidget {
           BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
             builder: (context, state) {
               final favorites = state.favorites;
+
+              if (favorites.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.favorite_border,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          context.l10n.noFavoritePackages,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          context.l10n.addToFavorite,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
 
               return SliverList.builder(
                 itemCount: favorites.length,

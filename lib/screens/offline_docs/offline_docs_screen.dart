@@ -42,6 +42,39 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
               final docs = state.docs;
               final packageNames = docs.keys.toList()..sort();
 
+              if (packageNames.isEmpty) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.download_outlined,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          context.l10n.noDownloadedDocs,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          context.l10n.downloadDocsInstruction,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
               return SliverToBoxAdapter(
                 child: ExpansionPanelList(
                   expansionCallback: (int index, bool isExpanded) {
