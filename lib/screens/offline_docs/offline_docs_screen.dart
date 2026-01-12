@@ -25,7 +25,9 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
   void initState() {
     super.initState();
     context.read<HexDocBloc>().add(const HexDocEventList());
-    context.read<OfflineDocsServerBloc>().add(const OfflineDocsServerConfigRequested());
+    context
+        .read<OfflineDocsServerBloc>()
+        .add(const OfflineDocsServerConfigRequested());
   }
 
   @override
@@ -40,6 +42,9 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
         slivers: [
           SliverAppBar(
             title: Text(context.l10n.navDownloads),
+            centerTitle: true,
+            floating: true,
+            snap: true,
           ),
           // Server Control Panel
           SliverToBoxAdapter(
@@ -65,14 +70,20 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.noDownloadedDocs,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           context.l10n.downloadDocsInstruction,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                           textAlign: TextAlign.center,
@@ -84,90 +95,103 @@ class _OfflineDocsScreenState extends State<OfflineDocsScreen> {
               }
 
               return SliverToBoxAdapter(
-                child: ExpansionPanelList(
-                  expansionCallback: (int index, bool isExpanded) {
-                    context.read<HexDocBloc>().add(
-                          HexDocEventToggleExpanded(packageNames[index]),
-                        );
-                  },
-                  children:
-                      packageNames.map<ExpansionPanel>((String packageName) {
-                    return ExpansionPanel(
-                      headerBuilder: (BuildContext context, bool isExpanded) {
-                        return ListTile(
-                          title: Text(packageName),
-                        );
-                      },
-                      body: Column(
-                        children: docs[packageName]!.map((doc) {
-                          return ListTile(
-                            title: Text(doc.packageVersion),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.preview),
-                                  onPressed: () {
-                                    context.goNamed(
-                                      FavoriteReleaseDocsScreen.name,
-                                      pathParameters: {
-                                        'package_name': doc.packageName,
-                                        'package_version': doc.packageVersion,
-                                      },
-                                      queryParameters: {
-                                        'parentName': OfflineDocsScreen.name,
-                                      },
-                                    );
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title:
-                                              Text(context.l10n.deleteDocument),
-                                          content: Text(context.l10n
-                                              .confirmDeleteDocument(
-                                                  doc.packageName,
-                                                  doc.packageVersion)),
-                                          actions: [
-                                            TextButton(
-                                              child: Text(context.l10n.cancel),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text(context.l10n.delete),
-                                              onPressed: () {
-                                                context.read<HexDocBloc>().add(
-                                                      HexDocEventDelete(
-                                                        packageName:
-                                                            doc.packageName,
-                                                        packageVersion:
-                                                            doc.packageVersion,
-                                                      ),
-                                                    );
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: ExpansionPanelList(
+                    expansionCallback: (int index, bool isExpanded) {
+                      context.read<HexDocBloc>().add(
+                            HexDocEventToggleExpanded(packageNames[index]),
                           );
-                        }).toList(),
-                      ),
-                      isExpanded: state.expandedState[packageName] ?? false,
-                    );
-                  }).toList(),
+                    },
+                    children:
+                        packageNames.map<ExpansionPanel>((String packageName) {
+                      return ExpansionPanel(
+                        headerBuilder: (BuildContext context, bool isExpanded) {
+                          return ListTile(
+                            title: Text(packageName),
+                          );
+                        },
+                        body: Column(
+                          children: docs[packageName]!.map((doc) {
+                            return ListTile(
+                              title: Text(doc.packageVersion),
+                              trailing: Wrap(
+                                spacing: 4,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.preview),
+                                    tooltip: context.l10n.openInBrowser,
+                                    onPressed: () {
+                                      context.goNamed(
+                                        FavoriteReleaseDocsScreen.name,
+                                        pathParameters: {
+                                          'package_name': doc.packageName,
+                                          'package_version': doc.packageVersion,
+                                        },
+                                        queryParameters: {
+                                          'parentName': OfflineDocsScreen.name,
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    tooltip: context.l10n.delete,
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              context.l10n.deleteDocument,
+                                            ),
+                                            content: Text(
+                                              context.l10n
+                                                  .confirmDeleteDocument(
+                                                doc.packageName,
+                                                doc.packageVersion,
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child:
+                                                    Text(context.l10n.cancel),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              FilledButton(
+                                                child:
+                                                    Text(context.l10n.delete),
+                                                onPressed: () {
+                                                  context
+                                                      .read<HexDocBloc>()
+                                                      .add(
+                                                        HexDocEventDelete(
+                                                          packageName:
+                                                              doc.packageName,
+                                                          packageVersion: doc
+                                                              .packageVersion,
+                                                        ),
+                                                      );
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        isExpanded: state.expandedState[packageName] ?? false,
+                      );
+                    }).toList(),
+                  ),
                 ),
               );
             },
@@ -197,183 +221,194 @@ class _ServerControlPanel extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.all(16),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isRunning
-                    ? [
-                        colorScheme.primaryContainer,
-                        colorScheme.tertiaryContainer,
-                      ]
-                    : [
-                        colorScheme.surfaceContainerHighest,
-                        colorScheme.surfaceContainerHigh,
-                      ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+          child: Card(
+            margin: EdgeInsets.zero,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isRunning
-                    ? colorScheme.primary.withAlpha(50)
-                    : colorScheme.outline.withAlpha(50),
-              ),
             ),
-            child: Column(
-              children: [
-                // Header Row
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: isRunning
-                              ? Colors.green.withAlpha(30)
-                              : colorScheme.onSurface.withAlpha(20),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          isRunning ? Icons.dns : Icons.dns_outlined,
-                          color: isRunning ? Colors.green : colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.l10n.docsServer,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isRunning
-                                        ? Colors.green
-                                        : isStarting || isStopping
-                                            ? Colors.orange
-                                            : colorScheme.outline,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  _getStatusText(context, state.status),
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: isRunning
-                                        ? Colors.green.shade700
-                                        : colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Start/Stop Button
-                      if (isStarting || isStopping)
-                        const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      else
-                        FilledButton.icon(
-                          onPressed: () {
-                            if (isRunning) {
-                              context.read<OfflineDocsServerBloc>().add(
-                                    const OfflineDocsServerStopped(),
-                                  );
-                            } else {
-                              context.read<OfflineDocsServerBloc>().add(
-                                    const OfflineDocsServerStarted(),
-                                  );
-                            }
-                          },
-                          icon: Icon(isRunning ? Icons.stop : Icons.play_arrow),
-                          label: Text(isRunning
-                              ? context.l10n.stopServer
-                              : context.l10n.startServer),
-                          style: FilledButton.styleFrom(
-                            backgroundColor:
-                                isRunning ? Colors.red : colorScheme.primary,
-                          ),
-                        ),
-                    ],
-                  ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isRunning
+                      ? [
+                          colorScheme.primaryContainer,
+                          colorScheme.tertiaryContainer,
+                        ]
+                      : [
+                          colorScheme.surfaceContainerHighest,
+                          colorScheme.surfaceContainerHigh,
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                // Server URL (only when running)
-                if (isRunning) ...[
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface.withAlpha(200),
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
-                      ),
-                    ),
+                border: Border.all(
+                  color: isRunning
+                      ? colorScheme.primary.withAlpha(50)
+                      : colorScheme.outline.withAlpha(50),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.link,
-                          size: 18,
-                          color: colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            serverUrl,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontFamily: 'monospace',
-                              color: colorScheme.onSurface,
-                            ),
-                            overflow: TextOverflow.ellipsis,
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: isRunning
+                                ? Colors.green.withAlpha(30)
+                                : colorScheme.onSurface.withAlpha(20),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            isRunning ? Icons.dns : Icons.dns_outlined,
+                            color: isRunning
+                                ? Colors.green
+                                : colorScheme.onSurface,
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.copy, size: 20),
-                          tooltip: context.l10n.copy,
-                          onPressed: () async {
-                            await Clipboard.setData(ClipboardData(text: serverUrl));
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(context.l10n.copiedToClipboard),
-                                  duration: const Duration(seconds: 2),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context.l10n.docsServer,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              );
-                            }
-                          },
+                              ),
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isRunning
+                                          ? Colors.green
+                                          : isStarting || isStopping
+                                              ? Colors.orange
+                                              : colorScheme.outline,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    _getStatusText(context, state.status),
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: isRunning
+                                          ? Colors.green.shade700
+                                          : colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                        IconButton(
-                          icon: const Icon(Icons.open_in_browser, size: 20),
-                          tooltip: context.l10n.openInBrowser,
-                          onPressed: () async {
-                            final uri = Uri.parse(serverUrl);
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
-                            }
-                          },
-                        ),
+                        if (isStarting || isStopping)
+                          const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        else
+                          FilledButton.icon(
+                            onPressed: () {
+                              if (isRunning) {
+                                context.read<OfflineDocsServerBloc>().add(
+                                      const OfflineDocsServerStopped(),
+                                    );
+                              } else {
+                                context.read<OfflineDocsServerBloc>().add(
+                                      const OfflineDocsServerStarted(),
+                                    );
+                              }
+                            },
+                            icon:
+                                Icon(isRunning ? Icons.stop : Icons.play_arrow),
+                            label: Text(
+                              isRunning
+                                  ? context.l10n.stopServer
+                                  : context.l10n.startServer,
+                            ),
+                            style: FilledButton.styleFrom(
+                              backgroundColor:
+                                  isRunning ? Colors.red : colorScheme.primary,
+                            ),
+                          ),
                       ],
                     ),
                   ),
+                  if (isRunning) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.surface.withAlpha(200),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.link,
+                            size: 18,
+                            color: colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              serverUrl,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontFamily: 'monospace',
+                                color: colorScheme.onSurface,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.copy, size: 20),
+                            tooltip: context.l10n.copy,
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                ClipboardData(text: serverUrl),
+                              );
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text(context.l10n.copiedToClipboard),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.open_in_browser, size: 20),
+                            tooltip: context.l10n.openInBrowser,
+                            onPressed: () async {
+                              final uri = Uri.parse(serverUrl);
+                              if (await canLaunchUrl(uri)) {
+                                await launchUrl(uri);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );

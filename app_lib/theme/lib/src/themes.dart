@@ -8,6 +8,90 @@ import 'package:flutter/material.dart';
 
 final themeList = [VioletTheme(), GreenTheme(), FireTheme(), WheatTheme()];
 
+ThemeData _buildTheme(ColorScheme colorScheme) {
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
+    scaffoldBackgroundColor: colorScheme.surface,
+    appBarTheme: AppBarTheme(
+      centerTitle: true,
+      backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
+      surfaceTintColor: colorScheme.surfaceTint,
+      elevation: 0,
+    ),
+    cardTheme: CardThemeData(
+      elevation: 0,
+      color: colorScheme.surfaceContainerLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      iconColor: colorScheme.primary,
+      textColor: colorScheme.onSurface,
+      subtitleTextStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: colorScheme.surfaceContainerHighest,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(color: colorScheme.primary, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    ),
+    chipTheme: ChipThemeData(
+      shape: const StadiumBorder(),
+      side: BorderSide.none,
+      backgroundColor: colorScheme.secondaryContainer,
+      labelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+      secondaryLabelStyle: TextStyle(color: colorScheme.onSecondaryContainer),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+    ),
+    dividerTheme: DividerThemeData(
+      color: colorScheme.outlineVariant,
+      space: 24,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: colorScheme.inverseSurface,
+      contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
+      behavior: SnackBarBehavior.floating,
+    ),
+  );
+}
+
 abstract class AppTheme {
   const AppTheme({
     required this.name,
@@ -33,16 +117,8 @@ class VioletTheme extends AppTheme {
   VioletTheme._()
       : super(
           name: 'Violet',
-          lightTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: violet.lightColorScheme,
-            // textTheme: textTheme,
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: violet.darkColorScheme,
-            // textTheme: textTheme,
-          ),
+          lightTheme: _buildTheme(violet.lightColorScheme),
+          darkTheme: _buildTheme(violet.darkColorScheme),
         );
 }
 
@@ -55,16 +131,8 @@ class GreenTheme extends AppTheme {
   GreenTheme._()
       : super(
           name: 'Green',
-          lightTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: green.lightColorScheme,
-            // textTheme: textTheme,
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: green.darkColorScheme,
-            // textTheme: textTheme,
-          ),
+          lightTheme: _buildTheme(green.lightColorScheme),
+          darkTheme: _buildTheme(green.darkColorScheme),
         );
 }
 
@@ -77,16 +145,8 @@ class FireTheme extends AppTheme {
   FireTheme._()
       : super(
           name: 'Fire',
-          lightTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: fire.lightColorScheme,
-            // textTheme: textTheme,
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: fire.darkColorScheme,
-            // textTheme: textTheme,
-          ),
+          lightTheme: _buildTheme(fire.lightColorScheme),
+          darkTheme: _buildTheme(fire.darkColorScheme),
         );
 }
 
@@ -99,16 +159,8 @@ class WheatTheme extends AppTheme {
   WheatTheme._()
       : super(
           name: 'Wheat',
-          lightTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: wheat.lightColorScheme,
-            // textTheme: textTheme,
-          ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: wheat.darkColorScheme,
-            // textTheme: textTheme,
-          ),
+          lightTheme: _buildTheme(wheat.lightColorScheme),
+          darkTheme: _buildTheme(wheat.darkColorScheme),
         );
 }
 
@@ -121,17 +173,17 @@ class DynamicTheme extends AppTheme {
   DynamicTheme._(Color seedColor)
       : super(
           name: 'Dynamic',
-          lightTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: seedColor, brightness: Brightness.light),
-            // textTheme: textTheme,
+          lightTheme: _buildTheme(
+            ColorScheme.fromSeed(
+              seedColor: seedColor,
+              brightness: Brightness.light,
+            ),
           ),
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(
-                seedColor: seedColor, brightness: Brightness.dark),
-            // textTheme: textTheme,
+          darkTheme: _buildTheme(
+            ColorScheme.fromSeed(
+              seedColor: seedColor,
+              brightness: Brightness.dark,
+            ),
           ),
         );
 }

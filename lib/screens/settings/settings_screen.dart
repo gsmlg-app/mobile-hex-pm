@@ -32,18 +32,24 @@ class SettingsScreen extends StatelessWidget {
         final themeBloc = context.read<ThemeBloc>();
         final theme = themeBloc.state.theme;
         final isLight = Theme.of(context).brightness == Brightness.light;
-
         return SafeArea(
           child: CustomScrollView(
             slivers: <Widget>[
               SliverAppBar(
                 title: Text(context.l10n.settingsTitle),
+                centerTitle: true,
+                floating: true,
+                snap: true,
               ),
               SliverFillRemaining(
                 child: BlocBuilder<ThemeBloc, ThemeState>(
                   bloc: themeBloc,
                   builder: (context, state) {
                     return SettingsList(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       sections: [
                         SettingsSection(
                           title: Text(context.l10n.hexSection),

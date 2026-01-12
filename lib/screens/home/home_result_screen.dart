@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:app_database/app_database.dart';
@@ -18,23 +16,16 @@ class HomeResultScreen extends StatelessWidget {
   static const path = 'search/:package_name/result';
   static const fullPath = '${HomeScreen.path}/$path';
 
-  HomeResultScreen({super.key, required this.packageName})
-      : controller = TextEditingController(text: packageName);
+  HomeResultScreen({super.key, required this.packageName});
 
   final String packageName;
 
-  final TextEditingController controller;
-
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    double w = screenWidth;
-    if (screenHeight < screenWidth) {
-      w = screenHeight;
-    }
     final formBloc = context.read<HexSearchFormBloc>();
     final hexSearchBloc = context.read<HexSearchBloc>();
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return AppAdaptiveScaffold(
       selectedIndex: Destinations.indexOf(const Key(HomeScreen.name), context),
@@ -46,45 +37,59 @@ class HomeResultScreen extends StatelessWidget {
       body: (context) => CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: FormBlocListener<HexSearchFormBloc, String, String>(
-              formBloc: formBloc,
-              onSuccess: (context, state) {
-                final name = state.successResponse!;
-                hexSearchBloc.add(HexSearchEventSearch(name));
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(context.l10n.hex),
-                  SizedBox(
-                    width: 12,
+            title: Text(context.l10n.search),
+            centerTitle: true,
+            floating: true,
+            snap: true,
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: FormBlocListener<HexSearchFormBloc, String, String>(
+                formBloc: formBloc,
+                onSuccess: (context, state) {
+                  final name = state.successResponse!;
+                  hexSearchBloc.add(HexSearchEventSearch(name));
+                },
+                child: Card(
+                  color: colorScheme.surfaceContainerLow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  SizedBox(
-                    width: max(w * 0.5, 300),
-                    height: 84,
-                    child: TextFieldBlocBuilder(
-                      textFieldBloc: formBloc.searchName,
-                      suffixButton: SuffixButton.clearText,
-                      autofillHints: const [AutofillHints.name],
-                      obscureText: false,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      decoration: InputDecoration(
-                        hintText: 'Find packages',
-                        border: OutlineInputBorder(),
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFieldBlocBuilder(
+                            textFieldBloc: formBloc.searchName,
+                            onSubmitted: (value) => formBloc.submit(),
+                            suffixButton: SuffixButton.clearText,
+                            autofillHints: const [AutofillHints.name],
+                            obscureText: false,
+                            autocorrect: false,
+                            enableSuggestions: false,
+                            decoration: InputDecoration(
+                              hintText: context.l10n.searchPackages,
+                              prefixIcon: const Icon(Icons.search),
+                              border: InputBorder.none,
+                              filled: false,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        FilledButton.icon(
+                          onPressed: formBloc.submit,
+                          icon: const Icon(Icons.search),
+                          label: Text(context.l10n.search),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: 120,
-                    height: 54,
-                    child: TextButton(
-                      onPressed: formBloc.submit,
-                      child: Text(context.l10n.search),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -141,9 +146,8 @@ class HomeResultScreen extends StatelessWidget {
                                   ),
                         ),
                         SizedBox(height: 16),
-                        ElevatedButton.icon(
+                        FilledButton.icon(
                           onPressed: () {
-                            // Retry the last search
                             final currentSearch = context
                                 .read<HexSearchFormBloc>()
                                 .searchName
@@ -154,7 +158,7 @@ class HomeResultScreen extends StatelessWidget {
                                   );
                             }
                           },
-                          icon: Icon(Icons.refresh),
+                          icon: const Icon(Icons.refresh),
                           label: Text(context.l10n.retry),
                         ),
                       ],
@@ -213,69 +217,103 @@ class HomeResultScreen extends StatelessWidget {
               return SliverList.builder(
                 itemBuilder: (context, idx) {
                   final Package pkg = results[idx];
+                  final description = pkg.meta.description;
 
-                  // Handle packages with no releases
                   if (pkg.releases.isEmpty) {
-                    return ListTile(
-                      leading: pkg.private == true
-                          ? Icon(Icons.lock)
-                          : Icon(Icons.public),
-                      title: Text(pkg.name),
-                      subtitle: Text(context.l10n.packageHasNoReleases),
-                      trailing: Icon(Icons.info_outline,
-                          color: Theme.of(context).colorScheme.secondary),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: pkg.private == true
+                                ? colorScheme.errorContainer
+                                : colorScheme.primaryContainer,
+                            foregroundColor: pkg.private == true
+                                ? colorScheme.onErrorContainer
+                                : colorScheme.onPrimaryContainer,
+                            child: Icon(
+                              pkg.private == true ? Icons.lock : Icons.public,
+                            ),
+                          ),
+                          title: Text(pkg.name),
+                          subtitle: Text(context.l10n.packageHasNoReleases),
+                          trailing: Icon(
+                            Icons.info_outline,
+                            color: colorScheme.secondary,
+                          ),
+                        ),
+                      ),
                     );
                   }
 
                   final lastVersion = pkg.releases.first;
-                  return ListTile(
-                    leading: pkg.private == true
-                        ? Icon(Icons.lock)
-                        : Icon(Icons.public),
-                    title: Text.rich(
-                      TextSpan(
-                        children: [
-                          WidgetSpan(
-                            baseline: TextBaseline.alphabetic,
-                            alignment: PlaceholderAlignment.middle,
-                            child: TextButton(
-                              onPressed: () {
-                                showPackage(pkg: pkg, context: context);
-                              },
-                              child: Text(
-                                pkg.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    child: Card(
+                      child: ListTile(
+                        onTap: () {
+                          showPackage(pkg: pkg, context: context);
+                        },
+                        leading: CircleAvatar(
+                          backgroundColor: pkg.private == true
+                              ? colorScheme.errorContainer
+                              : colorScheme.primaryContainer,
+                          foregroundColor: pkg.private == true
+                              ? colorScheme.onErrorContainer
+                              : colorScheme.onPrimaryContainer,
+                          child: Icon(
+                            pkg.private == true ? Icons.lock : Icons.public,
+                          ),
+                        ),
+                        title: Text(
+                          pkg.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (description != null && description.isNotEmpty)
+                              Text(
+                                description,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            const SizedBox(height: 4),
+                            Text(
+                              lastVersion.version ?? '',
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: colorScheme.secondary,
                               ),
                             ),
-                          ),
-                          TextSpan(text: ' '),
-                          TextSpan(
-                            text: lastVersion.version,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
-                                ?.copyWith(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${pkg.downloads.all}',
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            Text(
+                              context.l10n.downloads,
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    subtitle: Text('${pkg.meta.description}'),
-                    trailing: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text('${pkg.downloads.all}'),
-                        Text(context.l10n.downloads),
-                      ],
                     ),
                   );
                 },
@@ -323,6 +361,9 @@ class HomeResultScreen extends StatelessWidget {
         ),
       ),
       builder: (context) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+
         return Padding(
           padding: const EdgeInsets.symmetric(
             vertical: 8.0,
@@ -373,7 +414,7 @@ class HomeResultScreen extends StatelessWidget {
                           return element.name == pkg.name;
                         });
 
-                        return ElevatedButton(
+                        return FilledButton(
                           onPressed: isSaved
                               ? null
                               : () async {
@@ -394,7 +435,7 @@ class HomeResultScreen extends StatelessWidget {
                                           FavoritePackageEventInit(),
                                         );
                                   } catch (e) {
-                                    print(e);
+                                    debugPrint(e.toString());
                                   }
                                 },
                           child: isSaved
@@ -426,19 +467,17 @@ class HomeResultScreen extends StatelessWidget {
                               ),
                         ),
                         Wrap(
-                          spacing: 32,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             for (final owner in owners)
-                              Text(
-                                owner.username,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
+                              Chip(
+                                label: Text(owner.username),
+                                backgroundColor: colorScheme.secondaryContainer,
+                                labelStyle:
+                                    theme.textTheme.labelLarge?.copyWith(
+                                  color: colorScheme.onSecondaryContainer,
+                                ),
                               ),
                           ],
                         ),
@@ -464,35 +503,27 @@ class HomeResultScreen extends StatelessWidget {
                                       Theme.of(context).colorScheme.secondary,
                                 ),
                           ),
-                          TextButton(
+                          TextButton.icon(
                             onPressed: () async {
                               final Uri url = Uri.parse(pkg.docsHtmlUrl ?? '');
                               if (!await launchUrl(url)) {
                                 throw 'Could not launch $url';
                               }
                             },
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Online documentation',
-                                  ),
-                                  TextSpan(text: ' '),
-                                  WidgetSpan(child: Icon(Icons.cloud_download)),
-                                ],
-                              ),
-                            ),
+                            icon: const Icon(Icons.cloud_download),
+                            label: const Text('Online documentation'),
                           ),
                           for (var entry
                               in pkg.meta.links?.entries ?? {}.entries)
-                            TextButton(
+                            TextButton.icon(
                               onPressed: () async {
                                 final Uri url = Uri.parse(entry.value ?? '');
                                 if (!await launchUrl(url)) {
                                   throw 'Could not launch $url';
                                 }
                               },
-                              child: Text(entry.key ?? ''),
+                              icon: const Icon(Icons.link),
+                              label: Text(entry.key ?? ''),
                             ),
                         ],
                       ),
@@ -511,8 +542,17 @@ class HomeResultScreen extends StatelessWidget {
                                       Theme.of(context).colorScheme.secondary,
                                 ),
                           ),
-                          for (var license in pkg.meta.licenses ?? <String>[])
-                            Text(license),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (var license
+                                  in pkg.meta.licenses ?? <String>[])
+                                Chip(
+                                  label: Text(license),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -608,13 +648,12 @@ class HomeResultScreen extends StatelessWidget {
                             ),
                       ),
                       Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
                           for (var release in pkg.releases)
-                            TextButton(
-                              onPressed: () async {},
-                              child: Text(
-                                release.version ?? '',
-                              ),
+                            Chip(
+                              label: Text(release.version ?? ''),
                             ),
                         ],
                       ),
@@ -628,9 +667,8 @@ class HomeResultScreen extends StatelessWidget {
                   builder: (context, state) {
                     final releaseMap = state.releases;
                     final release = releaseMap[pkg.name];
-                    final requirements = release?.requirements ??
-                        <String, ReleaseRequirement>{};
-                    print('requirements: $requirements');
+                    final requirements =
+                        release?.requirements ?? <String, ReleaseRequirement>{};
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -645,36 +683,13 @@ class HomeResultScreen extends StatelessWidget {
                               ),
                         ),
                         Wrap(
-                          spacing: 32,
+                          spacing: 8,
+                          runSpacing: 8,
                           children: [
                             for (final d in requirements.entries)
-                              RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: d.key,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                          ),
-                                    ),
-                                    TextSpan(text: ' '),
-                                    TextSpan(
-                                      text: d.value.requirement,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .secondary,
-                                          ),
-                                    ),
-                                  ],
+                              Chip(
+                                label: Text(
+                                  "${d.key} ${d.value.requirement}${d.value.optional == true ? ' (optional)' : ''}",
                                 ),
                               ),
                           ],

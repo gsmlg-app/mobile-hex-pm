@@ -20,6 +20,9 @@ class FavoriteScreen extends StatelessWidget {
       context.read<FavoritePackageBloc>().add(FavoritePackageEventInit());
     });
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AppAdaptiveScaffold(
       selectedIndex:
           Destinations.indexOf(const Key(FavoriteScreen.name), context),
@@ -32,6 +35,9 @@ class FavoriteScreen extends StatelessWidget {
         slivers: <Widget>[
           SliverAppBar(
             title: Text(context.l10n.favoritePackages),
+            centerTitle: true,
+            floating: true,
+            snap: true,
           ),
           BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
             builder: (context, state) {
@@ -52,14 +58,20 @@ class FavoriteScreen extends StatelessWidget {
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.noFavoritePackages,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           context.l10n.addToFavorite,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
@@ -83,21 +95,35 @@ class FavoriteScreen extends StatelessWidget {
                                   FavoritePackageEventRemove(pkg.name),
                                 );
                           },
-                          backgroundColor: Color(0xFFFE4A49),
-                          foregroundColor: Colors.white,
+                          backgroundColor: colorScheme.error,
+                          foregroundColor: colorScheme.onError,
                           icon: Icons.delete,
-                          label: 'Delete',
+                          label: context.l10n.delete,
                         ),
                       ],
                     ),
-                    child: ListTile(
-                      leading: Text('${idx + 1}.'),
-                      title: Text(pkg.name),
-                      subtitle: Text(pkg.description),
-                      onTap: () {
-                        context.goNamed(FavoriteReleasesScreen.name,
-                            pathParameters: {'package_name': pkg.name});
-                      },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: colorScheme.primaryContainer,
+                            foregroundColor: colorScheme.onPrimaryContainer,
+                            child: Text('${idx + 1}'),
+                          ),
+                          title: Text(pkg.name),
+                          subtitle: Text(pkg.description),
+                          onTap: () {
+                            context.goNamed(
+                              FavoriteReleasesScreen.name,
+                              pathParameters: {'package_name': pkg.name},
+                            );
+                          },
+                        ),
+                      ),
                     ),
                   );
                 },

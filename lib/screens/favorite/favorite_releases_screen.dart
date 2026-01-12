@@ -25,6 +25,9 @@ class FavoriteReleasesScreen extends StatelessWidget {
           );
     });
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AppAdaptiveScaffold(
       selectedIndex:
           Destinations.indexOf(const Key(FavoriteScreen.name), context),
@@ -37,6 +40,9 @@ class FavoriteReleasesScreen extends StatelessWidget {
         slivers: <Widget>[
           SliverAppBar(
             title: Text(context.l10n.releasesTitle(packageName)),
+            centerTitle: true,
+            floating: true,
+            snap: true,
           ),
           BlocBuilder<FavoritePackageBloc, FavoritePackageState>(
             builder: (context, state) {
@@ -59,53 +65,103 @@ class FavoriteReleasesScreen extends StatelessWidget {
                             ),
                           );
                     }
-                    return ListTile(
-                      title: Text(r.version ?? 'Unknown version'),
-                      subtitle: Text(context.l10n.loading),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
+                      child: Card(
+                        child: ListTile(
+                          leading: const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          title: Text(
+                            r.version ?? context.l10n.noReleasesAvailable,
+                          ),
+                          subtitle: Text(context.l10n.loading),
+                        ),
+                      ),
                     );
                   }
 
-                  return ListTile(
-                    leading: Text('${release.downloads}'),
-                    title: SelectableText.rich(
-                      TextSpan(
-                        text: release.version,
-                        children: [
-                          const TextSpan(text: '   '),
-                          TextSpan(
-                              text: '${release.meta.buildTools?.join(",")}'),
-                        ],
+                  final buildTools = release.meta.buildTools ?? <String>[];
+                  final requirements = release.requirements ?? {};
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
+                    child: Card(
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: colorScheme.secondaryContainer,
+                          foregroundColor: colorScheme.onSecondaryContainer,
+                          child: Text(
+                            '${release.downloads}',
+                            style: theme.textTheme.labelMedium,
+                          ),
+                        ),
+                        title: Text(
+                          release.version,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (buildTools.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: [
+                                  for (final tool in buildTools)
+                                    Chip(
+                                      label: Text(tool),
+                                    ),
+                                ],
+                              ),
+                            ],
+                            if (requirements.isNotEmpty) ...[
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: [
+                                  for (final entry in requirements.entries)
+                                    Chip(
+                                      label: Text(
+                                        "${entry.key} ${entry.value.requirement}",
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                        trailing: release.hasDocs
+                            ? IconButton(
+                                onPressed: () {
+                                  context.goNamed(
+                                    FavoriteReleaseDocsScreen.name,
+                                    pathParameters: {
+                                      'package_name': packageName,
+                                      'package_version': release.version,
+                                    },
+                                    queryParameters: {
+                                      'parentName': FavoriteScreen.name,
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.description),
+                              )
+                            : const Icon(Icons.cancel_outlined),
                       ),
                     ),
-                    subtitle: SelectableText.rich(
-                      TextSpan(
-                        children: [
-                          for (final entry
-                              in (release.requirements ?? {}).entries)
-                            TextSpan(
-                              text:
-                                  '{:${entry.key}, "${entry.value.requirement}", ${entry.value.optional == true ? "optional: true" : ""}},',
-                            )
-                        ],
-                      ),
-                    ),
-                    trailing: release.hasDocs
-                        ? IconButton(
-                            onPressed: () {
-                              context.goNamed(
-                                FavoriteReleaseDocsScreen.name,
-                                pathParameters: {
-                                  'package_name': packageName,
-                                  'package_version': release.version,
-                                },
-                                queryParameters: {
-                                  'parentName': FavoriteScreen.name,
-                                },
-                              );
-                            },
-                            icon: const Icon(Icons.description),
-                          )
-                        : const Icon(Icons.cancel_outlined),
                   );
                 },
               );
