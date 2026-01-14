@@ -14,6 +14,7 @@ workspace:
   - app_lib/database
   - app_lib/logging
   - app_lib/docs_server
+  - app_lib/secure_storage
   - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
