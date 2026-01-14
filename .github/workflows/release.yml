@@ -72,8 +72,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "v${{ inputs.build-name }}" -m "Release v${{ inputs.build-name }}"
-          git push origin "v${{ inputs.build-name }}"
+          # Check if tag already exists
+          if git rev-parse "v${{ inputs.build-name }}" >/dev/null 2>&1; then
+            echo "Tag v${{ inputs.build-name }} already exists, skipping tag creation"
+          else
+            git tag -a "v${{ inputs.build-name }}" -m "Release v${{ inputs.build-name }}"
+            git push origin "v${{ inputs.build-name }}"
+          fi
 
       - name: Generate release notes
         id: release_notes
@@ -99,15 +104,23 @@ jobs:
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ inputs.build-name }}
-          release_name: Release v${{ inputs.build-name }}
-          body: ${{ steps.release_notes.outputs.notes }}
-          draft: false
-          prerelease: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if release already exists
+          if gh release view "v${{ inputs.build-name }}" >/dev/null 2>&1; then
+            echo "Release v${{ inputs.build-name }} already exists, skipping creation"
+            UPLOAD_URL=$(gh api repos/${{ github.repository }}/releases/tags/v${{ inputs.build-name }} --jq '.upload_url')
+            RELEASE_ID=$(gh api repos/${{ github.repository }}/releases/tags/v${{ inputs.build-name }} --jq '.id')
+          else
+            gh release create "v${{ inputs.build-name }}" \
+              --title "Release v${{ inputs.build-name }}" \
+              --notes "${{ steps.release_notes.outputs.notes }}"
+            UPLOAD_URL=$(gh api repos/${{ github.repository }}/releases/tags/v${{ inputs.build-name }} --jq '.upload_url')
+            RELEASE_ID=$(gh api repos/${{ github.repository }}/releases/tags/v${{ inputs.build-name }} --jq '.id')
+          fi
+          echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+          echo "id=$RELEASE_ID" >> $GITHUB_OUTPUT
 
   build-android:
     if: inputs.platform == 'android' || inputs.platform == 'all'
