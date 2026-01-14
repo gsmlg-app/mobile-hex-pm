@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:app_database/app_database.dart';
+import 'package:app_secure_storage/app_secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +19,7 @@ class MainProvider extends StatelessWidget {
     super.key,
     required this.child,
     required this.sharedPrefs,
+    required this.vault,
     required this.database,
     required this.appSupportDir,
     required this.tmpDir,
@@ -25,6 +27,7 @@ class MainProvider extends StatelessWidget {
 
   final Widget child;
   final SharedPreferences sharedPrefs;
+  final VaultRepository vault;
   final AppDatabase database;
   final Directory appSupportDir;
   final Directory tmpDir;
@@ -38,6 +41,9 @@ class MainProvider extends StatelessWidget {
         ),
         RepositoryProvider<AppDatabase>(
           create: (BuildContext context) => database,
+        ),
+        RepositoryProvider<VaultRepository>(
+          create: (BuildContext context) => vault,
         ),
         RepositoryProvider<Dio>(
           create: (BuildContext context) => Dio(
@@ -59,7 +65,7 @@ class MainProvider extends StatelessWidget {
             create: (context) => HexAuthBloc(
               context.read<Dio>(),
               context.read<HexApi>(),
-              context.read<SharedPreferences>(),
+              context.read<VaultRepository>(),
             ),
           ),
           BlocProvider<HexSearchFormBloc>(

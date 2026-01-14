@@ -11,7 +11,7 @@ dependencies:
   equatable: ^2.0.5
 
   hex_api: any
-  shared_preferences: any
+  app_secure_storage: any
   dio: any
 
 dev_dependencies:

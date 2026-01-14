@@ -1,9 +1,9 @@
+import 'package:app_secure_storage/app_secure_storage.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hex_api/hex_api.dart';
 import 'package:hex_auth_bloc/src/interceptor.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'event.dart';
 part 'state.dart';
@@ -11,9 +11,9 @@ part 'state.dart';
 class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
   final Dio dio;
   final HexApi hexApi;
-  final SharedPreferences sharedPrefs;
+  final VaultRepository vault;
 
-  HexAuthBloc(this.dio, this.hexApi, this.sharedPrefs)
+  HexAuthBloc(this.dio, this.hexApi, this.vault)
       : super(HexAuthState.initial()) {
     on<HexAuthEventInit>(_onHexAuthEventInit);
     on<HexAuthEventLogin>(_onHexAuthEventLogin);
@@ -24,7 +24,7 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
     HexAuthEventInit event,
     Emitter<HexAuthState> emitter,
   ) async {
-    final apiKey = sharedPrefs.getString('HEX_API_KEY');
+    final apiKey = await vault.read(key: 'HEX_API_KEY');
 
     emitter(state.copyWith(apiKey: apiKey));
 
@@ -56,7 +56,7 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
       dio.interceptors.add(ApiAuthInterceptor(event.apiKey));
       final user = await hexApi.users.getCurrentUser();
       emitter(state.copyWith(currenUser: user, error: ''));
-      sharedPrefs.setString('HEX_API_KEY', event.apiKey);
+      await vault.write(key: 'HEX_API_KEY', value: event.apiKey);
     } on DioException catch (e) {
       // Remove interceptor on failure
       dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
@@ -75,7 +75,7 @@ class HexAuthBloc extends Bloc<HexAuthEvent, HexAuthState> {
     Emitter<HexAuthState> emitter,
   ) async {
     emitter(state.copyWith(clearApiKey: true, clearCurrentUser: true));
-    sharedPrefs.remove('HEX_API_KEY');
+    await vault.delete(key: 'HEX_API_KEY');
     dio.interceptors.removeWhere((i) => i is ApiAuthInterceptor);
   }
 }

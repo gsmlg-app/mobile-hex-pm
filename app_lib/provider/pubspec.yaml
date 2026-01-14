@@ -23,6 +23,7 @@ dependencies:
   hex_doc_bloc: any
   offline_docs_server: any
   app_database: any
+  app_secure_storage: any
 
 dev_dependencies:
   flutter_test:
