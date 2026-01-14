@@ -3,10 +3,12 @@ version: 1.0.0
 description: API client, generate from OpenAPI spec
 
 environment:
-  sdk: ">=3.6.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
 resolution: workspace
 
 dependencies:
+  flutter:
+    sdk: flutter
   dio: ^5.7.0
   json_annotation: ^4.9.0
   freezed_annotation: ^3.0.0
