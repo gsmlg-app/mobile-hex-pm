@@ -8,14 +8,12 @@ environment:
   sdk: ">=3.6.0"
 
 workspace:
-  - app_lib/theme
   - app_lib/locale
   - app_lib/provider
   - app_lib/database
   - app_lib/logging
   - app_lib/docs_server
   - app_lib/secure_storage
-  - app_bloc/theme
   - app_bloc/hex_auth
   - app_bloc/hex_search
   - app_bloc/favorite_package
@@ -50,7 +48,6 @@ dependencies:
   google_fonts: ^6.2.1
 
   # workspace packages
-  app_theme: any
   app_locale: any
   app_provider: any
   app_database: any
@@ -62,7 +59,8 @@ dependencies:
   app_adaptive_widgets: any
   duskmoon_settings: ^1.4.0
   hex_api: any
-  theme_bloc: any
+  duskmoon_theme: ^1.4.0
+  duskmoon_theme_bloc: ^1.4.0
   hex_auth_bloc: any
   hex_search_bloc: any
   favorite_package_bloc: any

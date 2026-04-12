@@ -1,7 +1,8 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_feedback/app_feedback.dart';
 import 'package:app_locale/app_locale.dart';
-import 'package:app_theme/app_theme.dart';
+import 'package:duskmoon_theme/duskmoon_theme.dart';
+import 'package:duskmoon_theme_bloc/duskmoon_theme_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +12,6 @@ import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_control_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_config_screen.dart';
 import 'package:duskmoon_settings/duskmoon_settings.dart';
-import 'package:theme_bloc/theme_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
   static const name = 'Settings';
@@ -29,8 +29,7 @@ class SettingsScreen extends StatelessWidget {
       ),
       destinations: Destinations.navs(context),
       body: (context) {
-        final themeBloc = context.read<ThemeBloc>();
-        final theme = themeBloc.state.theme;
+        final themeBloc = context.read<DmThemeBloc>();
         final isLight = Theme.of(context).brightness == Brightness.light;
         return SafeArea(
           child: CustomScrollView(
@@ -42,9 +41,13 @@ class SettingsScreen extends StatelessWidget {
                 snap: true,
               ),
               SliverFillRemaining(
-                child: BlocBuilder<ThemeBloc, ThemeState>(
+                child: BlocBuilder<DmThemeBloc, DmThemeState>(
                   bloc: themeBloc,
                   builder: (context, state) {
+                    final entry = state.entry;
+                    final colorScheme = isLight
+                        ? entry.light.colorScheme
+                        : entry.dark.colorScheme;
                     return SettingsList(
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -95,7 +98,7 @@ class SettingsScreen extends StatelessWidget {
                             SettingsTile.navigation(
                               leading: const Icon(Icons.brightness_medium),
                               title: Text(context.l10n.appearance),
-                              value: themeBloc.state.themeMode.icon,
+                              value: state.themeMode.icon,
                               onPressed: (context) {
                                 showBottomSheetActionList(
                                   context: context,
@@ -103,31 +106,31 @@ class SettingsScreen extends StatelessWidget {
                                     BottomSheetAction(
                                       title: ThemeMode.light.icon,
                                       onTap: () {
-                                        context.read<ThemeBloc>().add(
-                                              const ChangeThemeMode(
-                                                ThemeMode.light,
-                                              ),
-                                            );
+                                        themeBloc.add(
+                                          const DmSetThemeMode(
+                                            ThemeMode.light,
+                                          ),
+                                        );
                                       },
                                     ),
                                     BottomSheetAction(
                                       title: ThemeMode.dark.icon,
                                       onTap: () {
-                                        context.read<ThemeBloc>().add(
-                                              const ChangeThemeMode(
-                                                ThemeMode.dark,
-                                              ),
-                                            );
+                                        themeBloc.add(
+                                          const DmSetThemeMode(
+                                            ThemeMode.dark,
+                                          ),
+                                        );
                                       },
                                     ),
                                     BottomSheetAction(
                                       title: ThemeMode.system.icon,
                                       onTap: () {
-                                        context.read<ThemeBloc>().add(
-                                              const ChangeThemeMode(
-                                                ThemeMode.system,
-                                              ),
-                                            );
+                                        themeBloc.add(
+                                          const DmSetThemeMode(
+                                            ThemeMode.system,
+                                          ),
+                                        );
                                       },
                                     ),
                                   ],
@@ -156,11 +159,7 @@ class SettingsScreen extends StatelessWidget {
                                             .bodyLarge!
                                             .fontSize,
                                         decoration: BoxDecoration(
-                                          color: isLight
-                                              ? theme.lightTheme.colorScheme
-                                                  .primary
-                                              : theme.darkTheme.colorScheme
-                                                  .primary,
+                                          color: colorScheme.primary,
                                         ),
                                       ),
                                     ),
@@ -171,11 +170,7 @@ class SettingsScreen extends StatelessWidget {
                                             .bodyLarge!
                                             .fontSize,
                                         decoration: BoxDecoration(
-                                          color: isLight
-                                              ? theme.lightTheme.colorScheme
-                                                  .secondary
-                                              : theme.darkTheme.colorScheme
-                                                  .secondary,
+                                          color: colorScheme.secondary,
                                         ),
                                       ),
                                     ),
@@ -186,11 +181,7 @@ class SettingsScreen extends StatelessWidget {
                                             .bodyLarge!
                                             .fontSize,
                                         decoration: BoxDecoration(
-                                          color: isLight
-                                              ? theme.lightTheme.colorScheme
-                                                  .tertiary
-                                              : theme.darkTheme.colorScheme
-                                                  .tertiary,
+                                          color: colorScheme.tertiary,
                                         ),
                                       ),
                                     ),
@@ -206,18 +197,17 @@ class SettingsScreen extends StatelessWidget {
                               onPressed: (context) {
                                 showBottomSheetActionList(
                                   context: context,
-                                  actions: themeList.map<BottomSheetAction>(
-                                    (theme) {
-                                      return BottomSheetAction(
-                                        title: Text(theme.name),
-                                        onTap: () {
-                                          themeBloc.add(
-                                            ChangeTheme(theme),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ).toList(),
+                                  actions:
+                                      DmThemeData.themes.map((themeEntry) {
+                                    return BottomSheetAction(
+                                      title: Text(themeEntry.name),
+                                      onTap: () {
+                                        themeBloc.add(
+                                          DmSetTheme(themeEntry.name),
+                                        );
+                                      },
+                                    );
+                                  }).toList(),
                                 );
                               },
                             ),

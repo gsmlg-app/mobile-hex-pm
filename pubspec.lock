@@ -362,10 +362,18 @@ packages:
     source: hosted
     version: "1.4.2"
   duskmoon_theme:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: duskmoon_theme
       sha256: e9bb592b479c05da1ebf2f7c1d27c3443c9e630f324dac3b5ec7fb8b30592a25
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.2"
+  duskmoon_theme_bloc:
+    dependency: "direct main"
+    description:
+      name: duskmoon_theme_bloc
+      sha256: d5f5712baefd68e8bced8c5a9c0ce3f1b11ac0999605bbcf5d3c703ba0a733c8
       url: "https://pub.dev"
     source: hosted
     version: "1.4.2"

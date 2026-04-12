@@ -12,7 +12,7 @@ import 'package:hex_doc_bloc/hex_doc_bloc.dart';
 import 'package:hex_search_bloc/hex_search_bloc.dart';
 import 'package:offline_docs_server/offline_docs_server_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:theme_bloc/theme_bloc.dart';
+import 'package:duskmoon_theme_bloc/duskmoon_theme_bloc.dart';
 
 class MainProvider extends StatelessWidget {
   const MainProvider({
@@ -56,9 +56,9 @@ class MainProvider extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<ThemeBloc>(
-            create: (BuildContext context) => ThemeBloc(
-              context.read<SharedPreferences>(),
+          BlocProvider<DmThemeBloc>(
+            create: (BuildContext context) => DmThemeBloc(
+              prefs: context.read<SharedPreferences>(),
             ),
           ),
           BlocProvider<HexAuthBloc>(
