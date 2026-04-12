@@ -10,7 +10,7 @@ import 'package:mobile_hex_pm/screens/settings/hex_data_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/hex_settings_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_control_screen.dart';
 import 'package:mobile_hex_pm/screens/settings/server_config_screen.dart';
-import 'package:settings_ui/settings_ui.dart';
+import 'package:duskmoon_settings/duskmoon_settings.dart';
 import 'package:theme_bloc/theme_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -232,7 +232,7 @@ class SettingsScreen extends StatelessWidget {
           ),
         );
       },
-      smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
+      smallSecondaryBody: DmAdaptiveScaffold.emptyBuilder,
     );
   }
 }

@@ -25,10 +25,6 @@ workspace:
   - app_widget/artwork
   - app_widget/feedback
   - app_widget/web_view
-  - third_party/form_bloc
-  - third_party/flutter_form_bloc
-  - third_party/flutter_adaptive_scaffold
-  - third_party/settings_ui
   - app_api/hex_api
 
 dependencies:
@@ -64,7 +60,7 @@ dependencies:
   app_artwork: any
   app_feedback: any
   app_adaptive_widgets: any
-  settings_ui: any
+  duskmoon_settings: ^1.4.0
   hex_api: any
   theme_bloc: any
   hex_auth_bloc: any
@@ -72,9 +68,8 @@ dependencies:
   favorite_package_bloc: any
   hex_doc_bloc: any
   offline_docs_server: any
-  form_bloc: any
-  flutter_form_bloc: any
-  flutter_adaptive_scaffold: any
+  duskmoon_form: ^1.4.0
+  duskmoon_adaptive_scaffold: ^1.4.0
   app_web_view: any
   flutter_slidable: ^4.0.0
 
@@ -91,7 +86,7 @@ dev_dependencies:
 
   build_runner: ^2.4.2
   mockito: ^5.4.4
-  bdd_widget_test: ^1.2.0
+  bdd_widget_test: any
 
   melos: ^7.0.0-dev.8
   dependency_validator: ^5.0.0

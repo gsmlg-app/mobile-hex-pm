@@ -1,7 +1,7 @@
 import 'package:app_adaptive_widgets/app_adaptive_widgets.dart';
 import 'package:app_locale/app_locale.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:duskmoon_form/duskmoon_form.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hex_search_bloc/hex_search_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
@@ -91,7 +91,7 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 32),
                   // Search Section
-                  FormBlocListener<HexSearchFormBloc, String, String>(
+                  DmFormBlocListener<HexSearchFormBloc, String, String>(
                     formBloc: formBloc,
                     onSuccess: (context, state) {
                       final name = state.successResponse!;
@@ -116,7 +116,7 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Expanded(
-                              child: TextFieldBlocBuilder(
+                              child: DmTextFieldBlocBuilder(
                                 onSubmitted: (v) => formBloc.submit(),
                                 textFieldBloc: formBloc.searchName,
                                 suffixButton: SuffixButton.clearText,

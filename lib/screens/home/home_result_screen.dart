@@ -4,7 +4,7 @@ import 'package:app_database/app_database.dart';
 import 'package:app_feedback/app_feedback.dart';
 import 'package:favorite_package_bloc/favorite_package_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_bloc/flutter_form_bloc.dart';
+import 'package:duskmoon_form/duskmoon_form.dart';
 import 'package:hex_api/hex_api.dart';
 import 'package:hex_search_bloc/hex_search_bloc.dart';
 import 'package:mobile_hex_pm/destination.dart';
@@ -45,7 +45,7 @@ class HomeResultScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              child: FormBlocListener<HexSearchFormBloc, String, String>(
+              child: DmFormBlocListener<HexSearchFormBloc, String, String>(
                 formBloc: formBloc,
                 onSuccess: (context, state) {
                   final name = state.successResponse!;
@@ -64,7 +64,7 @@ class HomeResultScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: TextFieldBlocBuilder(
+                          child: DmTextFieldBlocBuilder(
                             textFieldBloc: formBloc.searchName,
                             onSubmitted: (value) => formBloc.submit(),
                             suffixButton: SuffixButton.clearText,

@@ -10,11 +10,11 @@ dependencies:
   bloc: ^9.0.0
   equatable: ^2.0.5
   dio: any
-  form_bloc: any
+  duskmoon_form: ^1.4.0
   hex_api: any
 
 dev_dependencies:
-  test: ^1.20.1
+  test: any
   bloc_test: ^10.0.0
   mocktail: ^1.0.3
   lints: ^6.0.0

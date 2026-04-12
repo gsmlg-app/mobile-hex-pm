@@ -1,7 +1,6 @@
-import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart' show DioException;
 import 'package:equatable/equatable.dart';
-import 'package:form_bloc/form_bloc.dart';
+import 'package:duskmoon_form/duskmoon_form.dart';
 import 'package:hex_api/hex_api.dart';
 
 part 'event.dart';
